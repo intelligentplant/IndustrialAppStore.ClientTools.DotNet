@@ -1,4 +1,4 @@
-﻿# IntelligentPlant.IndustrialAppStore.Authentication.AspNetCore
+﻿# IntelligentPlant.IndustrialAppStore.Authentication
 
 This project defines extension methods for adding authentication to an ASP.NET Core 2.x or 3.x application using the Intelligent Plant [Industrial App Store](https://appstore.intelligentplant.com).
 
