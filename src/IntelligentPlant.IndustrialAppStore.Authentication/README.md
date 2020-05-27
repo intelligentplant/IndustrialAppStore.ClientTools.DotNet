@@ -85,7 +85,8 @@ If you are using ASP.NET Core 3.0 or greater, you can enable [PKCE](https://oaut
         "ClientSecret": "<YOUR CLIENT SECRET>",
         "UsePkce": true
     }
-} 
+}
+```
 
 Alternatively, you can also enable PKCE programatically from your `Startup` class:
 
