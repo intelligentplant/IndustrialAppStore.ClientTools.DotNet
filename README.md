@@ -24,7 +24,9 @@ dotnet new iasmvc
 
 This will create a new ASP.NET Core MVC application that is pre-configured to use the Industrial App Store for authentication. The `README.md` file for the new project provides additional instructions for completing the setup.
 
-When creating the project, you can provide several command line parameters to pre-populate items such as the display name used in the app, and the client ID secret key used for authentication. Run `dotnet new iasmvc --help` to see all of the available options. Examples:
+When creating the project, you can provide several command line parameters to pre-populate items such as the display name used in the app, and the client ID secret key used for authentication. Run `dotnet new iasmvc --help` to see all of the available options. 
+
+Examples:
 
 ```
 # Sets the app display name, client ID, and client secret used for 
