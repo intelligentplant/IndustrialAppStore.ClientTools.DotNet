@@ -8,7 +8,7 @@ This repository contains client tools and templates for writing [Industrial App 
 You can install the [Industrial App Store templates](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.Templates) for `dotnet new` as follows:
 
 ```
-dotnet net --install IntelligentPlant.IndustrialAppStore.Templates
+dotnet new --install IntelligentPlant.IndustrialAppStore.Templates
 ```
 
 
