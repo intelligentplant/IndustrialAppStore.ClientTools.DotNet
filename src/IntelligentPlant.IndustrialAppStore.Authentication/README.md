@@ -28,17 +28,7 @@ In the `ConfigureServices` method in your `Startup` class, configure your applic
 
 ```csharp
 public void ConfigureServices(IServiceCollection services) {
-    services.AddAuthentication(options => {
-        // If an authentication cookie is present, use it.
-        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-
-        // If authentication is required, and no cookie is present, use the Industrial App 
-        // Store to sign in.
-        options.DefaultChallengeScheme = IASAuthDefaults.AuthenticationScheme;
-    })
-    .AddCookie()
-    .AddIndustrialAppStoreAuthentication(options => {
+    services.AddIndustrialAppStoreAuthentication(options => {
         // Bind the settings from the app configuration to the Industrial App Store 
         // authentication options.
         Configuration.GetSection("IAS").Bind(options);
@@ -48,8 +38,25 @@ public void ConfigureServices(IServiceCollection services) {
 }
 ```
 
-Finally, in the `Configure` method in your `Startup` class, add authentication and authorization into you rquest pipeline:
+If your app has a login page that requires the user to e.g. accept a privacy policy or explicitly enable persistent cookies, you can specify this as follows:
 
+```csharp
+public void ConfigureServices(IServiceCollection services) {
+    services.AddIndustrialAppStoreAuthentication(options => {
+        // Bind the settings from the app configuration to the Industrial App Store 
+        // authentication options.
+        Configuration.GetSection("IAS").Bind(options);
+        // Set the login path to be our login page.
+        options.LoginPath = new PathString("/Account/Login");
+    });
+
+    // Other configuration
+}
+```
+
+Finally, in the `Configure` method in your `Startup` class, add authentication and authorization into your request pipeline:
+
+```csharp
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
     // Other configuration
 
@@ -64,6 +71,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
 
     // Other configuration
 }
+```
 
 
 # PKCE
@@ -97,6 +105,7 @@ public void ConfigureServices(IServiceCollection services) {
     // Other configuration
 }
 ```
+
 
 # Calling Industrial App Store APIs
 
