@@ -27,14 +27,14 @@ This will create a new ASP.NET Core MVC application that is pre-configured to us
 When creating the project, you can provide several command line parameters to pre-populate items such as the display name used in the app, and the client ID secret key used for authentication. Run `dotnet new iasmvc --help` to see all of the available options. Examples:
 
 ```
-\# Sets the app display name, client ID, and client secret used for 
-\# authentication.
+# Sets the app display name, client ID, and client secret used for 
+# authentication.
 dotnet new iasmvc --app-name "My First App" --client-id "my_client_id" --client-secret "my-client-secret"
 
-\# Uses the Proof Key for Code Exchange (PKCE) extension to the OAuth 
-\# authorization code flow instead of a secret key.
+# Uses the Proof Key for Code Exchange (PKCE) extension to the OAuth 
+# authorization code flow instead of a secret key.
 dotnet new iasmvc --app-name "My First App" --client-id "my_client_id" --pkce
 
-\# Specifies the local HTTPS port to use instead of randomly choosing a port.
+# Specifies the local HTTPS port to use instead of randomly choosing a port.
 dotnet new iasmvc --port 43789
 ```
