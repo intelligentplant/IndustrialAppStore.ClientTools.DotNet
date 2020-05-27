@@ -29,7 +29,7 @@ When creating the project, you can provide several command line parameters to pr
 ```
 # Sets the app display name, client ID, and client secret used for 
 # authentication.
-dotnet new iasmvc --app-name "My First App" --client-id "my_client_id" --client-secret "my-client-secret"
+dotnet new iasmvc --app-name "My First App" --client-id "my_client_id" --client-secret "my_client_secret"
 
 # Uses the Proof Key for Code Exchange (PKCE) extension to the OAuth 
 # authorization code flow instead of a secret key.
