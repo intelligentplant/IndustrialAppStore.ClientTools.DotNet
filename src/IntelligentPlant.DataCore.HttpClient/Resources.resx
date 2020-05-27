@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error_DataSourceNameIsRequired" xml:space="preserve">
+    <value>A data source name is required.</value>
+  </data>
+  <data name="Error_DefaultHttpErrorMessage" xml:space="preserve">
+    <value>A non-good status code was returned: {0} {1} {2}/{3}</value>
+    <comment>{0} - HTTP verb
+{1} - URL
+{2} - status code
+{3} - reason phrase</comment>
+  </data>
+  <data name="Error_EventSinkNameIsRequired" xml:space="preserve">
+    <value>An event sink name is required.</value>
+  </data>
+  <data name="Error_EventSourceNameIsRequired" xml:space="preserve">
+    <value>An event source name is required.</value>
+  </data>
+  <data name="Error_HttpClientRequiresBaseUrl" xml:space="preserve">
+    <value>A base Data Core URL must be provided.</value>
+  </data>
+  <data name="Error_InvalidDataSourceName" xml:space="preserve">
+    <value>You must specify a data source name.</value>
+  </data>
+  <data name="Error_InvalidSampleInterval" xml:space="preserve">
+    <value>A valid TimeSpan literal or sample interval ("1d", "30m", "15s") must be specified.</value>
+  </data>
+  <data name="Error_InvalidTimeStamp" xml:space="preserve">
+    <value>A valid absolute or relative sample time must be specified.</value>
+  </data>
+  <data name="Error_OneOrMoreRoleNamesRequired" xml:space="preserve">
+    <value>One or more role names are required.</value>
+  </data>
+  <data name="Error_PositiveSampleIntervalIsRequired" xml:space="preserve">
+    <value>A positive sample interval is required.</value>
+  </data>
+  <data name="Error_ScriptEngineIdIsRequired" xml:space="preserve">
+    <value>A script engine ID is required.</value>
+  </data>
+  <data name="Error_Scripting_AggregatedFunctionListCanContainOnlyAggregateFunctions" xml:space="preserve">
+    <value>Aggregated data function list cannot contain any of the following functions: {0}</value>
+    <comment>{0} - invalid functions list</comment>
+  </data>
+  <data name="Error_Scripting_AggregatedFunctionListCannotBeEmpty" xml:space="preserve">
+    <value>Aggregated data function list cannot be empty.</value>
+  </data>
+  <data name="Error_Scripting_AggregatedFunctionListCannotContainEmptyValues" xml:space="preserve">
+    <value>Aggregated data function list cannot contain null or white space values.</value>
+  </data>
+  <data name="Error_Scripting_DigitalStateNameIsTooLong" xml:space="preserve">
+    <value>Digital state names cannot be longer than {0} characters: "{1}"</value>
+    <comment>{0} - limit
+{1} - name</comment>
+  </data>
+  <data name="Error_Scripting_EventDefinitionNameIsTooLong" xml:space="preserve">
+    <value>Event definition names cannot be longer than {0} characters: "{1}"</value>
+    <comment>{0} - limit
+{1} - name</comment>
+  </data>
+  <data name="Error_Scripting_EventDefinitionValueCannotBeNull" xml:space="preserve">
+    <value>An event definition is required: "{0}"</value>
+    <comment>{0} - name</comment>
+  </data>
+  <data name="Error_Scripting_FindScriptTagsAsync_HttpError" xml:space="preserve">
+    <value>An error occurred while searching for script tags.</value>
+  </data>
+  <data name="Error_Scripting_GetExtendedScriptTemplateAsync_HttpError" xml:space="preserve">
+    <value>An error occurred while requesting a script template.</value>
+  </data>
+  <data name="Error_Scripting_GetScriptEnginesAsync_HttpError" xml:space="preserve">
+    <value>An error occurred while requesting script engines.</value>
+  </data>
+  <data name="Error_Scripting_GetScriptTagAsync_HttpError" xml:space="preserve">
+    <value>An error occurred while retrieving a script tag.</value>
+  </data>
+  <data name="Error_Scripting_GetScriptTagsAsync_HttpError" xml:space="preserve">
+    <value>An error occurred while retrieving script tags.</value>
+  </data>
+  <data name="Error_Scripting_GetScriptTagsAsync_TagCountIsTooLarge" xml:space="preserve">
+    <value>You cannot request more than {0} tags.</value>
+    <comment>{0} - maximum page size</comment>
+  </data>
+  <data name="Error_Scripting_GetScriptTemplatesAsync_HttpError" xml:space="preserve">
+    <value>An error occurred while requesting script templates.</value>
+  </data>
+  <data name="Error_Scripting_InputDataBlockSizeMustBeGreaterThanZero" xml:space="preserve">
+    <value>Input data block size must be greater than zero.</value>
+  </data>
+  <data name="Error_Scripting_InputDataSampleIntervalMustBeGreaterThanZero" xml:space="preserve">
+    <value>Input data sample interval must be greater than zero.</value>
+  </data>
+  <data name="Error_Scripting_InvalidEngineId" xml:space="preserve">
+    <value>You must specify a script engine ID.</value>
+  </data>
+  <data name="Error_Scripting_InvalidTemplateName" xml:space="preserve">
+    <value>You must specify a script template name.</value>
+  </data>
+  <data name="Error_Scripting_InvalidTimeSpan" xml:space="preserve">
+    <value>You must specify a valid time span.</value>
+  </data>
+  <data name="Error_Scripting_ScheduleIsRequired" xml:space="preserve">
+    <value>When using a schedule trigger, a schedule must be defined.</value>
+  </data>
+  <data name="Error_Scripting_TagReferenceNameIsInvalid" xml:space="preserve">
+    <value>Tag reference names must start with a letter or an underscore, and can only consist of letters, numbers, or underscores: "{0}"</value>
+    <comment>{0} - name</comment>
+  </data>
+  <data name="Error_Scripting_TagReferenceNameIsTooLong" xml:space="preserve">
+    <value>Tag reference names cannot be longer than {0} characters: "{1}"</value>
+    <comment>{0} - limit
+{1} - name</comment>
+  </data>
+  <data name="Error_Scripting_TagReferenceValueCannotBeNull" xml:space="preserve">
+    <value>A tag reference definition is required: "{0}"</value>
+    <comment>{0} - name</comment>
+  </data>
+  <data name="Error_Scripting_TemplateParameterNameIsTooLong" xml:space="preserve">
+    <value>The maximum length of a template parameter name is {0} characters: "{1}"</value>
+    <comment>{0} - maximum length
+{1} - name</comment>
+  </data>
+  <data name="Error_Scripting_TooManyDigitalStates" xml:space="preserve">
+    <value>Maximum number of digital states is {0}.</value>
+    <comment>{0} - limit</comment>
+  </data>
+  <data name="Error_Scripting_TooManyEventDefinitions" xml:space="preserve">
+    <value>Maximum number of event definitions is {0}.</value>
+    <comment>{0} - limit</comment>
+  </data>
+  <data name="Error_Scripting_TooManyTagReferences" xml:space="preserve">
+    <value>Maximum number of tag references is {0}.</value>
+    <comment>{0} - limit</comment>
+  </data>
+  <data name="Error_StartTimeCannotBeGreaterThanEndTime" xml:space="preserve">
+    <value>Start time cannot be greater than end time.</value>
+  </data>
+  <data name="Error_TagMapOrListCannotContainNullItems" xml:space="preserve">
+    <value>A tag map or list cannot contain null items.</value>
+  </data>
+  <data name="Error_TagNameIsRequired" xml:space="preserve">
+    <value>A tag name is required.</value>
+  </data>
+  <data name="Error_TemplateNameIsRequired" xml:space="preserve">
+    <value>A template name is required.</value>
+  </data>
+  <data name="Error_WriteValuesCannotContainNullItems" xml:space="preserve">
+    <value>A collection of values to write cannot contain null items.</value>
+  </data>
+</root>

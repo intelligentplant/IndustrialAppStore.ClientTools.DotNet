@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageType>Template</PackageType>
+    <PackageVersion>1.0</PackageVersion>
+    <DefaultNetCoreTargetFramework>netcoreapp3.1</DefaultNetCoreTargetFramework>
+    <PackageId>IntellientPlant.IndustrialAppStore.Templates</PackageId>
+    <Title>Industrial App Store Templates</Title>
+    <Authors>Intelligent Plant</Authors>
+    <Description>Templates to use when creating an application for the Intelligent Plant Industrial App Store.</Description>
+    <PackageTags>dotnet-new;templates;industrial</PackageTags>
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+    <IncludeDevelopmentPackages>false</IncludeDevelopmentPackages>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="templates\**\*" Exclude="templates\**\bin\**;templates\**\obj\**" />
+    <Compile Remove="**\*" />
+  </ItemGroup>
+
+</Project>

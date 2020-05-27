@@ -1,0 +1,15 @@
+<!-- Contains NuGet package versions used throughout the rest of the repository. -->
+
+<Project>
+
+  <!-- Dev/Test/Benchmark Packages -->
+  <PropertyGroup>
+    <BenchmarkDotNetVersion>0.12.1</BenchmarkDotNetVersion>
+    <MicrosoftCodeAnalysisFxCopAnalyzersVersion>3.0.0</MicrosoftCodeAnalysisFxCopAnalyzersVersion>
+    <MicrosoftNETTestSdkVersion>16.6.1</MicrosoftNETTestSdkVersion>
+    <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
+    <MSTestTestAdapterVersion>2.1.1</MSTestTestAdapterVersion>
+    <MSTestTestFrameworkVersion>2.1.1</MSTestTestFrameworkVersion>
+  </PropertyGroup>
+  
+</Project>

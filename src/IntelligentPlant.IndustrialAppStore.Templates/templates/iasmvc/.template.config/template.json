@@ -1,0 +1,98 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Intelligent Plant",
+    "classifications": [ "Web", "MVC" ],
+    "identity": "IntelligentPlant.IndustrialAppStore.StarterMvcTemplate",
+    "name": "Industrial App Store App (MVC)",
+    "shortName": "iasmvc",
+    "tags": {
+      "language": "C#",
+      "type": "project"
+    },
+    "sourceName": "ExampleMvcApplication",
+    "preferNameDirectory": true,
+  "symbols": {
+    "AppName": {
+      "type": "parameter",
+      "description": "The display name for your app.",
+      "defaultValue": "Example IAS Application",
+      "replaces": "Example IAS Application"
+    },
+    "ClientId": {
+      "type": "parameter",
+      "description": "Specifies the Industrial App Store client ID for your app.",
+      "defaultValue": "<YOUR CLIENT ID>",
+      "replaces": "<YOUR CLIENT ID>"
+    },
+    "ClientSecret": {
+      "type": "parameter",
+      "description": "Specifies the Industrial App Store client secret for your app.",
+      "defaultValue": "<YOUR CLIENT SECRET>",
+      "replaces": "<YOUR CLIENT SECRET>"
+    },
+    "UsePkce": {
+      "type": "parameter",
+      "description": "If specified, the app will be configured to use Proof Key for Code Exchange (PKCE) instead of a secret key.",
+      "datatype": "bool",
+      "defaultValue": "false"
+    },
+    "HttpsPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "Port number to use for the HTTPS endpoint in launchSettings.json. If not specified, a port number will be generated automatically."
+    },
+    "SkipRestore": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "If specified, skips the automatic restore of the project on create.",
+      "defaultValue": "false"
+    },
+    "HttpPortGenerated": {
+      "type": "generated",
+      "generator": "port"
+    },
+    "HttpPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "HttpPortGenerated",
+        "fallbackVariableName": "HttpPortGenerated"
+      },
+      "replaces": "8080"
+    },
+    "HttpsPortGenerated": {
+      "type": "generated",
+      "generator": "port",
+      "parameters": {
+        "low": 44300,
+        "high": 44399
+      }
+    },
+    "HttpsPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "HttpsPort",
+        "fallbackVariableName": "HttpsPortGenerated"
+      },
+      "replaces": "44300"
+    }
+  },
+    "primaryOutputs": [
+      {
+        "path": "ExampleMvcApplication.csproj"
+      }
+    ],
+    "defaultName": "IasWebApplication",
+    "postActions": [
+      {
+        "condition": "(!skipRestore)",
+        "description": "Restore NuGet packages required by this project.",
+        "manualInstructions": [
+          { "text": "Run 'dotnet restore'" }
+        ],
+        "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+        "continueOnError": true
+      }
+    ]
+}
