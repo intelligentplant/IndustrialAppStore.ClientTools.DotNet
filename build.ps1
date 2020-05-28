@@ -93,21 +93,11 @@ if ($Sign) {
 }
 
 # Configure version numbers to use in build.
-$Version = Get-Content "$PSScriptRoot/build/version.json" | Out-String | ConvertFrom-Json
-$MajorMinorVersion = "$($Version.Major).$($Version.Minor)"
-$MajorMinorPatchVersion = "$($MajorMinorVersion).$($Version.Patch)"
+$Version = . "$PSScriptRoot/build/Get-Version.ps1"
 
-$AssemblyVersion = "$($MajorMinorVersion).0.0"
-$FileVersion = "$($MajorMinorPatchVersion).0"
-if ([string]::IsNullOrEmpty($Version.PreRelease)) {
-    $PackageVersion = $MajorMinorPatchVersion
-} else {
-    $PackageVersion = "$($MajorMinorPatchVersion)-$($Version.PreRelease)"
-}
-
-$MSBuildArguments += "/p:""AssemblyVersion=$($AssemblyVersion)"""
-$MSBuildArguments += "/p:""FileVersion=$($FileVersion)"""
-$MSBuildArguments += "/p:""Version=$($PackageVersion)"""
+$MSBuildArguments += "/p:""AssemblyVersion=$($Version.AssemblyVersion)"""
+$MSBuildArguments += "/p:""FileVersion=$($Version.FileVersion)"""
+$MSBuildArguments += "/p:""Version=$($Version.PackageVersion)"""
 
 if ($CI) {
     $MSBuildArguments += "/p:""ContinuousIntegrationBuild=true"""
