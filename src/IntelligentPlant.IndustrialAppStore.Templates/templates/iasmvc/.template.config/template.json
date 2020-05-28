@@ -1,16 +1,19 @@
 {
-    "$schema": "http://json.schemastore.org/template",
-    "author": "Intelligent Plant",
-    "classifications": [ "Web", "MVC" ],
-    "identity": "IntelligentPlant.IndustrialAppStore.StarterMvcTemplate",
-    "name": "Industrial App Store App (MVC)",
-    "shortName": "iasmvc",
-    "tags": {
-      "language": "C#",
-      "type": "project"
-    },
-    "sourceName": "ExampleMvcApplication",
-    "preferNameDirectory": true,
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Intelligent Plant",
+  "classifications": [ "Web", "MVC" ],
+  "identity": "IntelligentPlant.IndustrialAppStore.StarterMvcTemplate",
+  "name": "Industrial App Store App (MVC)",
+  "shortName": "iasmvc",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "ExampleMvcApplication",
+  "preferNameDirectory": true,
+  "guids": [
+    "be127432-88b9-4a34-ad20-426d9083091a"
+  ],
   "symbols": {
     "AppName": {
       "type": "parameter",
@@ -23,12 +26,6 @@
       "description": "Specifies the Industrial App Store client ID for your app.",
       "defaultValue": "<YOUR CLIENT ID>",
       "replaces": "<YOUR CLIENT ID>"
-    },
-    "ClientSecret": {
-      "type": "parameter",
-      "description": "Specifies the Industrial App Store client secret for your app.",
-      "defaultValue": "<YOUR CLIENT SECRET>",
-      "replaces": "<YOUR CLIENT SECRET>"
     },
     "UsePkce": {
       "type": "parameter",
@@ -78,21 +75,21 @@
       "replaces": "44300"
     }
   },
-    "primaryOutputs": [
-      {
-        "path": "ExampleMvcApplication.csproj"
-      }
-    ],
-    "defaultName": "IasWebApplication",
-    "postActions": [
-      {
-        "condition": "(!skipRestore)",
-        "description": "Restore NuGet packages required by this project.",
-        "manualInstructions": [
-          { "text": "Run 'dotnet restore'" }
-        ],
-        "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
-        "continueOnError": true
-      }
-    ]
+  "primaryOutputs": [
+    {
+      "path": "ExampleMvcApplication.csproj"
+    }
+  ],
+  "defaultName": "IasWebApplication",
+  "postActions": [
+    {
+      "condition": "(!SkipRestore)",
+      "description": "Restore NuGet packages required by this project.",
+      "manualInstructions": [
+        { "text": "Run 'dotnet restore'" }
+      ],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    }
+  ]
 }

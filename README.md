@@ -55,20 +55,19 @@ dotnet sln add ./MyNewApp.Web/MyNewApp.Web.csproj
 
 ## Specifying Project Parameters
 
-When creating the project, you can provide several command line parameters to pre-populate items such as the display name used in the app, and the client ID and secret key used for authentication. Run `dotnet new iasmvc --help` to see all of the available options. 
+When creating the project, you can provide several command line parameters to pre-populate items such as the display name used in the app, and the client ID used for authentication. Run `dotnet new iasmvc --help` to see all of the available options. 
 
 Examples:
 
 ```
-# Sets the app display name, client ID, and client secret used for 
-# authentication.
+# Sets the app display name and client ID
 
-dotnet new iasmvc --app-name "My First App" --client-id "my_client_id" --client-secret "my_client_secret"
+dotnet new iasmvc --app-name "My First App" --client-id "abcdef0123456789"
 
-# Uses the Proof Key for Code Exchange (PKCE) extension to the OAuth 
-# authorization code flow instead of a secret key.
+# Enables the Proof Key for Code Exchange (PKCE) extension to the OAuth 
+# authorization code flow.
 
-dotnet new iasmvc --app-name "My First App" --client-id "my_client_id" --pkce
+dotnet new iasmvc --app-name "My First App" --client-id "abcdef0123456789" --pkce
 
 # Specifies the local HTTPS port to use instead of randomly choosing a port.
 

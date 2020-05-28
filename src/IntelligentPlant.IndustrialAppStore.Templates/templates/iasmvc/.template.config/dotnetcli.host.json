@@ -9,10 +9,6 @@
       "longName": "client-id",
       "shortName": ""
     },
-    "ClientSecret": {
-      "longName": "client-secret",
-      "shortName": ""
-    },
     "UsePkce": {
       "longName": "pkce",
       "shortName": ""
@@ -26,7 +22,5 @@
       "shortName": ""
     }
   },
-  "usageExamples": [
-    ""
-  ]
+  "usageExamples": []
 }

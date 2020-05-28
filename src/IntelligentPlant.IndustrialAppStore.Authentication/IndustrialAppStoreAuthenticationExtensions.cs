@@ -168,7 +168,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                     // Microsoft OAuth authentication middleware requires a client secret to be 
                     // specified, even when PKCE is being used. This can be any non-empty value; 
                     // it just has to be set.
-                    if (options.UsePkce) {
+                    if (options.UsePkce && string.IsNullOrWhiteSpace(options.ClientSecret)) {
                         options.ClientSecret = "PKCE";
                     }
 #endif

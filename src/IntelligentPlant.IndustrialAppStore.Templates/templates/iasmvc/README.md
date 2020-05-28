@@ -7,18 +7,18 @@ This ASP.NET Core application uses the [Industrial App Store](https://appstore.i
 
 If you have not done so already, you can register as an Industrial App Store developer [here](https://appstore.intelligentplant.com/Developer/RegisterDeveloper).
 
-Once you have registered, you can create a new app registration for your app. Make a note of the app ID that is generated for your app. Once you have created the app registration, you will need to add the following redirect URL to the registration:
+Once you have registered as a developer, you can create a new app registration for your app. Make a note of the app ID that is generated for your app. You will also need to add the following redirect URL to the app registration:
 
     https://localhost:44300/auth/signin-ip
 
-Next, you can do one of the following:
+Next, you can do one or both of the following on the registration page for your app:
 
 1. Generate a secret key for your app.
 2. Enable Proof Key for Code Exchange (PKCE) for your app.
 
-[PKCE](https://oauth.net/2/pkce/) is an extension to the OAuth2 authorization code flow that allows you to sign users into your app without requiring a secret key.
+[PKCE](https://oauth.net/2/pkce/) is an extension to the OAuth2 authorization code flow to enable a more secure transaction when exchanging an authorization code for an access token. When you enable PKCE, it is possible to authenticate users without requiring a secret key. However, the use of a secret key is still highly recommended unless your app requires you to publicly distribute an executable file.
 
-Next, update the default scopes requested by your app. The following scopes are available:
+Next, update the default scopes requested by your app on the app registration page. The following scopes are available:
 
 - Personal Info (`UserInfo`) - allows your app to query the Industrial App Store for information about the authenticated user (e.g. their display name and profile picture).
 - Data Read (`DataRead`) - allows your app to perform read queries on data sources and event sources that the authenticated user has granted the app access to.
@@ -27,7 +27,37 @@ Next, update the default scopes requested by your app. The following scopes are 
 
 In order for this app to function correctly, both "Personal Info" and "Data Read" scopes must be requested.
 
-Next, you must update the `appsettings.json` file for your app. If you generated a secret key for your app, update the file as follows:
+Next, you must update the `appsettings.json` file (in the same folder as this README):
+
+```json
+{
+    "IAS": {
+        "ClientId": "<YOUR CLIENT ID>"
+    }
+}
+```
+
+If you enabled PKCE on your app registration page, update the file as follows:
+
+```json
+{
+    "IAS": {
+        "ClientId": "<YOUR CLIENT ID>",
+        "UsePkce": true
+    }
+}
+```
+
+
+## Client Secrets
+
+If you generated a secret key for your app, use the [ASP.NET Core Secret Manager](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets) to save the secret using the following command:
+
+    dotnet user-secrets set "IAS:ClientSecret" "<YOUR CLIENT SECRET>"
+
+Note that the Secret Manager is intended for use in development environments only; you should use a secure store such as [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) to keep secrets safe in production environments.
+
+Alternatively, you can specify the client secret directly in the `appsettings.json` file:
 
 ```json
 {
@@ -38,16 +68,8 @@ Next, you must update the `appsettings.json` file for your app. If you generated
 }
 ```
 
-Alternatively, if you enabled PKCE for your app, update the file as follows:
+__NOTE THAT IT IS STRONGLY RECOMMENDED THAT YOU DO NOT STORE CLIENT SECRETS IN THIS WAY!__
 
-```json
-{
-    "IAS": {
-        "ClientId": "<YOUR CLIENT ID>",
-        "UsePkce": true
-    }
-}
-```
 
 # Calling IAS APIs
 
