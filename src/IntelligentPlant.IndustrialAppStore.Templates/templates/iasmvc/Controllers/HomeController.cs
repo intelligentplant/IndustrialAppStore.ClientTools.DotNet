@@ -66,27 +66,22 @@ namespace ExampleMvcApplication.Controllers {
 
             const int pageSize = 20;
 
-            try {
-                var tags = await iasClient.DataSources.FindTagsAsync(
-                    request.DataSourceName,
-                    string.IsNullOrWhiteSpace(request.TagNameFilter) ? "*" : request.TagNameFilter,
-                    page: request.Page,
-                    pageSize: pageSize,
-                    context: Request.HttpContext,
-                    cancellationToken: cancellationToken
-                );
+            var tags = await iasClient.DataSources.FindTagsAsync(
+                request.DataSourceName,
+                string.IsNullOrWhiteSpace(request.TagNameFilter) ? "*" : request.TagNameFilter,
+                page: request.Page,
+                pageSize: pageSize,
+                context: Request.HttpContext,
+                cancellationToken: cancellationToken
+            );
 
-                var viewModel = new TagListViewModel() {
-                    Request = request,
-                    Tags = tags,
-                    CanPageNext = tags.Count() == pageSize
-                };
+            var viewModel = new TagListViewModel() {
+                Request = request,
+                Tags = tags,
+                CanPageNext = tags.Count() == pageSize
+            };
 
-                return PartialView("_FindTagsPartial", viewModel);
-            }
-            catch (Exception e) {
-                throw;
-            }
+            return PartialView("_FindTagsPartial", viewModel);
         }
 
 

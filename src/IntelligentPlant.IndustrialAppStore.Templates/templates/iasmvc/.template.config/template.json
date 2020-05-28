@@ -29,7 +29,7 @@
     },
     "UsePkce": {
       "type": "parameter",
-      "description": "If specified, the app will be configured to use Proof Key for Code Exchange (PKCE) instead of a secret key.",
+      "description": "If specified, the app will be configured to use Proof Key for Code Exchange (PKCE) extension to the OAuth2 authorization code flow.",
       "datatype": "bool",
       "defaultValue": "false"
     },
