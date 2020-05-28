@@ -22,4 +22,41 @@
     <Compile Remove="**\*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="templates\iasmvc\ExampleMvcApplication.csproj.in" />
+    <None Include="templates\iasmvc\ExampleMvcApplication.csproj.in">
+      <DependentUpon>templates\iasmvc\ExampleMvcApplication.csproj</DependentUpon>
+    </None>
+    <Content Include="templates\iasmvc\ExampleMvcApplication.csproj"/>
+  </ItemGroup>
+
+  <Target Name="CreateTemplateProjectFiles" BeforeTargets="Build">
+    <ReplaceFileText
+       InputFilename="templates\iasmvc\ExampleMvcApplication.csproj.in"
+       OutputFilename="templates\iasmvc\ExampleMvcApplication.csproj"
+       Placeholder="#{PACKAGE_VERSION}"
+       Replacement="$(PackageVersion)" />
+  </Target>
+
+  <UsingTask TaskName="ReplaceFileText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <InputFileName ParameterType="System.String" Required="true" />
+      <OutputFileName ParameterType="System.String" Required="true" />
+      <Placeholder ParameterType="System.String" Required="true" />
+      <Replacement ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[  
+          File.WriteAllText(
+            OutputFileName,
+            File.ReadAllText(InputFileName).Replace(Placeholder, Replacement)
+          );
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  
 </Project>

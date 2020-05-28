@@ -1,0 +1,2 @@
+# Ignore template project files generated at compile time.
+templates/iasmvc/*.csproj
