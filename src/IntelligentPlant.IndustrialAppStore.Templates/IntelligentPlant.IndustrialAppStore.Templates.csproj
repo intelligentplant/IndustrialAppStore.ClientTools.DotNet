@@ -3,7 +3,6 @@
   <PropertyGroup>
     <PackageType>Template</PackageType>
     <DefaultNetCoreTargetFramework>netcoreapp3.1</DefaultNetCoreTargetFramework>
-    <PackageId>IntellientPlant.IndustrialAppStore.Templates</PackageId>
     <Title>Industrial App Store Templates</Title>
     <Authors>Intelligent Plant</Authors>
     <Description>Templates to use when creating an application for the Intelligent Plant Industrial App Store.</Description>
