@@ -34,21 +34,25 @@ This will create a new ASP.NET Core MVC application that is pre-configured to us
 
 The above steps create a `.csproj` file and associated source files that can be compiled and run using the `dotnet` command. To create a Visual Studio solution file containing the project, you can follow these steps instead:
 
-```
-# 1. Create solution file
+Create solution file:
 
+```
 mkdir MyNewApp
 cd MyNewApp
 dotnet new sln
+```
 
-# 2. Create project
+Create project:
 
+```
 mkdir MyNewApp.Web
 cd MyNewApp.Web
 dotnet new iasmvc
+```
 
-# 3. Add project to solution
+Add project to solution:
 
+```
 cd ..
 dotnet sln add ./MyNewApp.Web/MyNewApp.Web.csproj
 ```
