@@ -81,3 +81,5 @@ dotnet new iasmvc --app-name "My First App" --client-id "abcdef0123456789" --pkc
 
 dotnet new iasmvc --port 43789
 ```
+
+Note that it is not possible to specify the client secret when creating the project; the `README.md` file created by the template in the project folder contains instructions for setting the client secret.
