@@ -31,6 +31,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8967B5AD-F86A-4109-8DA1-881E0070280D}"
 	ProjectSection(SolutionItems) = preProject
 		build\Dependencies.props = build\Dependencies.props
+		build\version.json = build\version.json
+	EndProjectSection
+	ProjectSection(FolderGlobals) = preProject
+		C_5_4Users_4gcw_4Documents_4Repos_4Git_4IntelligentPlant_1IndustrialAppStore_1ClientTools_4build_4version_1json__JsonSchema = 
 	EndProjectSection
 EndProject
 Global

@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <PackageType>Template</PackageType>
-    <PackageVersion>1.0</PackageVersion>
     <DefaultNetCoreTargetFramework>netcoreapp3.1</DefaultNetCoreTargetFramework>
     <PackageId>IntellientPlant.IndustrialAppStore.Templates</PackageId>
     <Title>Industrial App Store Templates</Title>
@@ -12,6 +11,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
 
     <IncludeDevelopmentPackages>false</IncludeDevelopmentPackages>
+    <DeterministicSourcePaths>false</DeterministicSourcePaths>
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
