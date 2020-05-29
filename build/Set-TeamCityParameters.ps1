@@ -4,7 +4,9 @@
 .SYNOPSIS
 Sets TeamCity build parameters.
 .DESCRIPTION
-When building in TeamCity, this script can be used to set the build number, as well as the AssemblyVersion, AssemblyFileVersion, PackageVersion, and InformationalVersion parameters.
+When building in TeamCity, this script can be used to set the build number, as well as the system.AssemblyVersion, 
+system.AssemblyFileVersion, system.PackageVersion, and system.InformationalVersion parameters, 
+based on the content of the version.json file in this folder.
 .PARAMETER Branch
 The VCS branch name (i.e. "%teamcity.build.branch%").
 .PARAMETER BuildCounter
@@ -12,8 +14,8 @@ The TeamCity build counter (i.e. %build.counter%).
 .PARAMETER BuildMetadata
 Build metadata to append to the InformationalVersion property.
 .EXAMPLE
-Building release packages.
-    Set-TeamCityParameters.ps1 -BuildCounter 47 -Branch master
+Set parameters for unofficial build.
+    Set-TeamCityParameters.ps1 -BuildCounter 47 -Branch features/my-feature -BuildMetadata nightly
 #>
 [CmdletBinding(PositionalBinding = $false, DefaultParameterSetName='Groups')]
 param(
@@ -35,7 +37,7 @@ $BuildNumber = "$($Version.PackageVersion)+${Branch}-${BuildCounter}"
 if ([string]::IsNullOrWhiteSpace($BuildMetadata)) {
     $InformationalVersion = $BuildNumber
 } else {
-    $InformationalVersion = "$($BuildNumber)$($BuildMetadata)"
+    $InformationalVersion = "$($BuildNumber)#$($BuildMetadata)"
 }
 
 Write-Host "Setting assembly version: $($Version.AssemblyVersion)"
