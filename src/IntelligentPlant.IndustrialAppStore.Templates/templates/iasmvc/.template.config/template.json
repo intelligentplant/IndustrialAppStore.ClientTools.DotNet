@@ -1,7 +1,7 @@
 {
   "$schema": "http://json.schemastore.org/template",
   "author": "Intelligent Plant",
-  "classifications": [ "Web", "MVC" ],
+  "classifications": [ "Industrial App Store", "Web", "MVC" ],
   "identity": "IntelligentPlant.IndustrialAppStore.StarterMvcTemplate",
   "name": "Industrial App Store App (MVC)",
   "shortName": "iasmvc",

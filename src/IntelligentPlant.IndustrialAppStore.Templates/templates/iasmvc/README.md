@@ -1,6 +1,6 @@
 ﻿# Example IAS Application
 
-This ASP.NET Core application uses the [Industrial App Store](https://appstore.intelligentplant.com) starter template.
+This ASP.NET Core application uses a [starter template](https://github.com/intelligentplant/IndustrialAppStore.ClientTools.DotNet) from the [Industrial App Store](https://appstore.intelligentplant.com).
 
 
 # Getting Started
