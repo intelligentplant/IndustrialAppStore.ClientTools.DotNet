@@ -8,10 +8,10 @@ namespace ExampleMvcApplication.Controllers {
     public class AccountController : Controller {
 
         [HttpGet]
-        public IActionResult Login(string redirectUrl = "/") {
+        public IActionResult Login(string returnUrl = "/") {
             var viewModel = new LoginViewModel() {
                 IsPersistent = false,
-                RedirectUrl = redirectUrl
+                RedirectUrl = returnUrl
             };
             return View(viewModel);
         }
