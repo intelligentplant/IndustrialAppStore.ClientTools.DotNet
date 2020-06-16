@@ -30,7 +30,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// The HTTP client.
         /// </summary>
-        protected HttpClient HttpClient { get; }
+        public HttpClient HttpClient { get; }
 
         /// <summary>
         /// The HTTP client options.
