@@ -22,16 +22,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="templates\iasmvc\ExampleMvcApplication.csproj.in" />
-    <None Remove="templates\iasadapter\README.md" />
-    <None Include="templates\iasmvc\ExampleMvcApplication.csproj.in">
-      <DependentUpon>templates\iasmvc\ExampleMvcApplication.csproj</DependentUpon>
-    </None>
     <Content Include="templates\iasmvc\ExampleMvcApplication.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ExampleMvcApplication.csproj.in">
+      <DependentUpon>templates\iasmvc\ExampleMvcApplication.csproj</DependentUpon>
+    </None>
+  </ItemGroup>
+
   <Target Name="CreateTemplateProjectFiles" BeforeTargets="Build">
-    <ReplaceFileText InputFilename="templates\iasmvc\ExampleMvcApplication.csproj.in" OutputFilename="templates\iasmvc\ExampleMvcApplication.csproj" Placeholder="#{PACKAGE_VERSION}" Replacement="$(PackageVersion)" />
+    <ReplaceFileText InputFilename="ExampleMvcApplication.csproj.in" OutputFilename="templates\iasmvc\ExampleMvcApplication.csproj" Placeholder="#{PACKAGE_VERSION}" Replacement="$(PackageVersion)" />
   </Target>
 
   <UsingTask TaskName="ReplaceFileText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
