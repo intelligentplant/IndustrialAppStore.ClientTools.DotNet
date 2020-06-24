@@ -19,11 +19,16 @@ __Specific Version:__
 dotnet new --install IntelligentPlant.IndustrialAppStore.Templates::1.2.3
 ```
 
-Alternatively, you can install the template from source by checking out this repository, navigating to the [root templates folder](/src/IntelligentPlant.IndustrialAppStore.Templates) from the command line, and running the following command:
+__From Source:__
+
+Alternatively, you can install the template from source by checking out this repository, building the solution, navigating to the [root templates folder](/src/IntelligentPlant.IndustrialAppStore.Templates) from the command line, and running the following command:
 
 ```
 dotnet new --install .\
 ```
+
+Note that, when installing the template from source, the reference to the `IntelligentPlant.IndustrialAppStore.Authentication` NuGet package in projects generated using the template may use an incorrect version. You will have to update generated projects to use the correct package version, or replace the package reference with a project reference to the `IntelligentPlant.IndustrialAppStore.Authentication` project in this repository.
+
 
 # Creating an App using a Template
 
