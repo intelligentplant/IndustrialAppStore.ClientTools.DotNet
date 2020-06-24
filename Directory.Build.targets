@@ -35,14 +35,6 @@
     </PackageReference>
   </ItemGroup>
 
-  <!-- Workaround for https://github.com/dotnet/sourcelink/issues/572 - REMOVE ONCE SDK 3.1.300 IS RELEASED -->
-  <PropertyGroup>
-    <TargetFrameworkMonikerAssemblyAttributesPath>$([System.IO.Path]::Combine('$(IntermediateOutputPath)','$(TargetFrameworkMoniker).AssemblyAttributes$(DefaultLanguageSourceExtension)'))</TargetFrameworkMonikerAssemblyAttributesPath>
-  </PropertyGroup>
-  <ItemGroup>
-    <EmbeddedFiles Include="$(GeneratedAssemblyInfoFile)"/>
-  </ItemGroup>
-
   <!-- Extension point to allow Continuous Integration systems to inject their own configuration. -->
   <Import Project="CI.targets" Condition="Exists('CI.targets')" />
 
