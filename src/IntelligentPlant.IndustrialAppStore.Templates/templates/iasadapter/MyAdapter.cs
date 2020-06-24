@@ -62,22 +62,24 @@ namespace ExampleAdapter {
 
         // Implement the CheckHealthAsync method to add custom health checks to your adapter. 
         // Health checks allow you to report on the status of e.g. connections to external 
-        // systems.
+        // systems. If you detect that the underlying health status of the adapter has changed 
+        // (e.g. you unexpectedly disconnect from an external system) you can notify the base 
+        // class that the overall health status must be recalculated by calling the 
+        // OnHealthStatusChanged method.
         protected override async Task<IEnumerable<HealthCheckResult>> CheckHealthAsync(
-            IAdapterCallContext context, 
+            IAdapterCallContext context,
             CancellationToken cancellationToken
         ) {
+            var result = new List<HealthCheckResult>();
+            result.AddRange(await base.CheckHealthAsync(context, cancellationToken).ConfigureAwait(false));
+
+            // Use the IsRunning flag to detect if the adapter has been initialised.
+
             if (!IsRunning) {
-                return await base.CheckHealthAsync(context, cancellationToken).ConfigureAwait(false);
+                return result;
             }
 
-            var result = new List<HealthCheckResult>();
-
             // Add custom health check results to the list.
-
-            // CheckFeatureHealthAsync can be used to get health check results for adapter 
-            // features implemented in external classes.
-            result.AddRange(await CheckFeatureHealthAsync(context, cancellationToken).ConfigureAwait(false));
 
             return result;
         }
