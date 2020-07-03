@@ -9,10 +9,6 @@
       "longName": "client-id",
       "shortName": ""
     },
-    "UsePkce": {
-      "longName": "pkce",
-      "shortName": ""
-    },
     "HttpsPort": {
       "longName": "port",
       "shortName": ""

@@ -29,14 +29,6 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// </summary>
         public string ClientSecret { get; set; }
 
-#if NETCOREAPP3_1
-        /// <summary>
-        /// When <see langword="true"/>, the Proof Key for Code Exchange extension to the 
-        /// authorization code flow will be used.
-        /// </summary>
-        public bool UsePkce { get; set; }
-#endif
-
         /// <summary>
         /// The OAuth scopes to request.
         /// </summary>

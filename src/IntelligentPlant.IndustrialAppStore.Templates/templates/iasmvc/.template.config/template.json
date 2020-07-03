@@ -27,12 +27,6 @@
       "defaultValue": "<YOUR CLIENT ID>",
       "replaces": "<YOUR CLIENT ID>"
     },
-    "UsePkce": {
-      "type": "parameter",
-      "description": "If specified, the app will be configured to use Proof Key for Code Exchange (PKCE) extension to the OAuth2 authorization code flow.",
-      "datatype": "bool",
-      "defaultValue": "false"
-    },
     "HttpsPort": {
       "type": "parameter",
       "datatype": "integer",
