@@ -83,13 +83,6 @@ dotnet new iasmvc --app-name "My First App" --client-id "abcdef0123456789"
 ```
 
 ```
-# Enables the Proof Key for Code Exchange (PKCE) extension to the OAuth 
-# authorization code flow.
-
-dotnet new iasmvc --app-name "My First App" --client-id "abcdef0123456789" --pkce
-```
-
-```
 # Specifies the local HTTPS port to use instead of randomly choosing a port.
 
 dotnet new iasmvc --port 43789
