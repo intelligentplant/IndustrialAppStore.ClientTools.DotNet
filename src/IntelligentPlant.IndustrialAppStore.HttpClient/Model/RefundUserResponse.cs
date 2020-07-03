@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace IntelligentPlant.IndustrialAppStore.Client.Model {
 
-namespace IntelligentPlant.IndustrialAppStore.Client.Model {
+    /// <summary>
+    /// Describes the result of a request to refund a transaction.
+    /// </summary>
     public class RefundUserResponse {
 
         /// <summary>
@@ -16,4 +16,5 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Model {
         public string Message { get; set; }
 
     }
+
 }
