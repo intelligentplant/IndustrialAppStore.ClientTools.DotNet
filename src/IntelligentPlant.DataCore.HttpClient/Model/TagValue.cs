@@ -58,10 +58,17 @@ namespace IntelligentPlant.DataCore.Client.Model {
         public string Error { get; private set; }
 
         /// <summary>
+        /// Gets a flag indicating if the tag value contains a numeric value.
+        /// </summary>
+        public bool IsNumeric {
+            get { return !double.IsNaN(NumericValue); }
+        }
+
+        /// <summary>
         /// Gets a flag indicating if the tag value contains an error message in the <see cref="Error"/> property.
         /// </summary>
         public bool HasError {
-            get { return !String.IsNullOrWhiteSpace(Error); }
+            get { return !string.IsNullOrWhiteSpace(Error); }
         }
 
 
