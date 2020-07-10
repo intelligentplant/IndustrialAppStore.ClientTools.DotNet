@@ -36,7 +36,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         /// </summary>
         /// <param name="httpClient">
         ///   The HTTP client to use. When querying the Industrial App Store, an <c>Authorization</c> 
-        ///   header must be set on every outgoing request. Use the <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/> 
+        ///   header must be set on every outgoing request. Use the <see cref="CreateAuthenticationMessageHandler"/> 
         ///   method to create a message handler to add the the request pipeline when creating the 
         ///   <paramref name="httpClient"/>, to allow the <see cref="IndustrialAppStoreHttpClient{TContext}"/> 
         ///   to invoke a callback on demand to retrieve the <c>Authorization</c> header to add to 
@@ -55,6 +55,29 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
             UserInfo = new UserInfoClient<TContext>(HttpClient, Options);
             Organization = new OrganizationInfoClient<TContext>(HttpClient, Options);
             AccountTransactions = new AccountTransactionsClient<TContext>(HttpClient, Options);
+        }
+
+
+        /// <summary>
+        /// Creates a <see cref="DelegatingHandler"/> that can be added to an <see cref="HttpClient"/> 
+        /// message pipeline, that will set the <c>Authorize</c> header on outgoing requests based 
+        /// on the <typeparamref name="TContext"/> object passed to an <see cref="IndustrialAppStoreHttpClient"/> 
+        /// method.
+        /// </summary>
+        /// <param name="callback">
+        ///   The callback delegate that will receive the HTTP request and a <typeparamref name="TContext"/> 
+        ///   objectand return the <c>Authorize</c> header value to add to the request.
+        /// </param>
+        /// <returns>
+        ///   A new <see cref="DelegatingHandler"/> object.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="callback"/> is <see langword="null"/>.
+        /// </exception>
+#pragma warning disable CA1000 // Do not declare static members on generic types
+        public static DelegatingHandler CreateAuthenticationMessageHandler(AuthenticationCallback<TContext> callback) {
+#pragma warning restore CA1000 // Do not declare static members on generic types
+            return DataCoreHttpClient.CreateAuthenticationMessageHandler(callback);
         }
 
     }

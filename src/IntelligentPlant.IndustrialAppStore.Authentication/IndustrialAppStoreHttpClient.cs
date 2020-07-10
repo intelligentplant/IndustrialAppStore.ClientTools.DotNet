@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+
+using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.IndustrialAppStore.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +28,27 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// </param>
         public IndustrialAppStoreHttpClient(HttpClient httpClient, IndustrialAppStoreHttpClientOptions options) 
             : base(httpClient, options) { }
+
+
+        /// <summary>
+        /// Creates a <see cref="DelegatingHandler"/> that can be added to an <see cref="HttpClient"/> 
+        /// message pipeline, that will set the <c>Authorize</c> header on outgoing requests based 
+        /// on the <see cref="HttpContext"/> passed to an <see cref="IndustrialAppStoreHttpClient"/> 
+        /// method.
+        /// </summary>
+        /// <param name="callback">
+        ///   The callback delegate that will receive the HTTP request and the <see cref="HttpContext"/> 
+        ///   and return the <c>Authorize</c> header value to add to the request.
+        /// </param>
+        /// <returns>
+        ///   A new <see cref="DelegatingHandler"/> object.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="callback"/> is <see langword="null"/>.
+        /// </exception>
+        public static new DelegatingHandler CreateAuthenticationMessageHandler(AuthenticationCallback<HttpContext> callback) {
+            return DataCoreHttpClient.CreateAuthenticationMessageHandler(callback);
+        }
 
 
         /// <summary>
