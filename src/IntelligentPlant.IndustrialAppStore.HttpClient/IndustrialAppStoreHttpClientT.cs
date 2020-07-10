@@ -35,7 +35,12 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         /// Creates a new <see cref="IndustrialAppStoreHttpClient{TContext}"/> object.
         /// </summary>
         /// <param name="httpClient">
-        ///   The HTTP client.
+        ///   The HTTP client to use. When querying the Industrial App Store, an <c>Authorization</c> 
+        ///   header must be set on every outgoing request. Use the <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/> 
+        ///   method to create a message handler to add the the request pipeline when creating the 
+        ///   <paramref name="httpClient"/>, to allow the <see cref="DataCoreHttpClient{TContext}"/> 
+        ///   to invoke a callback on demand to retrieve the <c>Authorization</c> header to add to 
+        ///   outgoing requests.
         /// </param>
         /// <param name="options">
         ///   The HTTP client options.

@@ -70,12 +70,11 @@ namespace IntelligentPlant.DataCore.Client {
         /// Creates a new <see cref="DataCoreHttpClient{TContext}"/> object.
         /// </summary>
         /// <param name="httpClient">
-        ///   The HTTP client to use. The client requires the <see cref="HttpClient.BaseAddress"/> 
-        ///   property to be set. When querying the Industrial App Store, an <c>Authorization</c> 
+        ///   The HTTP client to use. When querying the Industrial App Store, an <c>Authorization</c> 
         ///   header must be set on every outgoing request. Use the <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/> 
         ///   method to create a message handler to add the the request pipeline when creating the 
-        ///   <paramref name="httpClient"/>, to allow the <see cref="DataCoreHttpClient{TContext}"/> to 
-        ///   invoke a callback on demand to retrieve the <c>Authorization</c> header to add to 
+        ///   <paramref name="httpClient"/>, to allow the <see cref="DataCoreHttpClient{TContext}"/> 
+        ///   to invoke a callback on demand to retrieve the <c>Authorization</c> header to add to 
         ///   outgoing requests.
         /// </param>
         public DataCoreHttpClient(HttpClient httpClient, TOptions options) {
