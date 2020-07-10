@@ -32,7 +32,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// Creates a new <see cref="TagSearchResultCollection"/> object.
         /// </summary>
         public TagSearchResultCollection() {
-            Tags = new TagSearchResult[0];
+            Tags = Array.Empty<TagSearchResult>();
         }
 
     }

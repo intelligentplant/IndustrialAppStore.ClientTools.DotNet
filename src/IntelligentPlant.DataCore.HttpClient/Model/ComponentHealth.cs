@@ -27,7 +27,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         [JsonConstructor]
         internal ComponentHealth(bool isHealthy, IEnumerable<ComponentHealthProperty> properties) {
             IsHealthy = isHealthy;
-            Properties = properties?.ToArray() ?? new ComponentHealthProperty[0];
+            Properties = properties?.ToArray() ?? System.Array.Empty<ComponentHealthProperty>();
         }
 
     }

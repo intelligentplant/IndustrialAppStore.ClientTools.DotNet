@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace IntelligentPlant.DataCore.Client.Model
@@ -21,14 +22,14 @@ namespace IntelligentPlant.DataCore.Client.Model
         /// <summary>
         /// The data samples.
         /// </summary>
-        private TagValue[] _values = new TagValue[0];
+        private TagValue[] _values = Array.Empty<TagValue>();
 
         /// <summary>
         /// Gets or sets the data samples.
         /// </summary>
         public IEnumerable<TagValue> Values {
             get { return _values; }
-            set { _values = value?.ToArray() ?? new TagValue[0]; }
+            set { _values = value?.ToArray() ?? Array.Empty<TagValue>(); }
         }
 		
     }

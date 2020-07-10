@@ -77,7 +77,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         ///   The validation errors.
         /// </returns>
         protected virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
-            return new ValidationResult[0];
+            return Array.Empty<ValidationResult>();
         }
 
     }
