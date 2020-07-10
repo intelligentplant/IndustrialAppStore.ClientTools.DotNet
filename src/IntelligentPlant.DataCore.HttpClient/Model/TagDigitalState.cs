@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace IntelligentPlant.DataCore.Client.Model {
+﻿namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     ///  Describes a digital or enumerated state for a tag.
     /// </summary>

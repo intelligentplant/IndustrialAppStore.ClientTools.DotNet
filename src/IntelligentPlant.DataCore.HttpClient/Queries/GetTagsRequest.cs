@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
 
 namespace IntelligentPlant.DataCore.Client.Queries {
     public class GetTagsRequest : DataSourceRequest, IValidatableObject {

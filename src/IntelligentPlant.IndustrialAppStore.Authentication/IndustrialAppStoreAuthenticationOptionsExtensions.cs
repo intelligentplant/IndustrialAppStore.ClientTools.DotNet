@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace IntelligentPlant.IndustrialAppStore.Authentication {
+﻿namespace IntelligentPlant.IndustrialAppStore.Authentication {
     internal static class IndustrialAppStoreAuthenticationOptionsExtensions {
 
         private static string GetEndpoint(this IndustrialAppStoreAuthenticationOptions options, string relativePath) {

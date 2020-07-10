@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace IntelligentPlant.DataCore.Client.Model {
+﻿namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     /// Describes a tag property.
     /// </summary>

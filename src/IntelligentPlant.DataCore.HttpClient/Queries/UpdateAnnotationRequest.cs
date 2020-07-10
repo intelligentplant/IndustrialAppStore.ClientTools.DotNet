@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
+
 using IntelligentPlant.DataCore.Client.Model;
 
 namespace IntelligentPlant.DataCore.Client.Queries {

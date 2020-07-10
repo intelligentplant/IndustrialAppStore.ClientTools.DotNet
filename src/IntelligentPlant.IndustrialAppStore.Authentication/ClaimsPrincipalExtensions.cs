@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
-using System.Text;
+﻿using System.Security.Claims;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
     public static class ClaimsPrincipalExtensions {
