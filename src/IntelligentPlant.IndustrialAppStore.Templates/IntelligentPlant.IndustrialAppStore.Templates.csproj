@@ -6,7 +6,7 @@
     <Title>Industrial App Store Templates</Title>
     <Authors>Intelligent Plant</Authors>
     <Description>Templates to use when creating an application for the Intelligent Plant Industrial App Store.</Description>
-    <PackageTags>dotnet-new;templates;industrial</PackageTags>
+    <PackageTags>$(PackageTags);dotnet-new;templates</PackageTags>
     <TargetFramework>netstandard2.0</TargetFramework>
 
     <IncludeDevelopmentPackages>false</IncludeDevelopmentPackages>

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>IntelligentPlant.DataCore.Client</RootNamespace>
+    <Description>Strongly-typed client for Intelligent Plant's Data Core API.</Description>
   </PropertyGroup>
 
   <ItemGroup>

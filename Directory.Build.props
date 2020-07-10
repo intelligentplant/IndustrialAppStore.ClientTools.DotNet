@@ -12,9 +12,9 @@
   <PropertyGroup>
     <Authors>Intelligent Plant</Authors>
     <Company>Intelligent Plant</Company>
-    <PackageProjectUrl>https://github.com/intelligentplant/IndustrialAppStore.ClientTools.DotNet</PackageProjectUrl>
+    <PackageProjectUrl>https://appstore.intelligentplant.com</PackageProjectUrl>
     <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts\packages\$(Configuration)</PackageOutputPath>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>industry;process;real-time;alarms;iot;iiot</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <CopyrightStartYear>2020</CopyrightStartYear>
   </PropertyGroup>
