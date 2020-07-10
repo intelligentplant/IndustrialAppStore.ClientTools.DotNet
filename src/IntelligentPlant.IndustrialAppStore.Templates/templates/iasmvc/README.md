@@ -11,7 +11,9 @@ Once you have registered as a developer, you can create a new app registration f
 
     https://localhost:44300/auth/signin-ip
 
-Once you have created your app registration, you can optionally generate a secret key for your app. Your app authenticates users via the OAuth 2.0 authorization code flow, using the [Proof Key for Code Exchange (PKCE)](https://oauth.net/2/pkce/) extension. PKCE is an extension to the OAuth2 authorization code flow to enable a more secure transaction when exchanging an authorization code for an access token. It is possible for your app to authenticate users without requiring a secret key. However, the use of a secret key is still highly recommended unless your app requires you to publicly distribute an executable file.
+Once you have created your app registration, you should generate a secret key for your app. Your app authenticates users via the OAuth 2.0 authorization code flow, using the [Proof Key for Code Exchange (PKCE)](https://oauth.net/2/pkce/) extension. PKCE is an extension to the OAuth2 authorization code flow to enable a more secure transaction when exchanging an authorization code for an access token. It is possible for your app to authenticate users without requiring a secret key. However, for maximum security, you should *always* generate a secret key unless your app requires you to publicly distribute an executable file.
+
+Note that you may need to enable the use of PKCE on the app registration page; in a future release, PKCE will be enabled for all apps by default.
 
 Next, update the default scopes requested by your app on the app registration page. The following scopes are available:
 
