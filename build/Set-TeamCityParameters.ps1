@@ -21,7 +21,8 @@ Set parameters for unofficial build.
 param(
 
     [Parameter(Mandatory=$true)]
-    [string]
+    [int]
+    [ValidateRange(0, [int]::MaxValue)]
     $BuildCounter,
 
     [string]
@@ -31,7 +32,7 @@ param(
     $Branch = 'master'
 )
 
-$Version = . "$PSScriptRoot/Get-Version.ps1"
+$Version = . "$PSScriptRoot/Get-Version.ps1" -RevisionVersion $BuildCounter
 
 $BuildNumber = "$($Version.PackageVersion)+${Branch}-${BuildCounter}"
 if ([string]::IsNullOrWhiteSpace($BuildMetadata)) {

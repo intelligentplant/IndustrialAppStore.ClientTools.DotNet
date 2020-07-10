@@ -19,6 +19,16 @@ namespace Microsoft.Extensions.DependencyInjection {
     /// </summary>
     public static class IndustrialAppStoreAuthenticationExtensions {
 
+#if NETCOREAPP3_1
+        /// <summary>
+        /// A client secret must always be specified in the OAuth options, but it is possible that 
+        /// the app has not been issued with a client secret and is using PKCE, so it is still able 
+        /// to use the authorization code flow. In these circumstances, we will set a default 
+        /// client secret in the OAuth options so that the options pass validation.
+        /// </summary>
+        internal const string DefaultClientSecret = "IndustrialAppStore";
+#endif
+
         /// <summary>
         /// Adds Industrial App Store authentication and required services to the application. 
         /// Register your app at https://appstore.intelligentplant.com!
@@ -169,7 +179,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                     // specified, even when PKCE is being used. This can be any non-empty value; 
                     // it just has to be set.
                     if (string.IsNullOrWhiteSpace(options.ClientSecret)) {
-                        options.ClientSecret = "PKCE";
+                        options.ClientSecret = DefaultClientSecret;
                     }
 #endif
 

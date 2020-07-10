@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
     public static class AuthenticationPropertiesExtensions {
@@ -46,13 +47,13 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
             }
 
             var tokenRequestParameters = new Dictionary<string, string>() {
-                { "grant_type", "refresh_token" },
-                { "refresh_token", refreshToken }
+                ["grant_type"] = "refresh_token",
+                ["refresh_token"] = refreshToken
             };
 
 #if NETCOREAPP3_1
-            if (!options.UsePkce) {
-                tokenRequestParameters["client_id"] = options.ClientId;
+            tokenRequestParameters["client_id"] = options.ClientId;
+            if (!string.IsNullOrWhiteSpace(options.ClientSecret) && !string.Equals(options.ClientSecret, IndustrialAppStoreAuthenticationExtensions.DefaultClientSecret, StringComparison.OrdinalIgnoreCase)) {
                 tokenRequestParameters["client_secret"] = options.ClientSecret;
             }
 #else
