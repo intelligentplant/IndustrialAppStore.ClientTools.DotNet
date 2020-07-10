@@ -82,8 +82,8 @@ namespace IntelligentPlant.DataCore.Client {
             HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             Options = options ?? throw new ArgumentNullException(nameof(options));
 
-            if (HttpClient.BaseAddress == null) {
-                throw new ArgumentException(Resources.Error_HttpClientRequiresBaseUrl, nameof(httpClient));
+            if (Options.DataCoreUrl == null) {
+                throw new ArgumentException(Resources.Error_BaseUrlIsRequired, nameof(options));
             }
 
             AssetModel = new AssetModelClient<TContext, TOptions>(HttpClient, Options);

@@ -61,6 +61,15 @@ namespace IntelligentPlant.DataCore.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A base Data Core URL must be provided..
+        /// </summary>
+        internal static string Error_BaseUrlIsRequired {
+            get {
+                return ResourceManager.GetString("Error_BaseUrlIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A data source name is required..
         /// </summary>
         internal static string Error_DataSourceNameIsRequired {
@@ -93,15 +102,6 @@ namespace IntelligentPlant.DataCore.Client {
         internal static string Error_EventSourceNameIsRequired {
             get {
                 return ResourceManager.GetString("Error_EventSourceNameIsRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A base Data Core URL must be provided..
-        /// </summary>
-        internal static string Error_HttpClientRequiresBaseUrl {
-            get {
-                return ResourceManager.GetString("Error_HttpClientRequiresBaseUrl", resourceCulture);
             }
         }
         

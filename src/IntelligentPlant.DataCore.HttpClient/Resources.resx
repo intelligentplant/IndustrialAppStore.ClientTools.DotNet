@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Error_BaseUrlIsRequired" xml:space="preserve">
+    <value>A base Data Core URL must be provided.</value>
+  </data>
   <data name="Error_DataSourceNameIsRequired" xml:space="preserve">
     <value>A data source name is required.</value>
   </data>
@@ -132,9 +135,6 @@
   </data>
   <data name="Error_EventSourceNameIsRequired" xml:space="preserve">
     <value>An event source name is required.</value>
-  </data>
-  <data name="Error_HttpClientRequiresBaseUrl" xml:space="preserve">
-    <value>A base Data Core URL must be provided.</value>
   </data>
   <data name="Error_InvalidDataSourceName" xml:space="preserve">
     <value>You must specify a data source name.</value>

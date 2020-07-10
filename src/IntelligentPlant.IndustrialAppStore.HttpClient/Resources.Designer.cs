@@ -97,6 +97,15 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A base Industrial App Store API URL must be provided..
+        /// </summary>
+        internal static string Error_BaseUrlIsRequired {
+            get {
+                return ResourceManager.GetString("Error_BaseUrlIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Refund Failed: {0}.
         /// </summary>
         internal static string RefundUserResponse_Message_Failed {

@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.IndustrialAppStore.Client.Clients;
 
@@ -41,6 +42,11 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         /// </param>
         public IndustrialAppStoreHttpClient(HttpClient httpClient, IndustrialAppStoreHttpClientOptions options) 
             : base(httpClient, options) {
+
+            if (Options.AppStoreUrl == null) {
+                throw new ArgumentException(Resources.Error_BaseUrlIsRequired, nameof(options));
+            }
+
             UserInfo = new UserInfoClient<TContext>(HttpClient, Options);
             Organization = new OrganizationInfoClient<TContext>(HttpClient, Options);
             AccountTransactions = new AccountTransactionsClient<TContext>(HttpClient, Options);

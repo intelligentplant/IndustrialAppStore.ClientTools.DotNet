@@ -130,6 +130,9 @@
     <value>Unexpected Response Code: {0}</value>
     <comment>{0} - response code</comment>
   </data>
+  <data name="Error_BaseUrlIsRequired" xml:space="preserve">
+    <value>A base Industrial App Store API URL must be provided.</value>
+  </data>
   <data name="RefundUserResponse_Message_Failed" xml:space="preserve">
     <value>Refund Failed: {0}</value>
     <comment>{0} - reason</comment>

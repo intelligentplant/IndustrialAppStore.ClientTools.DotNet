@@ -9,7 +9,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
     public class IndustrialAppStoreHttpClientOptions : DataCoreHttpClientOptions {
 
         /// <summary>
-        /// The base Industrial App Store URL.
+        /// The base Industrial App Store API URL.
         /// </summary>
         public Uri AppStoreUrl { get; set; }
 

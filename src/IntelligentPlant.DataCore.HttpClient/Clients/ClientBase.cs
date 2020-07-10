@@ -57,12 +57,32 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </param>
         /// <returns>
         ///   The absolute URL, or <see langword="null"/> if the <paramref name="relativeUrl"/> 
-        ///   cannot be converted to an absolute URL.
+        ///   cannot be converted to an absolute URL. If <paramref name="relativeUrl"/> is already 
+        ///   absolute, it will be returned unmodified.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="relativeUrl"/> is <see langword="null"/>.
         /// </exception>
         protected Uri GetAbsoluteUrl(string relativeUrl) {
+            return GetAbsoluteUrl(BaseUrl, relativeUrl);
+        }
+
+
+        /// <summary>
+        /// Converts a relative URL to an absolute URL, using the <see cref="BaseUrl"/> property 
+        /// as the base.
+        /// </summary>
+        /// <param name="relativeUrl">
+        ///   The relative URL.
+        /// </param>
+        /// <returns>
+        ///   The absolute URL. If <paramref name="relativeUrl"/> is already absolute, it will be 
+        ///   returned unmodified.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="relativeUrl"/> is <see langword="null"/>.
+        /// </exception>
+        protected Uri GetAbsoluteUrl(Uri relativeUrl) {
             return GetAbsoluteUrl(BaseUrl, relativeUrl);
         }
 
@@ -94,15 +114,46 @@ namespace IntelligentPlant.DataCore.Client.Clients {
                 throw new ArgumentNullException(nameof(relativeUrl));
             }
 
-            if (Uri.TryCreate(relativeUrl, UriKind.Absolute, out var result)) {
-                return result;
+            if (!Uri.TryCreate(relativeUrl, UriKind.RelativeOrAbsolute, out var parsedUrl)) {
+                return null;
             }
 
-            if (Uri.TryCreate(baseUrl, relativeUrl, out result)) {
-                return result;
+            return GetAbsoluteUrl(baseUrl, parsedUrl);
+        }
+
+
+        /// <summary>
+        /// Converts a relative URL to an absolute URL.
+        /// </summary>
+        /// <param name="baseUrl">
+        ///   The base URL.
+        /// </param>
+        /// <param name="relativeUrl">
+        ///   The relative URL.
+        /// </param>
+        /// <returns>
+        ///   The absolute URL, or <see langword="null"/> if the <paramref name="relativeUrl"/> 
+        ///   cannot be converted to an absolute URL.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="baseUrl"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="relativeUrl"/> is <see langword="null"/>.
+        /// </exception>
+        internal static Uri GetAbsoluteUrl(Uri baseUrl, Uri relativeUrl) {
+            if (baseUrl == null) {
+                throw new ArgumentNullException(nameof(baseUrl));
+            }
+            if (relativeUrl == null) {
+                throw new ArgumentNullException(nameof(relativeUrl));
             }
 
-            return null;
+            if (relativeUrl.IsAbsoluteUri) {
+                return relativeUrl;
+            }
+
+            return new Uri(baseUrl, relativeUrl);
         }
 
     }
