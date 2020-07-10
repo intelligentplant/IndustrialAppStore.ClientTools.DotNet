@@ -1,4 +1,4 @@
-<Project>
+<Project TreatAsLocalProperty="IsPackable;SignOutput;DeterministicSourcePaths;IncludeDevelopmentPackages">
   
   <!-- Recursively import the Directory.Build.props file from the parent folder if it exists. -->
   <PropertyGroup>
