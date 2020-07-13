@@ -1,5 +1,2 @@
 ﻿# Exclude static lib files
 wwwroot/lib/*
-
-# Re-include FontAwesome, since we are not retrieving this at build time via LibMan.
-!wwwroot/lib/fontawesome
