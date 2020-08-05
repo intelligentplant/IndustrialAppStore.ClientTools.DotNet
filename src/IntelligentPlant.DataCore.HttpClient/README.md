@@ -179,7 +179,9 @@ A tag on a data source represents the value of a single instrument in an industr
 ```csharp
 // Use an extension method to specify the filter properties.
 var tags = await client.DataSources.FindTagsAsync(
+    // DataSourceName must be the fully-qualified name of the data source!
     "MyDataSource",
+    // Use * as a wildcard in tag name
     "PT-*",
     page: 3,
     pageSize: 20,
@@ -262,7 +264,8 @@ When using an overload that queries a single data source, the return type will b
 Raw values are the unprocessed historical values for a tag that are stored in a historican's archive, and are queried using the `ReadRawTagValuesAsync` method on the client's `DataSources` property. In addition to specifying the tag names to query, you also specify a time range for the query, and the maximum number of samples to retrieve per tag. Most historians will place an absolute limit on the number of samples to retrieve per tag, and also on the overall maximum number of samples that will be returned in a single query.
 
 ```csharp
-// Get raw values from a single data source using DateTime instances to specify the time range (extension method).
+// Get raw values from a single data source using DateTime instances to specify the time range 
+// (extension method).
 var historicalValues = await client.DataSources.ReadRawTagValuesAsync(
     "MyDataSource",
     new [] { "Tag1", "Tag2" },
@@ -274,7 +277,8 @@ var historicalValues = await client.DataSources.ReadRawTagValuesAsync(
     cancellationToken: cancellationToken
 );
 
-// Get raw values from a single data source using absolute timestamp strings to specify the time range (extension method).
+// Get raw values from a single data source using absolute timestamp strings to specify the time 
+// range (extension method).
 historicalValues = await client.DataSources.ReadRawTagValuesAsync(
     "MyDataSource",
     new[] { "Tag1", "Tag2" },
@@ -286,7 +290,8 @@ historicalValues = await client.DataSources.ReadRawTagValuesAsync(
     cancellationToken: cancellationToken
 );
 
-// Get raw values from a single data source using relative timestamp strings to specify the time range (extension method).
+// Get raw values from a single data source using relative timestamp strings to specify the time 
+// range (extension method).
 historicalValues = await client.DataSources.ReadRawTagValuesAsync(
     "MyDataSource",
     new[] { "Tag1", "Tag2" },
@@ -298,7 +303,8 @@ historicalValues = await client.DataSources.ReadRawTagValuesAsync(
     cancellationToken: cancellationToken
 );
 
-// Get raw values from multiple data sources using relative timestamp strings to specify the time range (extension method).
+// Get raw values from multiple data sources using relative timestamp strings to specify the time 
+// range (extension method).
 var multiDataSourceHistoricalValues = await client.DataSources.ReadRawTagValuesAsync(
     new Dictionary<string, string[]>() {
         ["MyDataSource"] = new[] { "Tag1", "Tag2" },
@@ -417,7 +423,8 @@ The available data functions vary by historian, but most drivers will typically 
 Additional data functions may be supported; please refer to the vendor's documentation. In the future, we plan to implement a discovery feature to allow the supported functions to be retrieved programatically.
 
 ```csharp
-// Retrieve hourly average values over the last 24 hours for a single data source (extension method).
+// Retrieve hourly average values over the last 24 hours for a single data source (extension 
+// method).
 historicalValues = await client.DataSources.ReadProcessedTagValuesAsync(
     "MyDataSource",
     new[] { "Tag1", "Tag2" },
@@ -457,8 +464,8 @@ multiDataSourceHistoricalValues = await client.DataSources.ReadProcessedTagValue
     cancellationToken: cancellationToken
 );
 
-// Retrieve the maximum value each minute over the last 5 minutes for multiple data sources using a 
-// ReadProcessedTagValuesRequest object.
+// Retrieve the maximum value each minute over the last 5 minutes for multiple data sources using 
+// a ReadProcessedTagValuesRequest object.
 multiDataSourceHistoricalValues = await client.DataSources.ReadProcessedTagValuesAsync(
     new ReadProcessedTagValuesRequest() {
         Tags = new Dictionary<string, string[]>() {
