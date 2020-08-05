@@ -23,7 +23,7 @@ namespace IntelligentPlant.DataCore.Client {
     ///   <see cref="DataCoreHttpClient{TContext, TOptions}"/> to invoke a callback on demand to 
     ///   retrieve the <c>Authorization</c> header to add to outgoing requests.
     /// </remarks>
-    public class DataCoreHttpClient<TContext, TOptions> where TOptions : DataCoreHttpClientOptions {
+    public abstract class DataCoreHttpClient<TContext, TOptions> where TOptions : DataCoreHttpClientOptions {
 
         #region [ Fields / Properties ]
 
@@ -77,7 +77,7 @@ namespace IntelligentPlant.DataCore.Client {
         ///   to invoke a callback on demand to retrieve the <c>Authorization</c> header to add to 
         ///   outgoing requests.
         /// </param>
-        public DataCoreHttpClient(HttpClient httpClient, TOptions options) {
+        protected DataCoreHttpClient(HttpClient httpClient, TOptions options) {
             HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             Options = options ?? throw new ArgumentNullException(nameof(options));
 
@@ -121,17 +121,43 @@ namespace IntelligentPlant.DataCore.Client {
 
 
     /// <summary>
+    /// <see cref="DataCoreHttpClient{TContext, TOptions}"/> implementation that uses 
+    /// <see cref="DataCoreHttpClientOptions"/> to describe the client options.
+    /// </summary>
+    /// <typeparam name="TContext">
+    ///   The context type that is passed to API calls to allow authentication headers to be added 
+    ///   to outgoing requests.
+    /// </typeparam>
+    public class DataCoreHttpClient<TContext> : DataCoreHttpClient<TContext, DataCoreHttpClientOptions> {
+
+        /// <summary>
+        /// Creates a new <see cref="DataCoreHttpClient{TContext}"/> object.
+        /// </summary>
+        /// <param name="httpClient">
+        ///   The HTTP client to use. When querying the Industrial App Store, an <c>Authorization</c> 
+        ///   header must be set on every outgoing request. Use the <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/> 
+        ///   method to create a message handler to add the the request pipeline when creating the 
+        ///   <paramref name="httpClient"/>, to allow the <see cref="DataCoreHttpClient{TContext}"/> 
+        ///   to invoke a callback on demand to retrieve the <c>Authorization</c> header to add to 
+        ///   outgoing requests.
+        /// </param>
+        public DataCoreHttpClient(HttpClient httpClient, DataCoreHttpClientOptions options)
+            : base(httpClient, options) { }
+
+    }
+
+
+    /// <summary>
     /// <see cref="DataCoreHttpClient{TContext}"/> that uses an <see cref="object"/> as the 
     /// context associated with API operations.
     /// </summary>
-    public class DataCoreHttpClient : DataCoreHttpClient<object, DataCoreHttpClientOptions> {
+    public class DataCoreHttpClient : DataCoreHttpClient<object> {
 
         /// <summary>
         /// Creates a new <see cref="DataCoreHttpClient"/> object.
         /// </summary>
         /// <param name="httpClient">
-        ///   The HTTP client to use. The client requires the <see cref="HttpClient.BaseAddress"/> 
-        ///   property to be set. When querying the Industrial App Store, an <c>Authorization</c> 
+        ///   The HTTP client to use. When querying the Industrial App Store, an <c>Authorization</c> 
         ///   header must be set on every outgoing request. Use the <see cref="CreateAuthenticationMessageHandler"/> 
         ///   method to create a message handler to add the the request pipeline when creating the 
         ///   <paramref name="httpClient"/>, to allow the <see cref="DataCoreHttpClient"/> to 
