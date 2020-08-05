@@ -178,7 +178,7 @@ A tag on a data source represents the value of a single instrument in an industr
 
 ```csharp
 // Use an extension method to specify the filter properties.
-tags = await client.DataSources.FindTagsAsync(
+var tags = await client.DataSources.FindTagsAsync(
     "MyDataSource",
     "PT-*",
     page: 3,
@@ -188,7 +188,7 @@ tags = await client.DataSources.FindTagsAsync(
 );
 
 // Specify the filter details using a FindTagsRequest object.
-var tags = await client.DataSources.FindTagsAsync(new FindTagsRequest() {
+tags = await client.DataSources.FindTagsAsync(new FindTagsRequest() {
     // DataSourceName must be the fully-qualified name of the data source!
     DataSourceName = "MyDataSource",
     // Use * as a wildcard in tag name
