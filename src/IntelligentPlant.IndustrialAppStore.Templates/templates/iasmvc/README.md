@@ -2,6 +2,18 @@
 
 This ASP.NET Core application uses a [starter template](https://github.com/intelligentplant/IndustrialAppStore.ClientTools.DotNet) from the [Industrial App Store](https://appstore.intelligentplant.com).
 
+The application uses the following libraries for client-side functionality:
+
+- [Bootstrap](https://getbootstrap.com/)
+- [ChartJS](https://www.chartjs.org/)
+- [FontAwesome](https://fontawesome.com/)
+- [jQuery](https://jquery.com/)
+- [RxJS](https://rxjs.dev/)
+
+Please refer to the documentation for the above libraries for queries about their usage.
+
+Client libraries are managed using [LibMan](https://docs.microsoft.com/en-us/aspnet/core/client-side/libman/libman-vs) and are managed through the `libman.json` file.
+
 
 # Getting Started
 
@@ -12,8 +24,6 @@ Once you have registered as a developer, you can create a new app registration f
     https://localhost:44300/auth/signin-ip
 
 Once you have created your app registration, you should generate a secret key for your app. Your app authenticates users via the OAuth 2.0 authorization code flow, using the [Proof Key for Code Exchange (PKCE)](https://oauth.net/2/pkce/) extension. PKCE is an extension to the OAuth2 authorization code flow to enable a more secure transaction when exchanging an authorization code for an access token. It is possible for your app to authenticate users without requiring a secret key. However, for maximum security, you should *always* generate a secret key unless your app requires you to publicly distribute an executable file.
-
-Note that you may need to enable the use of PKCE on the app registration page; in a future release, PKCE will be enabled for all apps by default.
 
 Next, update the default scopes requested by your app on the app registration page. The following scopes are available:
 

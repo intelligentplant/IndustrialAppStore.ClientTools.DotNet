@@ -3,6 +3,11 @@
 This project defines extension methods for adding authentication to an ASP.NET Core 2.x or 3.x application using the Intelligent Plant [Industrial App Store](https://appstore.intelligentplant.com).
 
 
+# Installation
+
+Install the [IntelligentPlant.IndustrialAppStore.Authentication](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.Authentication) package by following the instructions on NuGet.org.
+
+
 # Quick Start
 
 Firstly, register your application with the [Industrial App Store](https://appstore.intelligentplant.com). When you register your app, you can configure the default scopes that your app will request (user info, reading user data sources, etc). You must also register a redirect URL to use when signing users in. The default relative path used is `/auth/signin-ip` i.e. if your app will run at `http://localhost:44321`, you must register `http://localhost:44321/auth/signin-ip` as an allowed redirect URL.
