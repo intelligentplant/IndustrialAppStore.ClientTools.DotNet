@@ -121,4 +121,4 @@ var dataSources = await client.DataSources.GetDataSourcesAsync(WindowsPrincipal.
 
 # Calling API Methods
 
-Please refer to the [documentation](/docs/Data Core API Client).
+Please refer to the [documentation](/docs/data-core-api-client).
