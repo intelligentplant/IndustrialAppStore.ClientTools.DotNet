@@ -52,7 +52,7 @@ multiDataSourceSnapshotValues = await client.DataSources.ReadSnapshotTagValuesAs
 );
 ```
 
-When using an overload that queries a single data source, the return type will be a `SnapshotTagValueDictionary` object i.e. a dictionary that maps from tag name to snapshot value. When using an overload where multiple data sources can be specified, the return type will be a dictionary that maps from data source name to a `SnapshotTagValueDictionary` object (i.e. results are indexed by data source name, and then sub-indexed by tag name).
+When using an overload that queries a single data source, the return type will be a [SnapshotTagValueDictionary](/src/IntelligentPlant.DataCore.HttpClient/Model/TagValueDictionary.cs) object i.e. a dictionary that maps from tag name to snapshot value. When using an overload where multiple data sources can be specified, the return type will be a dictionary that maps from data source name to a `SnapshotTagValueDictionary` object (i.e. results are indexed by data source name, and then sub-indexed by tag name).
 
 
 ## Reading Raw Historical Tag Values
@@ -130,7 +130,7 @@ multiDataSourceHistoricalValues = await client.DataSources.ReadRawTagValuesAsync
 );
 ```
 
-When using an overload that queries a single data source, the return type will be a `HistoricalTagValuesDictionary` object i.e. a dictionary that maps from tag name to `HistoricalTagValues` objects. A `HistoricalTagValues` object has properties containing the actual tag values, and a hint that recommends how the values should be visualised on a chart (e.g. trailing edge, interpolation between points). When using an overload where multiple data sources can be specified, the return type will be a dictionary that maps from data source name to a `HistoricalTagValuesDictionary` object (i.e. results are indexed by data source name, and then sub-indexed by tag name).
+When using an overload that queries a single data source, the return type will be a [HistoricalTagValuesDictionary](/src/IntelligentPlant.DataCore.HttpClient/Model/TagValueDictionary.cs) object i.e. a dictionary that maps from tag name to `HistoricalTagValues` objects. A `HistoricalTagValues` object has properties containing the actual tag values, and a hint that recommends how the values should be visualised on a chart (e.g. trailing edge, interpolation between points). When using an overload where multiple data sources can be specified, the return type will be a dictionary that maps from data source name to a `HistoricalTagValuesDictionary` object (i.e. results are indexed by data source name, and then sub-indexed by tag name).
 
 
 ## Reading Plot Tag Values
@@ -202,7 +202,7 @@ multiDataSourceHistoricalValues = await client.DataSources.ReadPlotTagValuesAsyn
 );
 ```
 
-As with raw data queries, when using an overload that queries a single data source, the return type will be a `HistoricalTagValuesDictionary` object i.e. a dictionary that maps from tag name to `HistoricalTagValues` objects. A `HistoricalTagValues` object has properties containing the actual tag values, and a hint that recommends how the values should be visualised on a chart (e.g. trailing edge, interpolation between points). When using an overload where multiple data sources can be specified, the return type will be a dictionary that maps from data source name to a `HistoricalTagValuesDictionary` object (i.e. results are indexed by data source name, and then sub-indexed by tag name).
+As with raw data queries, when using an overload that queries a single data source, the return type will be a [HistoricalTagValuesDictionary](/src/IntelligentPlant.DataCore.HttpClient/Model/TagValueDictionary.cs) object i.e. a dictionary that maps from tag name to `HistoricalTagValues` objects. A `HistoricalTagValues` object has properties containing the actual tag values, and a hint that recommends how the values should be visualised on a chart (e.g. trailing edge, interpolation between points). When using an overload where multiple data sources can be specified, the return type will be a dictionary that maps from data source name to a `HistoricalTagValuesDictionary` object (i.e. results are indexed by data source name, and then sub-indexed by tag name).
 
 
 ## Reading Processed/Aggregated Tag Values
@@ -278,4 +278,4 @@ multiDataSourceHistoricalValues = await client.DataSources.ReadProcessedTagValue
 );
 ```
 
-As with other historical data queries, when using an overload that queries a single data source, the return type will be a `HistoricalTagValuesDictionary` object i.e. a dictionary that maps from tag name to `HistoricalTagValues` objects. A `HistoricalTagValues` object has properties containing the actual tag values, and a hint that recommends how the values should be visualised on a chart (e.g. trailing edge, interpolation between points). When using an overload where multiple data sources can be specified, the return type will be a dictionary that maps from data source name to a `HistoricalTagValuesDictionary` object (i.e. results are indexed by data source name, and then sub-indexed by tag name).
+As with other historical data queries, when using an overload that queries a single data source, the return type will be a [HistoricalTagValuesDictionary](/src/IntelligentPlant.DataCore.HttpClient/Model/TagValueDictionary.cs) object i.e. a dictionary that maps from tag name to `HistoricalTagValues` objects. A `HistoricalTagValues` object has properties containing the actual tag values, and a hint that recommends how the values should be visualised on a chart (e.g. trailing edge, interpolation between points). When using an overload where multiple data sources can be specified, the return type will be a dictionary that maps from data source name to a `HistoricalTagValuesDictionary` object (i.e. results are indexed by data source name, and then sub-indexed by tag name).

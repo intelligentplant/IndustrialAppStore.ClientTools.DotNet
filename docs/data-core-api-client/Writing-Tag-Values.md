@@ -120,7 +120,7 @@ multiTagWriteResults = await client.DataSources.WriteSnapshotTagValuesAsync(
 );
 ```
 
-When calling an overload that writes to a single tag, the return value will be a `TagValueUpdateResponse` object describing if the write operation was successful. When calling an overload that writes to multiple tags, a collection of `TagValueUpdateResponse` objects is returned (one entry per tag that was written to).
+When calling an overload that writes to a single tag, the return value will be a [TagValueUpdateResponse](/src/IntelligentPlant.DataCore.HttpClient/Model/TagValueUpdateResponse.cs) object describing if the write operation was successful. When calling an overload that writes to multiple tags, a collection of `TagValueUpdateResponse` objects is returned (one entry per tag that was written to).
 
 
 ## Writing Historical Tag Values
@@ -216,3 +216,5 @@ multiTagWriteResults = await client.DataSources.WriteHistoricalTagValuesAsync(
     cancellationToken
 );
 ```
+
+As with snapshot write operations, when calling an overload that writes to a single tag, the return value will be a [TagValueUpdateResponse](/src/IntelligentPlant.DataCore.HttpClient/Model/TagValueUpdateResponse.cs) object describing if the write operation was successful. When calling an overload that writes to multiple tags, a collection of `TagValueUpdateResponse` objects is returned (one entry per tag that was written to).

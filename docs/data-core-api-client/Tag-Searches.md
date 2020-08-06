@@ -5,7 +5,7 @@ A tag on a data source represents the value of a single instrument in an industr
 ```csharp
 // Use an extension method to specify the filter properties.
 var tags = await client.DataSources.FindTagsAsync(
-    // DataSourceName must be the fully-qualified name of the data source!
+    // Data source name must be the fully-qualified name of the data source!
     "MyDataSource",
     // Use * as a wildcard in tag name
     "PT-*",
