@@ -2,6 +2,7 @@
 
 > **NOTE:** 
 > IAS apps require the `DataWrite` scope to write tag values.
+> Additionally, users must grant an IAS app access to a data source before it becomes visible.
 
 
 Some data sources (such as Intelligent Plant's Edge Historian) support writing tag values. This can be used to store e.g. calculation results computed by Industrial App Store apps. Note that writing values requires a higher level of permissions than reading values; write permissions are typically only granted to trusted actors.

@@ -2,6 +2,7 @@
 
 > **NOTE:** 
 > IAS apps require the `DataRead` scope to read tag values.
+> Additionally, users must grant an IAS app access to a data source before it becomes visible.
 
 
 Data sources allow you to request the values of tags; depending on the capabilities of the data source, you may be able to request snapshot (current) values, raw historical values, and/or computed historical values calculated using some sort of aggregation. The following sections describe how to perform different query types.

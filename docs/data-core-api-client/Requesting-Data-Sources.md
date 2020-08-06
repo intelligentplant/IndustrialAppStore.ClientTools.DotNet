@@ -1,9 +1,8 @@
 # Requesting Data Sources
 
-> 
 > **NOTE:** 
 > IAS apps will be unable to see any data sources unless they have been granted the `DataRead` or `DataWrite` scope.
-> 
+> Additionally, users must grant an IAS app access to a data source before it becomes visible.
 
 
 To get the data sources that are visible to the calling user, call the `GetDataSourcesAsync` method on the client's `DataSources` property:

@@ -2,6 +2,7 @@
 
 > **NOTE:** 
 > IAS apps will be unable to see any data sources unless they have been granted the `DataRead` or `DataWrite` scope.
+> Additionally, users must grant an IAS app access to a data source before it becomes visible.
 
 
 A tag on a data source represents the value of a single instrument in an industrial process, or e.g. the result of a calculation, recorded over time. To search for available tags on a data source, use the `FindTagsAsync` method on the client's `DataSources` property. The `IntelligentPlant.DataCore.Client` namespace contains extension methods to simplify the invocation of this operation.
