@@ -88,7 +88,7 @@ If you are using ASP.NET Core 3.0 or greater, [PKCE](https://oauth.net/2/pkce/) 
 
 # Calling Industrial App Store APIs
 
-The `IndustrialAppStoreHttpClient` service is automatically registered with the dependency injection container to allow you to call Industrial App Store APIs. When calling API methods, you can pass the `HttpContext` for the calling user to automatically use their access token to authorize the call:
+The `IndustrialAppStoreHttpClient` service is automatically registered with the dependency injection container to allow you to call Industrial App Store (and Data Core) APIs. When calling API methods, you must pass the `HttpContext` for the calling user to allow the client to use the caller's IAS access token to authorize the call:
 
 ```csharp
 [ApiController]
