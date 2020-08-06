@@ -211,11 +211,13 @@ Data sources allow you to request the values of tags; depending on the capabilit
 
 ### Specifying Query Time Ranges and Intervals
 
-Queries for historical tag values require you to specify a query time range, with the start and end time for the query being specified using `DateTime` instances. Each historical query type also has extension methods that allow the start and end times to be specified as `string` objects. When `string` timestamps are specified, they can be absolute ISO 8601 timestamps, or they can be relative timestamps (e.g. _"3 hours before the start of the current minute"_).
+Queries for historical tag values require you to specify a query time range, with the start and end time for the query being specified using `DateTime` instances. Each historical query type also has extension methods that allow the start and end times to be specified as `string` objects. When `string` objects are used, they can be absolute ISO 8601 timestamps (e.g. `2020-08-05T07:31:53Z`), or they can be relative timestamps (e.g. _3 hours before the start of the current minute_). 
 
-Similarly, some historical queries require you to specify a sample interval, so that a calculation can be performed on historical values over the query time range (e.g. requesting the average value of a tag at one hour intervals over the last 24 hours). Intervals can be specified as `TimeSpan` instances, or as `string` objects. When a `string` is used, it must be parsable using `TimeSpan.Parse`, or it must be a valid short-hand duration.
+Rules for specifying relative timestamps can be found [here](https://github.com/intelligentplant/IntelligentPlant.Relativity#parsing-timestamps).
 
-Rules for specifying relative timestamps and short-hand durations can be found [here](https://github.com/intelligentplant/IntelligentPlant.Relativity#parsing-timestamps).
+Similarly, some historical queries require you to specify a sample interval, so that a calculation can be performed on historical values over the query time range (e.g. requesting the average value of a tag at one hour intervals over the last 24 hours). Intervals can be specified as `TimeSpan` instances, or as `string` objects. When a `string` is used, it must be parsable using `TimeSpan.Parse` (e.g. `00:30:00`, `1.16:23:37.5543241`), or it must be a valid short-hand duration.
+
+Rules for specifying short-hand durations can be found [here](https://github.com/intelligentplant/IntelligentPlant.Relativity#parsing-durations).
 
 `DateTime` instances are always assumed to be specified in UTC. When parsing timestamps from `string` objects, the resulting `DateTime` will always be converted to UTC.
 
@@ -483,3 +485,223 @@ multiDataSourceHistoricalValues = await client.DataSources.ReadProcessedTagValue
 ```
 
 As with other historical data queries, when using an overload that queries a single data source, the return type will be a `HistoricalTagValuesDictionary` object i.e. a dictionary that maps from tag name to `HistoricalTagValues` objects. A `HistoricalTagValues` object has properties containing the actual tag values, and a hint that recommends how the values should be visualised on a chart (e.g. trailing edge, interpolation between points). When using an overload where multiple data sources can be specified, the return type will be a dictionary that maps from data source name to a `HistoricalTagValuesDictionary` object (i.e. results are indexed by data source name, and then sub-indexed by tag name).
+
+
+## Writing Tag Values
+
+Some data sources (such as Intelligent Plant's Edge Historian) support writing tag values. This can be used to store e.g. calculation results computed by Industrial App Store apps. Note that writing values requires a higher level of permissions than reading values; write permissions are typically only granted to trusted actors.
+
+The Data Core API supports two different types of tag value write operations: snapshot and archive. Both operations use the same method signatures, but have different intents that can be interpeted differently by the target data source.
+
+
+### Writing Snapshot Tag Values
+
+The intent of a snapshot tag value write is to update the instantaneous (current) value of a tag. If you attempt to write a snapshot value that is older than the current tag value, the target data source may choose to ignore the new value you have specified.
+
+Writing snapshot tag values is performed using the `WriteSnapshotTagValuesAsync` and `WriteSnapshotTagValueAsync` methods on the client's `DataSources` property:
+
+```csharp
+// Write a numeric value to a single tag (extension method).
+var writeResult = await client.DataSources.WriteSnapshotTagValueAsync(
+    "MyDataSource",
+    "Tag1",
+    DateTime.UtcNow,
+    100,
+    context: Request.HttpContext,
+    cancellationToken: cancellationToken
+);
+
+// Write a text value with non-good quality to a single tag (extension method).
+writeResult = await client.DataSources.WriteSnapshotTagValueAsync(
+    "MyDataSource",
+    "Tag1",
+    DateTime.UtcNow,
+    "Calculation Error",
+    status: TagValueStatus.Bad,
+    context: Request.HttpContext,
+    cancellationToken: cancellationToken
+);
+
+// Write multiple numeric values to a single tag (extension method).
+writeResult = await client.DataSources.WriteSnapshotTagValuesAsync(
+    "MyDataSource",
+    "Tag1",
+    new Dictionary<DateTime, double>() {
+        [DateTime.UtcNow.AddMinutes(-5)] = 100,
+        [DateTime.UtcNow.AddMinutes(-2.5)] = 50,
+        [DateTime.UtcNow] = 0
+    },
+    context: Request.HttpContext,
+    cancellationToken: cancellationToken
+);
+
+// Write multiple text values to a single tag (extension method).
+writeResult = await client.DataSources.WriteSnapshotTagValuesAsync(
+    "MyDataSource",
+    "Tag1",
+    new Dictionary<DateTime, string>() {
+        [DateTime.UtcNow.AddMinutes(-5)] = "Industrial",
+        [DateTime.UtcNow.AddMinutes(-2.5)] = "App",
+        [DateTime.UtcNow] = "Store"
+    },
+    context: Request.HttpContext,
+    cancellationToken: cancellationToken
+);
+
+// Write tag value objects to multiple tags (extension method).
+var multiTagWriteResults = await client.DataSources.WriteSnapshotTagValuesAsync(
+    "MyDataSource",
+    new[] {
+        new TagValue(
+            "Tag1", 
+            DateTime.UtcNow, 
+            double.NaN, 
+            "Calculation Error", 
+            TagValueStatus.Bad, 
+            null, 
+            null, 
+            "No data was available for the calculation time range"
+        ),
+        new TagValue(
+            "Tag2",
+            DateTime.UtcNow,
+            67.5,
+            null,
+            TagValueStatus.Good,
+            "deg C",
+            null,
+            null
+        )
+    },
+    context: Request.HttpContext,
+    cancellationToken: cancellationToken
+);
+
+// Write values to multiple tags using a WriteTagValuesRequest object.
+multiTagWriteResults = await client.DataSources.WriteSnapshotTagValuesAsync(
+    new WriteTagValuesRequest() {
+        DataSourceName = "MyDataSource",
+        Values = new[] {
+            new TagValue(
+                "Tag1",
+                DateTime.UtcNow,
+                double.NaN,
+                "Calculation Error",
+                TagValueStatus.Bad,
+                null,
+                null,
+                "No data was available for the calculation time range"
+            ),
+            new TagValue(
+                "Tag2",
+                DateTime.UtcNow,
+                67.5,
+                null,
+                TagValueStatus.Good,
+                "deg C",
+                null,
+                null
+            )
+        }
+    }, 
+    Request.HttpContext, 
+    cancellationToken
+);
+```
+
+When calling an overload that writes to a single tag, the return value will be a `TagValueUpdateResponse` object describing if the write operation was successful. When calling an overload that writes to multiple tags, a collection of `TagValueUpdateResponse` objects is returned (one entry per tag that was written to).
+
+
+### Writing Historical Tag Values
+
+The intent of a historical tag value write is to insert values directly into a data source's history archive (e.g. to back-fill a gap in history caused by a data outage). When writing to a data source's snapshot, filters are sometimes applied by the data source to ensure that incoming value changes are only written to the history archive if they are identified as meaningful value changes. Writing directly to the data source's archive will usually bypass these filters entirely.
+
+Historical tag value writes are performed using the `WriteHistoricalTagValuesAsync` method on the client's `DataSources` property:
+
+```csharp
+// Write multiple numeric values to a single tag (extension method).
+var writeResult = await client.DataSources.WriteHistoricalTagValuesAsync(
+    "MyDataSource",
+    "Tag1",
+    new Dictionary<DateTime, double>() {
+        [DateTime.UtcNow.AddMinutes(-60)] = 100,
+        [DateTime.UtcNow.AddMinutes(-55)] = 50,
+        [DateTime.UtcNow.AddMinutes(-50)] = 0
+    },
+    context: Request.HttpContext,
+    cancellationToken: cancellationToken
+);
+
+// Write multiple text values to a single tag (extension method).
+writeResult = await client.DataSources.WriteHistoricalTagValuesAsync(
+    "MyDataSource",
+    "Tag1",
+    new Dictionary<DateTime, string>() {
+        [DateTime.UtcNow.AddMinutes(-60)] = "Industrial",
+        [DateTime.UtcNow.AddMinutes(-55)] = "App",
+        [DateTime.UtcNow.AddMinutes(-50)] = "Store"
+    },
+    context: Request.HttpContext,
+    cancellationToken: cancellationToken
+);
+
+// Write tag value objects to multiple tags (extension method).
+var multiTagWriteResults = await client.DataSources.WriteHistoricalTagValuesAsync(
+    "MyDataSource",
+    new[] {
+        new TagValue(
+            "Tag1", 
+            DateTime.UtcNow.AddMinutes(-50), 
+            double.NaN, 
+            "Calculation Error", 
+            TagValueStatus.Bad, 
+            null, 
+            null, 
+            "No data was available for the calculation time range"
+        ),
+        new TagValue(
+            "Tag2",
+            DateTime.UtcNow.AddMinutes(-50),
+            67.5,
+            null,
+            TagValueStatus.Good,
+            "deg C",
+            null,
+            null
+        )
+    },
+    context: Request.HttpContext,
+    cancellationToken: cancellationToken
+);
+
+// Write values to multiple tags using a WriteTagValuesRequest object.
+multiTagWriteResults = await client.DataSources.WriteHistoricalTagValuesAsync(
+    new WriteTagValuesRequest() {
+        DataSourceName = "MyDataSource",
+        Values = new[] {
+            new TagValue(
+                "Tag1",
+                DateTime.UtcNow.AddMinutes(-50),
+                double.NaN,
+                "Calculation Error",
+                TagValueStatus.Bad,
+                null,
+                null,
+                "No data was available for the calculation time range"
+            ),
+            new TagValue(
+                "Tag2",
+                DateTime.UtcNow.AddMinutes(-50),
+                67.5,
+                null,
+                TagValueStatus.Good,
+                "deg C",
+                null,
+                null
+            )
+        }
+    }, 
+    Request.HttpContext, 
+    cancellationToken
+);
+```
