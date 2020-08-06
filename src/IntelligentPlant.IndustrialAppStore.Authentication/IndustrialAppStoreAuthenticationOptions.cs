@@ -12,7 +12,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <summary>
         /// The base URL for the Industrial App Store.
         /// </summary>
-        public string AppStoreUrl { get; set; } = IndustrialAppStoreHttpClientDefaults.AppStoreUrl;
+        public string IndustrialAppStoreUrl { get; set; } = IndustrialAppStoreHttpClientDefaults.AppStoreUrl;
 
         /// <summary>
         /// The base URL for the Data Core.

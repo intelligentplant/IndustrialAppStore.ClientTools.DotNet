@@ -12,7 +12,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
 
         /// <inheritdoc/>
         protected override Uri BaseUrl {
-            get { return Options.AppStoreUrl; }
+            get { return Options.IndustrialAppStoreUrl; }
         }
 
 

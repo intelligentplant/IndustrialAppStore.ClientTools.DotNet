@@ -48,7 +48,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         public IndustrialAppStoreHttpClient(HttpClient httpClient, IndustrialAppStoreHttpClientOptions options) 
             : base(httpClient, options) {
 
-            if (Options.AppStoreUrl == null) {
+            if (Options.IndustrialAppStoreUrl == null) {
                 throw new ArgumentException(Resources.Error_BaseUrlIsRequired, nameof(options));
             }
 

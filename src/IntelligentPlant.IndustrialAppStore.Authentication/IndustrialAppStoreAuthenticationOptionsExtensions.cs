@@ -2,7 +2,7 @@
     internal static class IndustrialAppStoreAuthenticationOptionsExtensions {
 
         private static string GetEndpoint(this IndustrialAppStoreAuthenticationOptions options, string relativePath) {
-            var baseUrl = options.AppStoreUrl;
+            var baseUrl = options.IndustrialAppStoreUrl;
             baseUrl = baseUrl?.TrimEnd('/');
             return string.Concat(baseUrl, relativePath);
         }

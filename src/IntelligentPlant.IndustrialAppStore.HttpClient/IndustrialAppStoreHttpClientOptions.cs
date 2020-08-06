@@ -11,14 +11,14 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         /// <summary>
         /// The base Industrial App Store API URL.
         /// </summary>
-        public Uri AppStoreUrl { get; set; }
+        public Uri IndustrialAppStoreUrl { get; set; }
 
 
         /// <summary>
         /// Creates a new <see cref="IndustrialAppStoreHttpClientOptions"/> object.
         /// </summary>
         public IndustrialAppStoreHttpClientOptions() {
-            AppStoreUrl = new Uri(IndustrialAppStoreHttpClientDefaults.AppStoreUrl);
+            IndustrialAppStoreUrl = new Uri(IndustrialAppStoreHttpClientDefaults.AppStoreUrl);
             DataCoreUrl = new Uri(IndustrialAppStoreHttpClientDefaults.DataCoreUrl);
         }
 

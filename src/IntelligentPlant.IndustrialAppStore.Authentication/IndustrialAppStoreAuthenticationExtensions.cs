@@ -65,7 +65,7 @@ namespace Microsoft.Extensions.DependencyInjection {
 
             services.AddSingleton(opts);
             services.AddSingleton(new IndustrialAppStoreHttpClientOptions() { 
-                AppStoreUrl = new Uri(opts.AppStoreUrl),
+                IndustrialAppStoreUrl = new Uri(opts.IndustrialAppStoreUrl),
                 DataCoreUrl = new Uri(opts.DataCoreUrl)
             });
 
@@ -163,7 +163,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                 IndustrialAppStoreAuthenticationDefaults.AuthenticationScheme, 
                 IndustrialAppStoreAuthenticationDefaults.DisplayName,
                 options => {
-                    var baseUrl = opts.AppStoreUrl;
+                    var baseUrl = opts.IndustrialAppStoreUrl;
                     baseUrl = baseUrl?.TrimEnd('/');
 
                     options.AuthorizationEndpoint = opts.GetAuthorizationEndpoint();
