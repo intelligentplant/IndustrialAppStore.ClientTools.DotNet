@@ -9,6 +9,10 @@ _The `IntelligentPlant.IndustrialAppStore.Client` namespace contains extension m
 
 ## Requesting Information About the Calling User
 
+> **NOTE:**
+> IAS apps can only perform this action if they have been granted the `UserInfo` scope.
+
+
 User information is retrieved by calling the `GetUserInfoAsync` method on the API client's `UserInfo` property:
 
 ```csharp
@@ -24,6 +28,10 @@ If the authenticated user is a member of an organisation, you can perform API ca
 
 
 ### User Search
+
+> **NOTE:**
+> IAS apps can only perform this action if they have been granted the `UserInfo` scope.
+
 
 Your app may need to search for users in the caller's organisation (for example, if you write a charting app and you want users to be able to share charts that they have created).
 
@@ -56,6 +64,10 @@ The result of the call is a collection of [UserOrGroupPrincipal](/src/Intelligen
 
 ### Group Search
 
+> **NOTE:**
+> IAS apps can only perform this action if they have been granted the `UserInfo` scope.
+
+
 Organisations in the Industrial App Store can create user groups to control access to apps, data sources, and so on. Your app can search organisation groups if required (e.g. if you want to allow a user to share something with a group rather than with individual users).
 
 You can search for users within the caller's organisation using the `FindGroupsAsync` method on the client's `Organization` property:
@@ -86,6 +98,10 @@ The result of the call is a collection of [UserOrGroupPrincipal](/src/Intelligen
 
 
 ### Requesting Group Memberships
+
+> **NOTE:**
+> IAS apps can only perform this action if they have been granted the `UserInfo` scope.
+
 
 In order to manage access to resources in your app, you can request information about the Industrial App Store user groups that an organisation user belongs to.
 

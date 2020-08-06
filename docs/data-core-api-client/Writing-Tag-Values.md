@@ -1,5 +1,9 @@
 # Writing Tag Values
 
+> **NOTE:** 
+> IAS apps require the `DataWrite` scope to write tag values.
+
+
 Some data sources (such as Intelligent Plant's Edge Historian) support writing tag values. This can be used to store e.g. calculation results computed by Industrial App Store apps. Note that writing values requires a higher level of permissions than reading values; write permissions are typically only granted to trusted actors.
 
 The Data Core API supports two different types of tag value write operations: snapshot and archive. Both operations use the same method signatures, but have different intents that can be interpeted differently by the target data source.
