@@ -81,36 +81,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
 
 # PKCE
 
-If you are using ASP.NET Core 3.0 or greater, you can enable [PKCE](https://oauth.net/2/pkce/) support instead of using a client secret to sign users in. Note that you must also enable PKCE in your app settings on the Industrial App Store. You can enable PKCE by modifying your application's `appsettings.json` file:
-
-```json
-{
-    "IAS": {
-        "ClientId": "<YOUR CLIENT ID>",
-        "ClientSecret": "<YOUR CLIENT SECRET>",
-        "UsePkce": true
-    }
-}
-```
-
-Alternatively, you can also enable PKCE programatically from your `Startup` class:
-
-```csharp
-public void ConfigureServices(IServiceCollection services) {
-    services.AddAuthentication(options => {
-        // Removed for brevity
-    })
-    .AddCookie()
-    .AddIndustrialAppStoreAuthentication(options => {
-        // Bind the settings from the app configuration to the Industrial App Store 
-        // authentication options.
-        Configuration.GetSection("IAS").Bind(options);
-        options.UsePkce = true;
-    });
-
-    // Other configuration
-}
-```
+If you are using ASP.NET Core 3.0 or greater, [PKCE](https://oauth.net/2/pkce/) support is automatically enabled.
 
 
 # Calling Industrial App Store APIs
