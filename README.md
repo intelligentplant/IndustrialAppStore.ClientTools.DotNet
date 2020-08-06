@@ -10,4 +10,4 @@ You can install templates for `dotnet new` by following the instructions [here](
 
 # Using the Industrial App Store API Client
 
-Documentation for the Industrial App Store/Data Core API client is available [here](/docs/data-core-api).
+Documentation for the Industrial App Store/Data Core API client is available [here](/docs/data-core-api-client).
