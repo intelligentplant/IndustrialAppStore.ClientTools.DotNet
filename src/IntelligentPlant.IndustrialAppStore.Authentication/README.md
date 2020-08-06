@@ -110,3 +110,5 @@ public class ExampleController : ControllerBase {
 
 }
 ```
+
+Refer to the [API client documentation](/docs/Data Core API Client) for more details on available API calls.
