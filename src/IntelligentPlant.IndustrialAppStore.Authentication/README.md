@@ -26,6 +26,9 @@ In your application's `appsettings.json` file, add the following items, replacin
 }
 ```
 
+> **NOTE:**
+> Do not store client secrets in the `appsettings.json` file in a production environment! Services such as [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) can be used to securely store client secrets and retrieve them at runtime.
+
 In your `Startup` class, add the following namespace import:
 
 ```csharp
