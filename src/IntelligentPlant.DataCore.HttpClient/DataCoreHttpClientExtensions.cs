@@ -2016,7 +2016,7 @@ namespace IntelligentPlant.DataCore.Client {
 
 
         /// <summary>
-        /// Writes values to a single tag in a data source's snapshot.
+        /// Writes numeric values to a single tag in a data source's snapshot.
         /// </summary>
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
@@ -2083,7 +2083,74 @@ namespace IntelligentPlant.DataCore.Client {
 
 
         /// <summary>
-        /// Writes a single value to a single tag in a data source's snapshot.
+        /// Writes text values to a single tag in a data source's snapshot.
+        /// </summary>
+        /// <typeparam name="TContext">
+        ///   The context type that is passed to API calls to allow authentication headers to be added 
+        ///   to outgoing requests.
+        /// </typeparam>
+        /// <param name="client">
+        ///   The client.
+        /// </param>
+        /// <param name="dataSourceName">
+        ///   The data source to write to.
+        /// </param>
+        /// <param name="tagName">
+        ///   The tag to write to.
+        /// </param>
+        /// <param name="values">
+        ///   The values to write.
+        /// </param>
+        /// <param name="status">
+        ///   The quality status for the values.
+        /// </param>
+        /// <param name="context">
+        ///   The context for the operation. If the request pipeline contains a handler created 
+        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
+        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
+        ///   header value for the outgoing request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="TagValueUpdateResponse"/> describing the write results for the tag.
+        /// </returns>
+        public static async Task<TagValueUpdateResponse> WriteSnapshotTagValuesAsync<TContext, TOptions>(
+            this DataSourcesClient<TContext, TOptions> client,
+            string dataSourceName,
+            string tagName,
+            IDictionary<DateTime, string> values,
+            TagValueStatus status = TagValueStatus.Good,
+            TContext context = default,
+            CancellationToken cancellationToken = default
+        ) where TOptions : DataCoreHttpClientOptions {
+            if (client == null) {
+                throw new ArgumentNullException(nameof(client));
+            }
+
+            if (string.IsNullOrWhiteSpace(dataSourceName)) {
+                throw new ArgumentException(Resources.Error_DataSourceNameIsRequired, nameof(dataSourceName));
+            }
+
+            if (string.IsNullOrWhiteSpace(tagName)) {
+                throw new ArgumentException(Resources.Error_TagNameIsRequired, nameof(tagName));
+            }
+
+            var result = await WriteSnapshotTagValuesAsync(
+                client,
+                dataSourceName,
+                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null)),
+                context,
+                cancellationToken
+            ).ConfigureAwait(false);
+
+            return result?.FirstOrDefault();
+        }
+
+
+        /// <summary>
+        /// Writes a single numeric value to a single tag in a data source's snapshot.
         /// </summary>
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
@@ -2163,7 +2230,7 @@ namespace IntelligentPlant.DataCore.Client {
 
 
         /// <summary>
-        /// Writes a single value to a single tag in a data source's snapshot.
+        /// Writes a single text value to a single tag in a data source's snapshot.
         /// </summary>
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
@@ -2294,7 +2361,7 @@ namespace IntelligentPlant.DataCore.Client {
 
 
         /// <summary>
-        /// Writes values to a single tag in a data source's history archive.
+        /// Writes numeric values to a single tag in a data source's history archive.
         /// </summary>
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
@@ -2353,6 +2420,74 @@ namespace IntelligentPlant.DataCore.Client {
                 client,
                 dataSourceName,
                 values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, x.Value, null, status, null)),
+                context,
+                cancellationToken
+            ).ConfigureAwait(false);
+
+            return result?.FirstOrDefault();
+        }
+
+
+        /// <summary>
+        /// Writes text values to a single tag in a data source's history archive.
+        /// </summary>
+        /// <typeparam name="TContext">
+        ///   The context type that is passed to API calls to allow authentication headers to be added 
+        ///   to outgoing requests.
+        /// </typeparam>
+        /// <param name="client">
+        ///   The client.
+        /// </param>
+        /// <param name="dataSourceName">
+        ///   The data source to write to.
+        /// </param>
+        /// <param name="tagName">
+        ///   The tag to write to.
+        /// </param>
+        /// <param name="values">
+        ///   The values to write.
+        /// </param>
+        /// <param name="status">
+        ///   The quality status for the values.
+        /// </param>
+        /// <param name="context">
+        ///   The context for the operation. If the request pipeline contains a handler created 
+        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
+        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
+        ///   header value for the outgoing request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="TagValueUpdateResponse"/> describing the write results for each tag 
+        ///   that was written to.
+        /// </returns>
+        public static async Task<TagValueUpdateResponse> WriteHistoricalTagValuesAsync<TContext, TOptions>(
+            this DataSourcesClient<TContext, TOptions> client,
+            string dataSourceName,
+            string tagName,
+            IDictionary<DateTime, string> values,
+            TagValueStatus status = TagValueStatus.Good,
+            TContext context = default,
+            CancellationToken cancellationToken = default
+        ) where TOptions : DataCoreHttpClientOptions {
+            if (client == null) {
+                throw new ArgumentNullException(nameof(client));
+            }
+
+            if (string.IsNullOrWhiteSpace(dataSourceName)) {
+                throw new ArgumentException(Resources.Error_DataSourceNameIsRequired, nameof(dataSourceName));
+            }
+
+            if (string.IsNullOrWhiteSpace(tagName)) {
+                throw new ArgumentException(Resources.Error_TagNameIsRequired, nameof(tagName));
+            }
+
+            var result = await WriteHistoricalTagValuesAsync(
+                client,
+                dataSourceName,
+                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null)),
                 context,
                 cancellationToken
             ).ConfigureAwait(false);
