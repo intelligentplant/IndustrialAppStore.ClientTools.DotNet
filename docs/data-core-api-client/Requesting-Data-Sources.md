@@ -1,5 +1,8 @@
 # Requesting Data Sources
 
+> IAS apps require the `DataRead` or `DataWrite` scope to perform this action.
+
+
 To get the data sources that are visible to the calling user, call the `GetDataSourcesAsync` method on the client's `DataSources` property:
 
 ```csharp
