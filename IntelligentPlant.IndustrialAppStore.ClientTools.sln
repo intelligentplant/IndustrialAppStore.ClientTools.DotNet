@@ -46,13 +46,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{34009963-2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data-core-api-client", "data-core-api-client", "{B394A8BF-92A8-46B8-B703-C8D398DAF61E}"
 	ProjectSection(SolutionItems) = preProject
-		docs\data-core-api-client\Getting Started.md = docs\data-core-api-client\Getting Started.md
-		docs\data-core-api-client\Industrial App Store Operations.md = docs\data-core-api-client\Industrial App Store Operations.md
-		docs\data-core-api-client\Reading Tag Values.md = docs\data-core-api-client\Reading Tag Values.md
+		docs\data-core-api-client\Getting-Started.md = docs\data-core-api-client\Getting-Started.md
+		docs\data-core-api-client\Industrial-App-Store-Operations.md = docs\data-core-api-client\Industrial-App-Store-Operations.md
+		docs\data-core-api-client\Reading-Tag-Values.md = docs\data-core-api-client\Reading-Tag-Values.md
 		docs\data-core-api-client\README.md = docs\data-core-api-client\README.md
-		docs\data-core-api-client\Requesting Data Sources.md = docs\data-core-api-client\Requesting Data Sources.md
-		docs\data-core-api-client\Tag Searches.md = docs\data-core-api-client\Tag Searches.md
-		docs\data-core-api-client\Writing Tag Values.md = docs\data-core-api-client\Writing Tag Values.md
+		docs\data-core-api-client\Requesting-Data-Sources.md = docs\data-core-api-client\Requesting-Data-Sources.md
+		docs\data-core-api-client\Tag-Searches.md = docs\data-core-api-client\Tag-Searches.md
+		docs\data-core-api-client\Writing-Tag-Values.md = docs\data-core-api-client\Writing-Tag-Values.md
 	EndProjectSection
 EndProject
 Global
