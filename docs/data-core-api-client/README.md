@@ -15,7 +15,7 @@ The [Industrial App Store](https://appstore.intelligentplant.com) (IAS) is a clo
 
 Please refer to the list below for details on how to configure the API client:
 
-- IAS applications written with ASP.NET Core should use the [IntelligentPlant.IndustrialAppStore.Authentication](/src/IntelligentPlant.IndustrialAppStore.Authentication) library. Apps created using the [IAS ASP.NET Core template](/) are pre-configured to use this library.
+- IAS applications written with ASP.NET Core should use the [IntelligentPlant.IndustrialAppStore.Authentication](/src/IntelligentPlant.IndustrialAppStore.Authentication) library. Apps created using the [IAS ASP.NET Core template](/README.md) are pre-configured to use this library.
 - IAS applications written in .NET without ASP.NET Core should use the [IntelligentPlant.IndustrialAppStore.HttpClient](/src/IntelligentPlant.IndustrialAppStore.HttpClient) library.
 - Applications for querying standalone Data Core API nodes should use the [IntelligentPlant.DataCore.HttpClient](/src/IntelligentPlant.DataCore.HttpClient) library.
 
