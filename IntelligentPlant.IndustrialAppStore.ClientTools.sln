@@ -42,6 +42,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8967B5AD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleAdapter", "samples\ExampleAdapter\ExampleAdapter.csproj", "{05B5BBD1-19CF-43F5-A7CB-02831D20783B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{34009963-21E6-4DBE-ADF8-FE005C4FC279}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data-core-api-client", "data-core-api-client", "{B394A8BF-92A8-46B8-B703-C8D398DAF61E}"
+	ProjectSection(SolutionItems) = preProject
+		docs\data-core-api-client\Getting Started.md = docs\data-core-api-client\Getting Started.md
+		docs\data-core-api-client\Industrial App Store Operations.md = docs\data-core-api-client\Industrial App Store Operations.md
+		docs\data-core-api-client\Reading Tag Values.md = docs\data-core-api-client\Reading Tag Values.md
+		docs\data-core-api-client\README.md = docs\data-core-api-client\README.md
+		docs\data-core-api-client\Requesting Data Sources.md = docs\data-core-api-client\Requesting Data Sources.md
+		docs\data-core-api-client\Tag Searches.md = docs\data-core-api-client\Tag Searches.md
+		docs\data-core-api-client\Writing Tag Values.md = docs\data-core-api-client\Writing Tag Values.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +96,7 @@ Global
 		{B2547378-627B-423F-B3CC-C34BA764CC9D} = {49E8C063-F41F-451F-81BF-C4960B9A0168}
 		{83C9EAEA-E7D7-42AF-BA17-63CD63568A70} = {49E8C063-F41F-451F-81BF-C4960B9A0168}
 		{05B5BBD1-19CF-43F5-A7CB-02831D20783B} = {65FE3E10-29B7-4A78-9ED8-C8384AE9D420}
+		{B394A8BF-92A8-46B8-B703-C8D398DAF61E} = {34009963-21E6-4DBE-ADF8-FE005C4FC279}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D12472DA-7354-4A19-8F60-4F9D42C71241}

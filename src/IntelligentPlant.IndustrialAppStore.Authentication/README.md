@@ -111,4 +111,4 @@ public class ExampleController : ControllerBase {
 }
 ```
 
-Refer to the [API client documentation](/docs/Data Core API Client/README.md) for more details on available API calls.
+Refer to the [API client documentation](/docs/data-core-api-client) for more details on available API calls.
