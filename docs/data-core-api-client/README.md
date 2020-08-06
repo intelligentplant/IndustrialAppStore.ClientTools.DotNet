@@ -22,9 +22,9 @@ Please refer to the list below for details on how to configure the API client:
 
 ## API Client Operations
 
-- [Getting Started](./Getting Started.md)
-- [Requesting Data Sources](./Requesting Data Sources.md)
-- [Tag Searches](./Tag Searches.md)
-- [Reading Tag Values](./Reading Tag Values.md)
-- [Writing Tag Values](./Writing Tag Values.md)
-- [Industrial App Store Operations](./Industrial App Store Operations.md)
+- [Getting Started](./Getting-Started.md)
+- [Requesting Data Sources](./Requesting-Data-Sources.md)
+- [Tag Searches](./Tag-Searches.md)
+- [Reading Tag Values](./Reading-Tag-Values.md)
+- [Writing Tag Values](./Writing-Tag-Values.md)
+- [Industrial App Store Operations](./Industrial-App-Store-Operations.md)
