@@ -4,7 +4,7 @@ In addition to the standard Data Core API operations, the Industrial App Store o
 
 Please note that the API calls described in this page are only available when using the [IntelligentPlant.IndustrialAppStore.Authentication](/src/IntelligentPlant.IndustrialAppStore.Authentication) and [IntelligentPlant.IndustrialAppStore.HttpClient](/src/IntelligentPlant.IndustrialAppStore.HttpClient) libraries to query the Industrial App Store.
 
-_The `IntelligentPlant.IndustrialAppStore.Client` namespace contains extension methods to simplify some IAS API calls._
+> The `IntelligentPlant.IndustrialAppStore.Client` namespace contains extension methods to simplify some IAS API calls.
 
 
 ## Requesting Information About the Calling User

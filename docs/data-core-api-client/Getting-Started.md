@@ -18,7 +18,8 @@ When creating a client object, an options object must be passed to the construct
 
 ## Basic Client Usage
 
-_You should ensure that you import the `IntelligentPlant.DataCore.Client` namespace in any classes that use the client. This namespace contains extensions methods to simplify the invocation of most API methods. When working with the Industrial App Store, you should also import the `IntelligentPlant.IndustrialAppStore.Client` namespace._
+> You should ensure that you import the `IntelligentPlant.DataCore.Client` namespace in any classes that use the client. This namespace contains extensions methods to simplify the invocation of most API methods. When working with the Industrial App Store, you should also import the `IntelligentPlant.IndustrialAppStore.Client` namespace.
+
 
 ```csharp
 using System;
