@@ -1,14 +1,14 @@
-# Data Core API Client
-
-
-## What is Data Core?
-
-Data Core is Intelligent Plant's data access API for industrial process data. It is primarily used by apps on the [Industrial App Store](https://appstore.intelligentplant.com) (IAS), but can also be used to integrate with standalone Intelligent Plant applications. Note that IAS apps should use the [IntelligentPlant.IndustrialAppStore.HttpClient](/src/IntelligentPlant.IndustrialAppStore.HttpClient) or [IntelligentPlant.IndustrialAppStore.Authentication](/src/IntelligentPlant.IndustrialAppStore.Authentication) libraries, which extend this library by providing additional IAS-specific API methods, and hooks for authenticating all outgoing API calls.
+# Industrial App Store/Data Core API Client
 
 
 ## What is the Industrial App Store?
 
 The [Industrial App Store](https://appstore.intelligentplant.com) (IAS) is a cloud-based platform offering apps for analysing and visualising real-time process data, and alarm & event data. Instead of being uploaded to the cloud for storage, data is stored on client networks, and connected to the IAS using a tool called [App Store Connect](https://appstore.intelligentplant.com/Home/AppProfile?appId=a73c453df5f447a6aa8a08d2019037a5).
+
+
+## What is Data Core?
+
+Data Core is Intelligent Plant's data access API for industrial process and alarm & event data. It is primarily used by apps on the [Industrial App Store](https://appstore.intelligentplant.com), but can also be used to integrate with standalone Intelligent Plant applications.
 
 
 ## Configuration
