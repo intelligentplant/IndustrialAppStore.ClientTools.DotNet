@@ -18,7 +18,14 @@ When creating a client object, an options object must be passed to the construct
 
 ## Basic Client Usage
 
-_You should ensure that you import the `IntelligentPlant.DataCore.Client` namespace in any classes that use the client. This namespace contains extensions methods to simplify the invocation of most API methods._
+_You should ensure that you import the `IntelligentPlant.DataCore.Client` namespace in any classes that use the client. This namespace contains extensions methods to simplify the invocation of most API methods. When working with the Industrial App Store, you should also import the `IntelligentPlant.IndustrialAppStore.Client` namespace._
+
+```csharp
+using System;
+...
+using IntelligentPlant.DataCore.Client;
+using IntelligentPlant.IndustrialAppStore.Client;
+```
 
 Once you have created the API client, you can use it to call a variety of API methods. API methods are broken down by feature area. For example, functions for reading (or writing) process data are separated from functions for browsing asset models, and so on. Each feature area is represented by a property on the client (e.g. the `DataSources` property is used to expose the API methods for reading process data from/writing process data to data sources such as industrial historians).
 
