@@ -56,7 +56,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
-        ///   A task that will return the matching users.
+        ///   A <see cref="Task{TResult}"/> that will return the matching users.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="request"/> is <see langword="null"/>.
@@ -108,7 +108,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
-        ///   A task that will return the matching groups.
+        ///   A <see cref="Task{TResult}"/> that will return the matching groups.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="request"/> is <see langword="null"/>.
