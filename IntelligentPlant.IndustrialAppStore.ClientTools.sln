@@ -4,8 +4,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30104.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{49E8C063-F41F-451F-81BF-C4960B9A0168}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{65FE3E10-29B7-4A78-9ED8-C8384AE9D420}"
+	ProjectSection(SolutionItems) = preProject
+		samples\Directory.Build.props = samples\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelligentPlant.IndustrialAppStore.Authentication", "src\IntelligentPlant.IndustrialAppStore.Authentication\IntelligentPlant.IndustrialAppStore.Authentication.csproj", "{ACDB21AD-AD3A-4EA3-A524-5D208E692E00}"
 EndProject
