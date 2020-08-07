@@ -51,7 +51,7 @@ If you generated a secret key for your app, use the [ASP.NET Core Secret Manager
 
     dotnet user-secrets set "IAS:ClientSecret" "<YOUR CLIENT SECRET>"
 
-Note that the Secret Manager is intended for use in development environments only; you should use a secure store such as [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) to keep secrets safe in production environments.
+> Note that the Secret Manager is intended for use in development environments only; you should use a secure store such as [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) to keep secrets safe in production environments.
 
 Alternatively, you can specify the client secret directly in the `appsettings.json` file:
 
@@ -64,7 +64,7 @@ Alternatively, you can specify the client secret directly in the `appsettings.js
 }
 ```
 
-__NOTE THAT IT IS STRONGLY RECOMMENDED THAT YOU DO NOT STORE CLIENT SECRETS IN THIS WAY!__
+__NOTE THAT IT IS STRONGLY RECOMMENDED THAT YOU DO NOT STORE CLIENT SECRETS IN THE `appsettings.json` FILE!__
 
 
 # Calling IAS APIs
