@@ -127,6 +127,31 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         }
 
 
+        /// <summary>
+        /// Refunds a transaction.
+        /// </summary>
+        /// <param name="request">
+        ///   The refund request.
+        /// </param>
+        /// <param name="context">
+        ///   The context for the operation. If the request pipeline contains a handler created 
+        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
+        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
+        ///   for the outgoing request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="Task{TResult}"/> that will return a <see cref="RefundUserResponse"/> 
+        ///   specifying if the operation was successful.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="request"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ValidationException">
+        ///   <paramref name="request"/> fails validation.
+        /// </exception>
         public async Task<RefundUserResponse> RefundUserAsync(
             RefundUserRequest request,
             TContext context = default,
@@ -146,14 +171,14 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     if (httpResponse.IsSuccessStatusCode) {
-                        // Success; content body contains the transaction ID.
+                        // Success.
                         return new RefundUserResponse() {
                             Success = true,
                             Message = Resources.RefundUserResponse_Message_Success
                         };
                     }
                     if (httpResponse.StatusCode == System.Net.HttpStatusCode.BadRequest) {
-                        // Transaction failed
+                        // Refund failed
                         return new RefundUserResponse() {
                             Success = false,
                             Message = string.Format(
