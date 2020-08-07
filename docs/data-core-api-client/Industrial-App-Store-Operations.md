@@ -112,3 +112,65 @@ var groupMemberships = await client.Organization.GetGroupMembershipsAsync(Reques
 ```
 
 The result of the call is a collection of [UserOrGroupPrincipal](/src/IntelligentPlant.IndustrialAppStore.HttpClient/Model/UserOrGroupPrincipal.cs) objects describing the matching groups.
+
+
+## Billing Users for App Usage
+
+> **NOTE:**
+> IAS apps can only perform actions related to billing if they have been granted the `AccountDebit` scope.
+
+
+To debit the calling user, call the `DebitUserAsync` method on the client's `AccountTransactions` property:
+
+```csharp
+// Debit a user 1 credit (extension method).
+var debitResponse = await client.AccountTransactions.DebitUserAsync(
+    1, 
+    Request.HttpContext, 
+    cancellationToken
+);
+
+// Debit a user 1 credit using a DebitUserRequest object.
+debitResponse = await client.AccountTransactions.DebitUserAsync(
+    new DebitUserRequest() {
+        DebitAmount = 1
+    }, 
+    Request.HttpContext, 
+    cancellationToken
+);
+```
+
+The result of a debit operation is a [DebitUserResponse](/src/IntelligentPlant.IndustrialAppStore.HttpClient/Model/DebitUserResponse.cs) object that describes if the operation was successful, and provides a transaction ID for the operation. The transaction ID can be used when refunding a debit operation.
+
+
+## Refunding Users
+
+> **NOTE:**
+> IAS apps can only perform actions related to billing if they have been granted the `AccountDebit` scope.
+
+Occasionally, it may be necessary to refund debit transactions (for example, if a user accidentally clicked on a button to perform a billable action). In these circumstances, it is possible to request a refund from IAS.
+
+> **NOTE:**
+> Refund operations require the ID of the transaction to be refunded. This is available as a property on the response when debiting a user account.
+
+A refund can be requested by calling the `RefundUserAsync` method on the client's `AccountTransactions` property:
+
+```csharp
+// Refund a transaction (extension method).
+var refundResponse = await client.AccountTransactions.RefundUserAsync(
+    "abc12345", 
+    Request.HttpContext, 
+    cancellationToken
+);
+
+// Refund a transaction using a RefundUserRequest object.
+refundResponse = await client.AccountTransactions.RefundUserAsync(
+    new RefundUserRequest() {
+        TransactionRef = "abc12345"
+    }, 
+    Request.HttpContext, 
+    cancellationToken
+);
+```
+
+The result of a refund operation is a [RefundUserResponse](/src/IntelligentPlant.IndustrialAppStore.HttpClient/Model/RefundUserResponse.cs) object that describes if the operation was successful.
