@@ -162,11 +162,12 @@
       )
       .subscribe(function (next) {
         if (currentPage === 1) {
-          // This is a new tag name filter; replace the entire tag-container element content.
+          // This is a new tag name filter or data source name; replace the entire tag-container 
+          // element content.
           $('#tags-container').html(next.response);
         } else {
-          // This is a new page of results for the current tag name filter; replace the load-next-page 
-          // element with the results.
+          // This is a new page of results for the current data source name and tag name filter; 
+          // replace the load-next-page element with the results.
           $('#load-next-page').replaceWith(next.response);
         }
       });
