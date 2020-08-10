@@ -15,6 +15,7 @@
     <PackageProjectUrl>https://appstore.intelligentplant.com</PackageProjectUrl>
     <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts\packages\$(Configuration)</PackageOutputPath>
     <PackageTags>industry;process;real-time;alarms;iot;iiot</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <NeutralLanguage>en</NeutralLanguage>
     <CopyrightStartYear>2020</CopyrightStartYear>
   </PropertyGroup>
