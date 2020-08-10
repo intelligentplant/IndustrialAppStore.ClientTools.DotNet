@@ -62,7 +62,7 @@ When using an overload that queries a single data source, the return type will b
 
 ## Reading Raw Historical Tag Values
 
-Raw values are the unprocessed historical values for a tag that are stored in a historican's archive, and are queried using the `ReadRawTagValuesAsync` method on the client's `DataSources` property. In addition to specifying the tag names to query, you also specify a time range for the query, and the maximum number of samples to retrieve per tag. Most historians will place an absolute limit on the number of samples to retrieve per tag, and also on the overall maximum number of samples that will be returned in a single query.
+Raw values are the unprocessed historical values for a tag that are stored in a historian's archive, and are queried using the `ReadRawTagValuesAsync` method on the client's `DataSources` property. In addition to specifying the tag names to query, you also specify a time range for the query, and the maximum number of samples to retrieve per tag. Most historians will place an absolute limit on the number of samples to retrieve per tag, and also on the overall maximum number of samples that will be returned in a single query.
 
 ```csharp
 // Get raw values from a single data source using DateTime instances to specify the time range 
