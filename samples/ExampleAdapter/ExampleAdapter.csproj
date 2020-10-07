@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IntelligentPlant.AppStoreConnect.Adapter" Version="1.0.0-RC7" />
+    <PackageReference Include="IntelligentPlant.AppStoreConnect.Adapter" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

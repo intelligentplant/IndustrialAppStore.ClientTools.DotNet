@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace ExampleAdapter {
 
     // This is your adapter class. For information about how to add features to your adapter (such 
-    // as tag browsing, or real-time data queries), visit https://github.com/intelligentplant/app-store-connect-adapters.
+    // as tag browsing, or real-time data queries), visit https://github.com/intelligentplant/AppStoreConnect.Adapters.
 
     public class MyAdapter : AdapterBase<MyAdapterOptions> {
 
@@ -86,8 +86,16 @@ namespace ExampleAdapter {
 
 
         // Override the Dispose(bool) method if you need to dispose of managed or unmanaged 
-        // resources. If your resources implement IAsyncDisposable, you can also override 
-        // DisposeAsync(bool) to provide both synchronous and asynchronous dispose methods.
+        // resources. 
+        //
+        // If any of your resources implement IAsyncDisposable, you can also override 
+        // DisposeAsyncCore() to implement asynchronous disposal. You should ensure that you also 
+        // dispose of these resources synchronously in your Dispose(bool) implementation if the 
+        // 'disposing' parameter is true.
+        //
+        // Note that, when calling DisposeAsync(), the behaviour implemented by the adapter is to 
+        // call DisposeAsyncCore(), and then call Dispose(false). See here for more details: 
+        // https://docs.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-disposeasync
 
     }
 }
