@@ -28,7 +28,7 @@ if ([string]::IsNullOrWhiteSpace($version.PreRelease)) {
     $PackageVersion = $MajorMinorPatchVersion
 } else {
     if ($RevisionVersion -gt 0) {
-        $PackageVersion = "${MajorMinorPatchVersion}-$($version.PreRelease)${RevisionVersion}"
+        $PackageVersion = "${MajorMinorPatchVersion}-$($version.PreRelease).${RevisionVersion}"
     } else {
         $PackageVersion = "${MajorMinorPatchVersion}-$($version.PreRelease)"
     }
