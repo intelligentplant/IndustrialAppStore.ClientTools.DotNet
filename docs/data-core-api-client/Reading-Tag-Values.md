@@ -8,6 +8,13 @@
 Data sources allow you to request the values of tags; depending on the capabilities of the data source, you may be able to request snapshot (current) values, raw historical values, and/or computed historical values calculated using some sort of aggregation. The following sections describe how to perform different query types.
 
 
+## Query Limits
+
+Limits are applied to all data queries to ensure that response sizes remain within reasonable limits. The Data Core API itself ensures that you do not attempt to retrieve more than 5000 samples per tag in a single query. Data sources themselves will also typically apply limits on either the maximum number of tags that can be requested in a single query, or on the maximum number of samples that a query will return, regardless of the number of tags in the query.
+
+Exceeding query limits will typically result in an HTTP 400/Bad Request response code.
+
+
 ## Specifying Query Time Ranges and Intervals
 
 Queries for historical tag values require you to specify a query time range, with the start and end time for the query being specified using `DateTime` instances. Each historical query type also has extension methods that allow the start and end times to be specified as `string` objects. When `string` objects are used, they can be absolute ISO 8601 timestamps (e.g. `2020-08-05T07:31:53Z`), or they can be relative timestamps (e.g. _3 hours before the start of the current minute_). 
