@@ -225,8 +225,8 @@ The available data functions vary by historian, but most drivers will typically 
 
 - `INTERP` - at each time interval, interpolate a value based on the values immediately before and immediately after the interval start and/or end times.
 - `AVG` - average value for each time interval specified in the query.
-- `MIN` - minimum tag value in each time interval. depending on the historian, this may return the actual raw timestamp of the minimum value, or it may return a value with the timestamp set to the start time of the interval.
-- `MAX` - maximum tag value in each time interval. depending on the historian, this may return the actual raw timestamp of the minimum value, or it may return a value with the timestamp set to the start time of the interval. 
+- `MIN` - minimum tag value in each time interval. Depending on the historian, this may return the actual raw timestamp of the minimum value, or it may return a value with the timestamp set to the start time of the interval.
+- `MAX` - maximum tag value in each time interval. Depending on the historian, this may return the actual raw timestamp of the minimum value, or it may return a value with the timestamp set to the start time of the interval. 
 
 Additional data functions may be supported; please refer to the vendor's documentation. In the future, we plan to implement a discovery feature to allow the supported functions to be retrieved programatically.
 
