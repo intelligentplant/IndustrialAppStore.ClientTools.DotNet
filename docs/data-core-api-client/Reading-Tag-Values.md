@@ -147,7 +147,7 @@ When using an overload that queries a single data source, the return type will b
 
 ## Reading Plot Tag Values
 
-Many data sources support the concept of a "plot" query. This is a request for historical tag values that is optimised for retrieving values to display on a chart. The exact algorithm for selecting or calculating values varies from vendor to vendor, but a common approach is the split the query time range into a number of equally-sized intervals (specified by the caller) and then selecting the minimum, maximum, earliest, and latest raw values in each interval i.e. each tag will return a sample count up to 4x the interval count, depending on whether a selected sample matches more than one of the selection criteria.
+Many data sources support the concept of a "plot" or best-fit query. This is a request for historical tag values that is optimised for retrieving values to display on a chart. The exact algorithm for selecting or calculating values varies from vendor to vendor, but a common approach is to the split the query time range into a number of equally-sized intervals (specified by the caller and typically the pixel width of the chart ot be displayed) and then selecting the minimum, maximum, earliest, and latest raw values in each interval i.e. each tag will return a sample count up to 4x the interval count, depending on whether each time interval contains any raw values, and whether or not a selected raw sample matches more than one of the selection criteria.
 
 Plot queries are performed using the `ReadPlotTagValuesAsync` method overloads on the client's `DataSources` property.
 
