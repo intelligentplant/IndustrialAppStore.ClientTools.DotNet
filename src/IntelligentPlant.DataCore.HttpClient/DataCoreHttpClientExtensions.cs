@@ -84,6 +84,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -153,6 +156,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -224,6 +230,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -274,6 +283,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -329,6 +341,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -378,6 +393,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -443,6 +461,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -510,6 +531,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -585,6 +609,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -658,6 +685,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -742,6 +772,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -813,6 +846,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -893,6 +929,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -971,6 +1010,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -1058,6 +1100,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1131,6 +1176,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1203,6 +1251,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -1283,6 +1334,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -1364,6 +1418,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1444,6 +1501,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1521,6 +1581,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -1606,6 +1669,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -1696,6 +1762,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1751,6 +1820,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -1825,6 +1897,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1887,6 +1962,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
@@ -1971,6 +2049,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2021,6 +2102,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The client.
@@ -2089,6 +2173,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2155,6 +2242,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The client.
@@ -2236,6 +2326,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2316,6 +2409,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2366,6 +2462,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The client.
@@ -2434,6 +2533,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The client.
@@ -2506,6 +2608,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
         /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
+        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2568,6 +2673,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <typeparam name="TContext">
         ///   The context type that is passed to API calls to allow authentication headers to be added 
         ///   to outgoing requests.
+        /// </typeparam>
+        /// <typeparam name="TOptions">
+        ///   The options type for the client.
         /// </typeparam>
         /// <param name="client">
         ///   The client.

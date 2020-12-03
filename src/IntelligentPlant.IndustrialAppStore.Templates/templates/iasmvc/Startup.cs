@@ -30,7 +30,7 @@ namespace ExampleMvcApplication {
                 options.LoginPath = new PathString("/Account/Login");
             });
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddNewtonsoftJson();
         }
 
         
