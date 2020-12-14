@@ -42,6 +42,8 @@ dotnet new iasmvc
 
 This will create a new ASP.NET Core MVC application that is pre-configured to use the Industrial App Store for authentication. The `README.md` file for the new project provides additional instructions for completing the setup.
 
+You can open the project in Visual Studio by double clicking it. In the future, you will be able to [use the template from inside Visual Studio](https://devblogs.microsoft.com/dotnet/net-cli-templates-in-visual-studio/).
+
 
 ## Creating a Visual Studio Solution
 
