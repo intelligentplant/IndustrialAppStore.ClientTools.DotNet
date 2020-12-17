@@ -37,6 +37,8 @@ All API methods allow a context and a cancellation token to be specified for the
 
 All calls made by the API client will throw a [DataCoreHttpClientException](/src/IntelligentPlant.DataCore.HttpClient/DataCoreHttpClientException.cs) (derived from [System.Net.Http.HttpRequestException](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httprequestexception)) if a non-good HTTP status code is returned. This exception type contains properties describing the HTTP method, URL, and so on.
 
-All Data Core API routes return an [RFC 7807 problem details](https://tools.ietf.org/html/rfc7807) object describing the issue when returning a response with a non-good status code; this is assigned to the `ProblemDetails` property on the `DataCoreHttpClientException` type. The `Details` property on the problem details object is typically used to provide a human-readable explanation of the problem that occurred.
+All Data Core API routes return an [RFC 7807 problem details](https://tools.ietf.org/html/rfc7807) object describing the issue when returning a response with a non-good status code; this is assigned to the `ProblemDetails` property on the `DataCoreHttpClientException` type. The `Detail` property on the problem details object is typically used to provide a human-readable explanation of the problem that occurred.
 
-> Note that the `Details` property on a problem details object is not guaranteed to be non-null. You should use `string.IsNullOrWhiteSpace(string?)` to determine if there is a value that you can display to an end user. 
+You can view the definition for the `ProblemDetails` type [here](https://github.com/intelligentplant/ProblemDetails.WebApi/blob/master/ProblemDetails.Core/ProblemDetails.cs).
+
+> Note that the `Detail` property on a problem details object is not guaranteed to be non-null. You should use `string.IsNullOrWhiteSpace(string?)` to determine if there is a value that you can display to an end user. 
