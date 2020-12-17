@@ -79,7 +79,7 @@ namespace IntelligentPlant.DataCore.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A non-good status code was returned: {0} {1} {2}/{3}.
+        ///   Looks up a localized string similar to A non-good status code was returned: {0} {1} {2}/{3}..
         /// </summary>
         internal static string Error_DefaultHttpErrorMessage {
             get {
@@ -390,6 +390,15 @@ namespace IntelligentPlant.DataCore.Client {
         internal static string Error_Scripting_TooManyTagReferences {
             get {
                 return ResourceManager.GetString("Error_Scripting_TooManyTagReferences", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;ProblemDetails&apos; property on the exception contains the RFC 7807 response received from the server..
+        /// </summary>
+        internal static string Error_SeeProblemDetails {
+            get {
+                return ResourceManager.GetString("Error_SeeProblemDetails", resourceCulture);
             }
         }
         

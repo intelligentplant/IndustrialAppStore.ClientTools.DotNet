@@ -124,7 +124,7 @@
     <value>A data source name is required.</value>
   </data>
   <data name="Error_DefaultHttpErrorMessage" xml:space="preserve">
-    <value>A non-good status code was returned: {0} {1} {2}/{3}</value>
+    <value>A non-good status code was returned: {0} {1} {2}/{3}.</value>
     <comment>{0} - HTTP verb
 {1} - URL
 {2} - status code
@@ -247,6 +247,9 @@
   <data name="Error_Scripting_TooManyTagReferences" xml:space="preserve">
     <value>Maximum number of tag references is {0}.</value>
     <comment>{0} - limit</comment>
+  </data>
+  <data name="Error_SeeProblemDetails" xml:space="preserve">
+    <value>The 'ProblemDetails' property on the exception contains the RFC 7807 response received from the server.</value>
   </data>
   <data name="Error_StartTimeCannotBeGreaterThanEndTime" xml:space="preserve">
     <value>Start time cannot be greater than end time.</value>

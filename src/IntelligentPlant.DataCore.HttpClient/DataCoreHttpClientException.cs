@@ -192,7 +192,9 @@ namespace IntelligentPlant.DataCore.Client {
                 : null;
 
             return new DataCoreHttpClientException(
-                errorMessage, 
+                problemDetails == null
+                    ? errorMessage
+                    : string.Concat(errorMessage, " ", Resources.Error_SeeProblemDetails), 
                 response.RequestMessage.Method.Method, 
                 response.RequestMessage.RequestUri.ToString(), 
                 response.StatusCode, 
