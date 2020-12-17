@@ -31,3 +31,12 @@ using IntelligentPlant.IndustrialAppStore.Client;
 Once you have created the API client, you can use it to call a variety of API methods. API methods are broken down by feature area. For example, functions for reading (or writing) process data are separated from functions for browsing asset models, and so on. Each feature area is represented by a property on the client (e.g. the `DataSources` property is used to expose the API methods for reading process data from/writing process data to data sources such as industrial historians).
 
 All API methods allow a context and a cancellation token to be specified for the operation, as described above. These parameters are optional; the default value for each will be used if not specified (i.e. `default(TContext)` and `default(CancellationToken)`).
+
+
+## Handling Exceptions
+
+All calls made by the API client will throw a [DataCoreHttpClientException](/src/IntelligentPlant.DataCore.HttpClient/DataCoreHttpClientException.cs) (derived from [System.Net.Http.HttpRequestException](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httprequestexception)) if a non-good HTTP status code is returned. This exception type contains properties describing the HTTP method, URL, and so on.
+
+All Data Core API routes return an [RFC 7807 problem details](https://tools.ietf.org/html/rfc7807) object describing the issue when returning a response with a non-good status code; this is assigned to the `ProblemDetails` property on the `DataCoreHttpClientException` type. The `Details` property on the problem details object is typically used to provide a human-readable explanation of the problem that occurred.
+
+> Note that the `Details` property on a problem details object is not guaranteed to be non-null. You should use `string.IsNullOrWhiteSpace(string?)` to determine if there is a value that you can display to an end user. 
