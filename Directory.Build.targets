@@ -21,8 +21,8 @@
 
   <ItemGroup Condition=" '$(IncludeDevelopmentPackages)' == 'true' ">
     <!-- FxCop NuGet Package -->
-    <PackageReference Remove="Microsoft.CodeAnalysis.FxCopAnalyzers" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="$(MicrosoftCodeAnalysisFxCopAnalyzersVersion)">
+    <PackageReference Remove="Microsoft.CodeAnalysis.NetAnalyzers" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="$(MicrosoftCodeAnalysisNetAnalyzersVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

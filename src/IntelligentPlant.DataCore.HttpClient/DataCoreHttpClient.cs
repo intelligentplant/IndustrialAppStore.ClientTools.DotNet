@@ -14,6 +14,9 @@ namespace IntelligentPlant.DataCore.Client {
     ///   The context type that is passed to API calls to allow authentication headers to be added 
     ///   to outgoing requests.
     /// </typeparam>
+    /// <typeparam name="TOptions">
+    ///   The options type for the client.
+    /// </typeparam>
     /// <remarks>
     ///   When querying the Industrial App Store, an <c>Authorization</c> header must be set on 
     ///   every outgoing request. Use the <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/> 
@@ -77,6 +80,19 @@ namespace IntelligentPlant.DataCore.Client {
         ///   to invoke a callback on demand to retrieve the <c>Authorization</c> header to add to 
         ///   outgoing requests.
         /// </param>
+        /// <param name="options">
+        ///   The client options.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="httpClient"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="options"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        ///   <see cref="DataCoreHttpClientOptions.DataCoreUrl"/> on <paramref name="options"/> is 
+        ///   <see langword="null"/>.
+        /// </exception>
         protected DataCoreHttpClient(HttpClient httpClient, TOptions options) {
             HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             Options = options ?? throw new ArgumentNullException(nameof(options));
@@ -141,6 +157,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   to invoke a callback on demand to retrieve the <c>Authorization</c> header to add to 
         ///   outgoing requests.
         /// </param>
+        /// <param name="options">
+        ///   The client options.
+        /// </param>
         public DataCoreHttpClient(HttpClient httpClient, DataCoreHttpClientOptions options)
             : base(httpClient, options) { }
 
@@ -163,6 +182,9 @@ namespace IntelligentPlant.DataCore.Client {
         ///   <paramref name="httpClient"/>, to allow the <see cref="DataCoreHttpClient"/> to 
         ///   invoke a callback on demand to retrieve the <c>Authorization</c> header to add to 
         ///   outgoing requests.
+        /// </param>
+        /// <param name="options">
+        ///   The client options.
         /// </param>
         public DataCoreHttpClient(HttpClient httpClient, DataCoreHttpClientOptions options) 
             : base(httpClient, options) { }

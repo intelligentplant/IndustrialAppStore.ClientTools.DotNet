@@ -45,6 +45,20 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         /// <param name="options">
         ///   The HTTP client options.
         /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="httpClient"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="options"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        ///   <see cref="DataCoreHttpClientOptions.DataCoreUrl"/> on <paramref name="options"/> is 
+        ///   <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        ///   <see cref="IndustrialAppStoreHttpClientOptions.IndustrialAppStoreUrl"/> on 
+        ///   <paramref name="options"/> is <see langword="null"/>.
+        /// </exception>
         public IndustrialAppStoreHttpClient(HttpClient httpClient, IndustrialAppStoreHttpClientOptions options) 
             : base(httpClient, options) {
 
