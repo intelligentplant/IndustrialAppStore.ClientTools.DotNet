@@ -5,7 +5,7 @@ This repository contains client tools and templates for writing [Industrial App 
 
 # Installing Templates
 
-You can install templates for `dotnet new` by following the instructions [here](/src/IntelligentPlant.IndustrialAppStore.Templates).
+You can install templates for the [dotnet new](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new) command line tool by following the instructions [here](/src/IntelligentPlant.IndustrialAppStore.Templates).
 
 
 # Using the Industrial App Store API Client
