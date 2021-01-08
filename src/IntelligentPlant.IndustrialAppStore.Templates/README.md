@@ -1,6 +1,6 @@
 ﻿# IntelligentPlant.IndustrialAppStore.Templates
 
-This project defines [Industrial App Store](https://appstore.intelligentplant.com) templates for the `dotnet new` command.
+This project defines [Industrial App Store](https://appstore.intelligentplant.com) templates for the [dotnet new](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new) command.
 
 
 # Installing Templates
