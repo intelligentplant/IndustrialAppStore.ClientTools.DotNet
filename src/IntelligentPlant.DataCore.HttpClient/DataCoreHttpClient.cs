@@ -216,12 +216,14 @@ namespace IntelligentPlant.DataCore.Client {
                 throw new ArgumentNullException(nameof(callback));
             }
 
-            return new Jaahas.Http.HttpRequestTransformHandler(async (request, cancellationToken) => {
+            async Task ApplyAuthHeaderAsync(HttpRequestMessage request, CancellationToken cancellationToken) {
                 var authHeader = await callback.Invoke(request, request.GetStateProperty<TContext>(), cancellationToken).ConfigureAwait(false);
                 if (authHeader != null) {
                     request.Headers.Authorization = authHeader;
                 }
-            });
+            }
+
+            return new Jaahas.Http.HttpRequestPipelineHandler(ApplyAuthHeaderAsync);
         }
 
         #endregion
