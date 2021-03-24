@@ -1083,7 +1083,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ///   A task that will return the new script tag.
         /// </returns>
         public async Task<ScriptTagDefinition> CreateScriptTagFromTemplateAsync(
-            CreateTemplatesScriptTagRequest request,
+            CreateTemplatedScriptTagRequest request,
             TContext context = default, 
             CancellationToken cancellationToken = default
         ) {
