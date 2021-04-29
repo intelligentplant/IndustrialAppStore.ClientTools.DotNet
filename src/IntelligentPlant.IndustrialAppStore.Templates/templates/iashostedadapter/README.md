@@ -10,3 +10,11 @@ The `ExampleHostedAdapter` and `ExampleHostedAdapterOptions` classes define the 
 For information about how to implement adapter features, as well as example projects, please visit the [App Store Connect adapters GitHub repository](https://github.com/intelligentplant/AppStoreConnect.Adapters).
 
 The `Startup` class configures the dependency injection container and application pipeline for the ASP.NET Core application. The `appsettings.json` file provides configuration settings for the application, including the `ExampleHostedAdapterOptions` instance that is passed to the `ExampleHostedAdapter` instance at runtime.
+
+
+# Connecting App Store Connect to the Adapter
+
+To connect a local App Store Connect instance to your adapter, configure a new `App Store Connect Adapter (HTTP Proxy)` data source in the App Store Connect UI, using the following settings:
+
+- `Address`: https://localhost:44300/
+- `Adapter ID`: fdb421d7-03b2-49e8-880a-224e8e5f04ef
