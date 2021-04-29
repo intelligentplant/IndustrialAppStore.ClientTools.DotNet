@@ -22,10 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="templates\iasmvc\ExampleMvcApplication.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="ExampleMvcApplication.csproj.in">
       <DependentUpon>templates\iasmvc\ExampleMvcApplication.csproj</DependentUpon>
     </None>

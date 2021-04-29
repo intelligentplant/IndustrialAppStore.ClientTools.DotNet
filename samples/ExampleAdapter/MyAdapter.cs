@@ -9,11 +9,25 @@ using IntelligentPlant.BackgroundTasks;
 
 using Microsoft.Extensions.Logging;
 
+// The [VendorInfo] attribute is used to add vendor information to all adapters in this assembly.
+[assembly: VendorInfo("My Company", "https://my-company.com")]
+
 namespace ExampleAdapter {
 
     // This is your adapter class. For information about how to add features to your adapter (such 
     // as tag browsing, or real-time data queries), visit https://github.com/intelligentplant/AppStoreConnect.Adapters.
 
+    // The [AdapterMetadata] attribute is used to provide information about your adapter type at
+    // runtime.
+    [AdapterMetadata(
+        // This is a URI to identify the adapter type; it is not required that the URI can be
+        // dereferenced!
+        "https://my-company.com/app-store-connect/adapters/my-adapter/",
+        // The display name for the adapter type.
+        Name = "My Adapter",
+        // The adapter type description.
+        Description = "A brief description of the adapter type"
+    )]
     public class MyAdapter : AdapterBase<MyAdapterOptions> {
 
         public MyAdapter(
@@ -22,25 +36,6 @@ namespace ExampleAdapter {
             IBackgroundTaskService taskScheduler,
             ILogger<MyAdapter> logger
         ) : base(id, options, taskScheduler, logger) {  }
-
-
-        // This constructor allows your adapter to respond to configuration changes at runtime. 
-        // See the OnOptionsChange method below. You can remove this constructor if you do not 
-        // require this capability.
-        public MyAdapter(
-            string id,
-            IAdapterOptionsMonitor<MyAdapterOptions> options,
-            IBackgroundTaskService taskScheduler,
-            ILogger<MyAdapter> logger
-        ) : base(id, options, taskScheduler, logger) { }
-
-
-        // If the adapter is created using the IAdapterOptionsMonitor<T> overload above, the 
-        // OnOptionsChange method will be called whenever the adapter's configuration options are 
-        // changed once the adapter has started. You can remove this override if it is not required.
-        protected override void OnOptionsChange(MyAdapterOptions options) {
-            base.OnOptionsChange(options);
-        }
 
 
         // The StartAsync method is called when the adapter is being started up. Use this method to 
@@ -60,7 +55,7 @@ namespace ExampleAdapter {
         }
 
 
-        // Implement the CheckHealthAsync method to add custom health checks to your adapter. 
+        // Override the CheckHealthAsync method to add custom health checks to your adapter. 
         // Health checks allow you to report on the status of e.g. connections to external 
         // systems. If you detect that the underlying health status of the adapter has changed 
         // (e.g. you unexpectedly disconnect from an external system) you can notify the base 

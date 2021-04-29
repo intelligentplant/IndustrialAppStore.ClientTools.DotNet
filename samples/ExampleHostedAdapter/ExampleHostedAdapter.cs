@@ -8,11 +8,12 @@ using DataCore.Adapter.Diagnostics;
 using IntelligentPlant.BackgroundTasks;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 // The [VendorInfo] attribute is used to add vendor information to all adapters in this assembly.
 [assembly: VendorInfo("My Company", "https://my-company.com")]
 
-namespace ExampleAdapter {
+namespace ExampleHostedAdapter {
 
     // This is your adapter class. For information about how to add features to your adapter (such 
     // as tag browsing, or real-time data queries), visit https://github.com/intelligentplant/AppStoreConnect.Adapters.
@@ -28,14 +29,14 @@ namespace ExampleAdapter {
         // The adapter type description.
         Description = "A brief description of the adapter type"
     )]
-    public class MyAdapter : AdapterBase<MyAdapterOptions> {
+    public partial class ExampleHostedAdapter : AdapterBase<ExampleHostedAdapterOptions> {
 
-        public MyAdapter(
-            string id,
-            MyAdapterOptions options,
+        public ExampleHostedAdapter(
+            string id, 
+            IOptionsMonitor<ExampleHostedAdapterOptions> options,
             IBackgroundTaskService taskScheduler,
-            ILogger<MyAdapter> logger
-        ) : base(id, options, taskScheduler, logger) { }
+            ILogger<ExampleHostedAdapter> logger
+        ) : base(id, options, taskScheduler, logger) {  }
 
 
         // The StartAsync method is called when the adapter is being started up. Use this method to 
@@ -55,6 +56,15 @@ namespace ExampleAdapter {
         }
 
 
+        // The OnOptionsChange method is called every time the adapter receives an update to its
+        // options at runtime. You can use this method to trigger any runtime changes required.
+        // You can test this functionality by running the application and then changing the
+        // adapter name or description in appsettings.json at runtime.
+        protected override void OnOptionsChange(ExampleHostedAdapterOptions options) {
+            base.OnOptionsChange(options);
+        }
+
+
         // Override the CheckHealthAsync method to add custom health checks to your adapter. 
         // Health checks allow you to report on the status of e.g. connections to external 
         // systems. If you detect that the underlying health status of the adapter has changed 
@@ -62,7 +72,7 @@ namespace ExampleAdapter {
         // class that the overall health status must be recalculated by calling the 
         // OnHealthStatusChanged method.
         protected override async Task<IEnumerable<HealthCheckResult>> CheckHealthAsync(
-            IAdapterCallContext context,
+            IAdapterCallContext context, 
             CancellationToken cancellationToken
         ) {
             var result = new List<HealthCheckResult>();

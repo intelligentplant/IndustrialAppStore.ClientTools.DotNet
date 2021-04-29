@@ -8,11 +8,12 @@ using DataCore.Adapter.Diagnostics;
 using IntelligentPlant.BackgroundTasks;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 // The [VendorInfo] attribute is used to add vendor information to all adapters in this assembly.
 [assembly: VendorInfo("My Company", "https://my-company.com")]
 
-namespace ExampleAdapter {
+namespace ExampleHostedAdapter {
 
     // This is your adapter class. For information about how to add features to your adapter (such 
     // as tag browsing, or real-time data queries), visit https://github.com/intelligentplant/AppStoreConnect.Adapters.
@@ -28,13 +29,13 @@ namespace ExampleAdapter {
         // The adapter type description.
         Description = "A brief description of the adapter type"
     )]
-    public class MyAdapter : AdapterBase<MyAdapterOptions> {
+    public partial class ExampleHostedAdapter : AdapterBase<ExampleHostedAdapterOptions> {
 
-        public MyAdapter(
+        public ExampleHostedAdapter(
             string id,
-            MyAdapterOptions options,
+            IOptionsMonitor<ExampleHostedAdapterOptions> options,
             IBackgroundTaskService taskScheduler,
-            ILogger<MyAdapter> logger
+            ILogger<ExampleHostedAdapter> logger
         ) : base(id, options, taskScheduler, logger) { }
 
 
@@ -52,6 +53,15 @@ namespace ExampleAdapter {
         // methods to dispose of resources when the adapter is being disposed.
         protected override Task StopAsync(CancellationToken cancellationToken) {
             return Task.CompletedTask;
+        }
+
+
+        // The OnOptionsChange method is called every time the adapter receives an update to its
+        // options at runtime. You can use this method to trigger any runtime changes required.
+        // You can test this functionality by running the application and then changing the
+        // adapter name or description in appsettings.json at runtime.
+        protected override void OnOptionsChange(ExampleHostedAdapterOptions options) {
+            base.OnOptionsChange(options);
         }
 
 
