@@ -23,6 +23,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="httpClient">
         ///   The HTTP client to use.
         /// </param>
+        /// <param name="options">
+        ///   The HTTP client options to use.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
         /// </exception>
@@ -53,16 +56,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ) {
             var url = GetAbsoluteUrl("api/info");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<string>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 

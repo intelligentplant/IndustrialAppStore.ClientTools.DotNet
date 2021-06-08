@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
 
 namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
@@ -11,24 +10,12 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets a flag indicating if the driver is in good health.
         /// </summary>
-        public bool IsHealthy { get; }
+        public bool IsHealthy { get; set; }
 
         /// <summary>
         /// Gets a collection of properties that contributed towards the overall health status.
         /// </summary>
-        public IEnumerable<ComponentHealthProperty> Properties { get; }
-
-
-        /// <summary>
-        /// Creates a new <see cref="ComponentHealth"/> object.
-        /// </summary>
-        /// <param name="isHealthy">A flag indicating if the driver is in good health.</param>
-        /// <param name="properties">A collection of properties that contributed towards the overall health status.</param>
-        [JsonConstructor]
-        internal ComponentHealth(bool isHealthy, IEnumerable<ComponentHealthProperty> properties) {
-            IsHealthy = isHealthy;
-            Properties = properties?.ToArray() ?? System.Array.Empty<ComponentHealthProperty>();
-        }
+        public IEnumerable<ComponentHealthProperty> Properties { get; set; } = Array.Empty<ComponentHealthProperty>(); 
 
     }
 }

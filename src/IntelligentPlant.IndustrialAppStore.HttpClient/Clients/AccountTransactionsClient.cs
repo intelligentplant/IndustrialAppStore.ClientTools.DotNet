@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -76,53 +75,45 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
 
             var url = GetAbsoluteUrl("api/resource/debit");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<double>(request.DebitAmount, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    if (httpResponse.StatusCode == System.Net.HttpStatusCode.OK) {
-                        // Success; content body contains the transaction ID.
-                        return new DebitUserResponse() { 
-                            Success = true,
-                            TransactionId = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false),
-                            Message = Resources.DebitUserResponse_Message_Success
-                        };
-                    }
-                    if (httpResponse.StatusCode == System.Net.HttpStatusCode.NotModified) {
-                        // Transaction failed
-                        return new DebitUserResponse() {
-                            Success = false,
-                            TransactionId = null,
-                            Message = Resources.DebitUserResponse_Message_TransactionFailed
-                        };
-                    }
-                    if (httpResponse.StatusCode == System.Net.HttpStatusCode.BadRequest) {
-                        // Insufficient funds
-                        return new DebitUserResponse() {
-                            Success = false,
-                            TransactionId = null,
-                            Message = Resources.DebitUserResponse_Message_InsufficientFunds
-                        };
-                    }
-
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-
-                    // Any other status is unexpected.
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request.DebitAmount))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                if (httpResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                    // Success; content body contains the transaction ID.
+                    return new DebitUserResponse() {
+                        Success = true,
+                        TransactionId = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false),
+                        Message = Resources.DebitUserResponse_Message_Success
+                    };
+                }
+                if (httpResponse.StatusCode == System.Net.HttpStatusCode.NotModified) {
+                    // Transaction failed
                     return new DebitUserResponse() {
                         Success = false,
                         TransactionId = null,
-                        Message = string.Format(
-                            CultureInfo.CurrentCulture, 
-                            Resources.DebitUserResponse_Message_UnexpectedResponseCode, 
-                            (int) httpResponse.StatusCode
-                        )
+                        Message = Resources.DebitUserResponse_Message_TransactionFailed
                     };
                 }
-            }
-            finally {
-                httpRequest.Dispose();
+                if (httpResponse.StatusCode == System.Net.HttpStatusCode.BadRequest) {
+                    // Insufficient funds
+                    return new DebitUserResponse() {
+                        Success = false,
+                        TransactionId = null,
+                        Message = Resources.DebitUserResponse_Message_InsufficientFunds
+                    };
+                }
+
+                await VerifyResponseAsync(httpResponse).ConfigureAwait(false);
+
+                // Any other status is unexpected.
+                return new DebitUserResponse() {
+                    Success = false,
+                    TransactionId = null,
+                    Message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.DebitUserResponse_Message_UnexpectedResponseCode,
+                        (int) httpResponse.StatusCode
+                    )
+                };
             }
         }
 
@@ -164,46 +155,38 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
 
             var url = GetAbsoluteUrl("api/resource/refund");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<string>(request.TransactionRef, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    if (httpResponse.IsSuccessStatusCode) {
-                        // Success.
-                        return new RefundUserResponse() {
-                            Success = true,
-                            Message = Resources.RefundUserResponse_Message_Success
-                        };
-                    }
-                    if (httpResponse.StatusCode == System.Net.HttpStatusCode.BadRequest) {
-                        // Refund failed
-                        return new RefundUserResponse() {
-                            Success = false,
-                            Message = string.Format(
-                                CultureInfo.CurrentCulture, 
-                                Resources.RefundUserResponse_Message_Failed, 
-                                await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false)
-                            )
-                        };
-                    }
-
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-
-                    // Any other status is unexpected.
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request.TransactionRef))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                if (httpResponse.IsSuccessStatusCode) {
+                    // Success.
+                    return new RefundUserResponse() {
+                        Success = true,
+                        Message = Resources.RefundUserResponse_Message_Success
+                    };
+                }
+                if (httpResponse.StatusCode == System.Net.HttpStatusCode.BadRequest) {
+                    // Refund failed
                     return new RefundUserResponse() {
                         Success = false,
                         Message = string.Format(
-                            CultureInfo.CurrentCulture, 
-                            Resources.RefundUserResponse_Message_UnexpectedResponseCode, 
-                            (int) httpResponse.StatusCode
+                            CultureInfo.CurrentCulture,
+                            Resources.RefundUserResponse_Message_Failed,
+                            await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false)
                         )
                     };
                 }
-            }
-            finally {
-                httpRequest.Dispose();
+
+                await VerifyResponseAsync(httpResponse).ConfigureAwait(false);
+
+                // Any other status is unexpected.
+                return new RefundUserResponse() {
+                    Success = false,
+                    Message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.RefundUserResponse_Message_UnexpectedResponseCode,
+                        (int) httpResponse.StatusCode
+                    )
+                };
             }
         }
 

@@ -2,7 +2,7 @@
     /// <summary>
     /// Describes a property associated with an event message.
     /// </summary>
-    public class EventProperty : IEventProperty {
+    public class EventProperty {
 
         /// <summary>
         /// Gets or sets the event name.

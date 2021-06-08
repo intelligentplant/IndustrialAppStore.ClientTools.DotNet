@@ -29,7 +29,6 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting.Templates {
         /// tags cannot be evaluated.
         /// </summary>
         [DefaultValue(true)]
-        [Newtonsoft.Json.JsonProperty(DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Populate)]
         public bool IsEnabled { get; set; } = true;
 
         /// <summary>

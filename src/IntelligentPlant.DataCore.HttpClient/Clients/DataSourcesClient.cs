@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
+
 using IntelligentPlant.DataCore.Client.Queries;
 using IntelligentPlant.DataCore.Client.Model;
 using IntelligentPlant.DataCore.Client.Model.Queries;
@@ -70,16 +70,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ) {
             var url = GetAbsoluteUrl("api/data/datasources");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
-                    await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<IEnumerable<DataSourceInfo>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                request.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<DataSourceInfo>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -113,16 +106,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/data/datasources/{Uri.EscapeDataString(dataSourceName)}");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
-                    await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<DataSourceInfo>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                request.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<DataSourceInfo>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -162,18 +148,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/security/data-source/{Uri.EscapeDataString(request.DataSourceName)}/is-in-role");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<IEnumerable<string>>(roleNames, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ComponentRoles>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, roleNames))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<ComponentRoles>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -211,18 +188,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/data/tags/{Uri.EscapeDataString(request.DataSourceName)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(typeof(TagSearchFilter), request.Filter, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<TagSearchResult>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request.Filter))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<TagSearchResult>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -260,18 +228,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl("api/data/v2/snapshot");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IDictionary<string, SnapshotTagValueDictionary>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IDictionary<string, SnapshotTagValueDictionary>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -309,18 +268,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl("api/data/v2/raw");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IDictionary<string, HistoricalTagValuesDictionary>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IDictionary<string, HistoricalTagValuesDictionary>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -356,18 +306,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl("api/data/v2/plot");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IDictionary<string, HistoricalTagValuesDictionary>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IDictionary<string, HistoricalTagValuesDictionary>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -402,18 +343,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl("api/data/v2/processed");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IDictionary<string, HistoricalTagValuesDictionary>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IDictionary<string, HistoricalTagValuesDictionary>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -448,18 +380,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl("api/data/v2/values-at-times");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IDictionary<string, HistoricalTagValuesDictionary>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IDictionary<string, HistoricalTagValuesDictionary>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -497,18 +420,10 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
             var url = GetAbsoluteUrl($"api/data/v2/snapshot/{Uri.EscapeDataString(request.DataSourceName)}");
-            var httpRequest = new HttpRequestMessage(HttpMethod.Put, url) {
-                Content = new ObjectContent<IEnumerable<TagValue>>(request.Values, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
 
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<TagValueUpdateResponse>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Put, url, context, request.Values))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<TagValueUpdateResponse>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -546,18 +461,10 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
             var url = GetAbsoluteUrl($"api/data/v2/history/{Uri.EscapeDataString(request.DataSourceName)}");
-            var httpRequest = new HttpRequestMessage(HttpMethod.Put, url) {
-                Content = new ObjectContent<IEnumerable<TagValue>>(request.Values, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
 
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<TagValueUpdateResponse>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Put, url, context, request.Values))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<TagValueUpdateResponse>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -595,18 +502,10 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
             var url = GetAbsoluteUrl("api/data/annotations");
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<ReadAnnotationsRequest>(request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
 
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<AnnotationCollection>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Put, url, context, request))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<AnnotationCollection>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -643,18 +542,10 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
             var url = GetAbsoluteUrl($"api/data/annotations/{Uri.EscapeDataString(request.DataSourceName)}");
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<Annotation>(request.Annotation, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
 
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<Annotation>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request.Annotation))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<Annotation>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -688,18 +579,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
             var url = GetAbsoluteUrl($"api/data/annotations/{Uri.EscapeDataString(request.DataSourceName)}");
-            var httpRequest = new HttpRequestMessage(HttpMethod.Put, url) {
-                Content = new ObjectContent<AnnotationUpdate>(request.Annotation, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Put, url, context, request.Annotation))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                await VerifyResponseAsync(httpResponse).ConfigureAwait(false);
             }
         }
 
@@ -733,16 +615,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
             var url = GetAbsoluteUrl($"api/data/annotations/{Uri.EscapeDataString(request.DataSourceName)}?id={Uri.EscapeDataString(request.Annotation.Id)}&tagName={Uri.EscapeDataString(request.Annotation.TagName)}&utcAnnotationTime={Uri.EscapeDataString(request.Annotation.UtcAnnotationTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"))}");
-            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, url).AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Delete, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                await VerifyResponseAsync(httpResponse).ConfigureAwait(false);
             }
         }
 
@@ -779,17 +654,10 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/script-engines");
-
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<IEnumerable<ScriptEngine>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<ScriptEngine>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -824,16 +692,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/script-engines/{Uri.EscapeDataString(request.ScriptEngineId)}/templates");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<IEnumerable<ScriptTemplate>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<ScriptTemplate>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -868,16 +729,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/script-engines/{Uri.EscapeDataString(request.ScriptEngineId)}/templates/{Uri.EscapeDataString(request.TemplateId)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<ScriptTemplateWithParameterDefinitions>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<ScriptTemplateWithParameterDefinitions>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -912,18 +766,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/search");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request.Filter, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<ScriptTagDefinition>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request.Filter))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<ScriptTagDefinition>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -958,18 +803,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.TagNamesOrIds.GetType(), request.TagNamesOrIds, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<ScriptTagDefinition>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request.TagNamesOrIds))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<ScriptTagDefinition>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -1004,16 +840,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/{Uri.EscapeDataString(request.TagNameOrId)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ScriptTagDefinition>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<ScriptTagDefinition>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -1048,18 +877,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/create");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.Settings.GetType(), request.Settings, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ScriptTagDefinition>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request.Settings))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<ScriptTagDefinition>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -1094,18 +914,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/create-from-template");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.Settings.GetType(), request.Settings, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ScriptTagDefinition>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request.Settings))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<ScriptTagDefinition>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -1140,18 +951,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/{Uri.EscapeDataString(request.ScriptTagId)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Put, url) {
-                Content = new ObjectContent(request.Settings.GetType(), request.Settings, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ScriptTagDefinition>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Put, url, context, request.Settings))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<ScriptTagDefinition>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -1186,18 +988,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/update-from-template/{Uri.EscapeDataString(request.ScriptTagId)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Put, url) {
-                Content = new ObjectContent(request.Settings.GetType(), request.Settings, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ScriptTagDefinition>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Put, url, context, request.Settings))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<ScriptTagDefinition>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -1232,16 +1025,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/{Uri.EscapeDataString(request.ScriptTagId)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, url).AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<bool>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Delete, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<bool>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -1298,6 +1084,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
                 HttpClient,
                 GetAbsoluteUrl("api/rpc"),
                 request, 
+                Options,
                 context, 
                 cancellationToken
             ).ConfigureAwait(false);

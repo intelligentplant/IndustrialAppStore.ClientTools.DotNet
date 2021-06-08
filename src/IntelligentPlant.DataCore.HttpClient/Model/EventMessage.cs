@@ -7,7 +7,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     /// Describes a Data Core event stream message.
     /// </summary>
-    public class EventMessage : IEventMessage {
+    public class EventMessage {
 
         /// <summary>
         /// Gets or sets the ID for the event object.
@@ -54,18 +54,10 @@ namespace IntelligentPlant.DataCore.Client.Model {
         public string Message { get; set; }
 
         /// <summary>
-        /// The event properties.
-        /// </summary>
-        private ICollection<EventProperty> _properties;
-
-        /// <summary>
         /// Gets or sets the event properties.
         /// </summary>
         [Required]
-        public ICollection<EventProperty> Properties {
-            get { return _properties; }
-            set { _properties = value ?? new List<EventProperty>(); }
-        }
+        public ICollection<EventProperty> Properties { get; set; } = new List<EventProperty>();
 
         /// <summary>
         /// Gets or sets the raw message from the event source.
@@ -76,18 +68,10 @@ namespace IntelligentPlant.DataCore.Client.Model {
         public string RawMessage { get; set; }
 
         /// <summary>
-        /// The route that the event has taken to get to its current location.
-        /// </summary>
-        private ICollection<EventRouteEntry> _route;
-
-        /// <summary>
         /// Gets or sets the route that the event has taken to get to its current location.
         /// </summary>
         [Required]
-        public ICollection<EventRouteEntry> Route {
-            get { return _route; }
-            set { _route = value ?? new List<EventRouteEntry>(); }
-        }
+        public ICollection<EventRouteEntry> Route { get; set; } = new List<EventRouteEntry>();
 
     }
 

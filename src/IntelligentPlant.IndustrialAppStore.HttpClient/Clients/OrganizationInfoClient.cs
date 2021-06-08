@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -76,18 +75,9 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
 
             var url = GetAbsoluteUrl("api/user-search/users");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<UserOrGroupPrincipalSearchRequest>(request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<UserOrGroupPrincipal>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<UserOrGroupPrincipal>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -128,18 +118,9 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
 
             var url = GetAbsoluteUrl("api/user-search/groups");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) { 
-                Content = new ObjectContent<UserOrGroupPrincipalSearchRequest>(request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<UserOrGroupPrincipal>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<UserOrGroupPrincipal>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -165,16 +146,9 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         ) {
             var url = GetAbsoluteUrl("api/user-search/me/groups");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<UserOrGroupPrincipal>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<UserOrGroupPrincipal>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 

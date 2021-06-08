@@ -46,9 +46,9 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// The RFC 7807 problem details object that was returned in the response body. This will 
         /// be <see langword="null"/> unless the content type of the response was 
-        /// <see cref="ProblemDetails.Constants.MediaType"/>.
+        /// <see cref="ProblemDetails.JsonMediaType"/>.
         /// </summary>
-        public ProblemDetails.ProblemDetails ProblemDetails { get; }
+        public ProblemDetails ProblemDetails { get; }
 
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="problemDetails">
         ///   The RFC 7807 problem details object describing the error.
         /// </param>
-        public DataCoreHttpClientException(string message, string verb, string url, HttpStatusCode statusCode, IDictionary<string, string[]> requestHeaders, IDictionary<string, string[]> responseHeaders, string responseContent, ProblemDetails.ProblemDetails problemDetails) 
+        public DataCoreHttpClientException(string message, string verb, string url, HttpStatusCode statusCode, IDictionary<string, string[]> requestHeaders, IDictionary<string, string[]> responseHeaders, string responseContent, ProblemDetails problemDetails) 
             : this(message, verb, url, statusCode, requestHeaders, responseHeaders, responseContent, problemDetails, null) { }
 
 
@@ -112,7 +112,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="inner">
         ///   The inner exception.
         /// </param>
-        public DataCoreHttpClientException(string message, string verb, string url, HttpStatusCode statusCode, IDictionary<string, string[]> requestHeaders, IDictionary<string, string[]> responseHeaders, string responseContent, ProblemDetails.ProblemDetails problemDetails, Exception inner) 
+        public DataCoreHttpClientException(string message, string verb, string url, HttpStatusCode statusCode, IDictionary<string, string[]> requestHeaders, IDictionary<string, string[]> responseHeaders, string responseContent, ProblemDetails problemDetails, Exception inner) 
             : base(message, inner) {
             Verb = verb;
             Url = url;
@@ -188,7 +188,7 @@ namespace IntelligentPlant.DataCore.Client {
                 : null;
 
             var problemDetails = includeContent && contentTypes.Any(IsProblemDetailsResponse)
-                ? Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemDetails.ProblemDetails>(content)
+                ? System.Text.Json.JsonSerializer.Deserialize<ProblemDetails>(content)
                 : null;
 
             return new DataCoreHttpClientException(
@@ -218,7 +218,7 @@ namespace IntelligentPlant.DataCore.Client {
         ///   otherwise.
         /// </returns>
         private static bool IsProblemDetailsResponse(string contentType) {
-            return contentType.StartsWith(IntelligentPlant.ProblemDetails.Constants.MediaType);
+            return contentType.StartsWith(ProblemDetails.JsonMediaType);
         }
 
 

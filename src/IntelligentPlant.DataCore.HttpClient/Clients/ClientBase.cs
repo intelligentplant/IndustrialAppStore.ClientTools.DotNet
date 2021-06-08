@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace IntelligentPlant.DataCore.Client.Clients {
 
@@ -154,6 +158,37 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             }
 
             return new Uri(baseUrl, relativeUrl);
+        }
+
+
+        protected internal static HttpRequestMessage CreateHttpRequestMessage<TContext>(HttpMethod method, Uri url, TContext context) {
+            return HttpClientUtilities.CreateHttpRequestMessage(method, url, context);
+        }
+
+
+        protected internal static HttpRequestMessage CreateHttpRequestMessage<TContext, TContent>(HttpMethod method, Uri url, TContext context, TContent content, JsonSerializerOptions jsonOptions) {
+            return HttpClientUtilities.CreateHttpRequestMessage(method, url, content, context, jsonOptions);
+        }
+
+
+        protected internal HttpRequestMessage CreateHttpRequestMessage<TContext, TContent>(HttpMethod method, Uri url, TContext context, TContent content) {
+            return CreateHttpRequestMessage(method, url, content, context, Options.JsonOptions);
+        }
+
+
+        protected internal static async Task VerifyResponseAsync(HttpResponseMessage response) {
+            await response.ThrowOnErrorResponse().ConfigureAwait(false);
+        }
+
+
+        protected internal static async Task<T> ReadFromJsonAsync<T>(HttpResponseMessage response, JsonSerializerOptions jsonOptions, CancellationToken cancellationToken) {
+            await VerifyResponseAsync(response).ConfigureAwait(false);
+            return await response.Content.ReadFromJsonAsync<T>(jsonOptions, cancellationToken).ConfigureAwait(false);
+        }
+
+
+        protected internal Task<T> ReadFromJsonAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken) {
+            return ReadFromJsonAsync<T>(response, Options.JsonOptions, cancellationToken);
         }
 
     }

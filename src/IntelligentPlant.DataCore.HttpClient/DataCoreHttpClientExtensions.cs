@@ -2157,7 +2157,12 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteSnapshotTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, x.Value, null, status, null)),
+                values?.OrderBy(x => x.Key).Select(x => new TagValue() { 
+                    TagName = tagName,
+                    UtcSampleTime = x.Key,
+                    NumericValue = x.Value,
+                    Status = status
+                }),
                 context,
                 cancellationToken
             ).ConfigureAwait(false);
@@ -2227,7 +2232,13 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteSnapshotTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null)),
+                values?.OrderBy(x => x.Key).Select(x => new TagValue() { 
+                    TagName = tagName,
+                    UtcSampleTime = x.Key,
+                    NumericValue = double.NaN,
+                    TextValue = x.Value,
+                    Status = status
+                }),
                 context,
                 cancellationToken
             ).ConfigureAwait(false);
@@ -2302,14 +2313,12 @@ namespace IntelligentPlant.DataCore.Client {
                 client,
                 dataSourceName,
                 new[] {
-                    new TagValue(
-                        tagName, 
-                        utcSampleTime, 
-                        value, 
-                        null, 
-                        status, 
-                        null
-                    )
+                    new TagValue() {
+                        TagName = tagName,
+                        UtcSampleTime = utcSampleTime,
+                        NumericValue = value,
+                        Status = status
+                    }
                 },
                 context,
                 cancellationToken
@@ -2385,14 +2394,13 @@ namespace IntelligentPlant.DataCore.Client {
                 client,
                 dataSourceName,
                 new[] {
-                    new TagValue(
-                        tagName,
-                        utcSampleTime,
-                        double.NaN,
-                        value,
-                        status,
-                        null
-                    )
+                    new TagValue() { 
+                        TagName = tagName,
+                        UtcSampleTime = utcSampleTime,
+                        NumericValue = double.NaN,
+                        TextValue = value,
+                        Status = status
+                    }
                 },
                 context,
                 cancellationToken
@@ -2518,7 +2526,12 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteHistoricalTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, x.Value, null, status, null)),
+                values?.OrderBy(x => x.Key).Select(x => new TagValue() {
+                    TagName = tagName,
+                    UtcSampleTime = x.Key,
+                    NumericValue = x.Value,
+                    Status = status
+                }),
                 context,
                 cancellationToken
             ).ConfigureAwait(false);
@@ -2589,7 +2602,13 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteHistoricalTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null)),
+                values?.OrderBy(x => x.Key).Select(x => new TagValue() {
+                    TagName = tagName,
+                    UtcSampleTime = x.Key,
+                    NumericValue = double.NaN,
+                    TextValue = x.Value,
+                    Status = status
+                }),
                 context,
                 cancellationToken
             ).ConfigureAwait(false);

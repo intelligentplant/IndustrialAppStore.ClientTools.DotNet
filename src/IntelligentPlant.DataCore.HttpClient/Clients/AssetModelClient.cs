@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
+
 using IntelligentPlant.DataCore.Client.Queries;
 using IntelligentPlant.DataCore.Client.Model;
 using IntelligentPlant.DataCore.Client.Model.AssetModel;
@@ -61,16 +63,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ) {
             var url = GetAbsoluteUrl("api/assetmodel/datasources");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
-                    await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<IEnumerable<DataSourceInfo>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                request.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<DataSourceInfo>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -105,16 +100,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/assetmodel/{Uri.EscapeDataString(request.DataSourceName)}/templates?name={Uri.EscapeDataString(request.NameFilter ?? string.Empty)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<AssetModelElementTemplate>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<AssetModelElementTemplate>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -149,16 +137,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/assetmodel/{Uri.EscapeDataString(request.DataSourceName)}/templates/{Uri.EscapeDataString(request.Id)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<AssetModelElementTemplate>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<AssetModelElementTemplate>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -193,16 +174,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/assetmodel/{Uri.EscapeDataString(request.DataSourceName)}/templates/{Uri.EscapeDataString(request.Id)}/properties?name={Uri.EscapeDataString(request.NameFilter ?? string.Empty)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<AssetModelPropertyTemplate>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<AssetModelPropertyTemplate>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -241,16 +215,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
                     : $"api/assetmodel/{Uri.EscapeDataString(request.DataSourceName)}/elements/{Uri.EscapeDataString(request.ParentId)}/children?name={Uri.EscapeDataString(request.NameFilter ?? string.Empty)}&propertyName={Uri.EscapeDataString(request.PropertyNameFilter ?? string.Empty)}&properties={request.LoadProperties}&children={request.LoadChildren}"
             );
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<AssetModelElement>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<AssetModelElement>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -284,16 +251,10 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
             var url = GetAbsoluteUrl($"api/assetmodel/{Uri.EscapeDataString(request.DataSourceName)}/elements/{Uri.EscapeDataString(request.Id)}?properties={request.LoadProperties}&children={request.LoadChildren}");
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
 
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<AssetModelElement>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<AssetModelElement>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 

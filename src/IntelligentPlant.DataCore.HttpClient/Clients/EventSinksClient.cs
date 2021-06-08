@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
+
 using IntelligentPlant.DataCore.Client.Queries;
 using IntelligentPlant.DataCore.Client.Model;
 using IntelligentPlant.DataCore.Client.Model.Queries;
@@ -30,6 +30,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </summary>
         /// <param name="httpClient">
         ///   The HTTP client to use.
+        /// </param>
+        /// <param name="options">
+        ///   The HTTP client options to use.
         /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
@@ -64,16 +67,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ) {
             var url = GetAbsoluteUrl("api/data/eventsinks");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
-                    await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<IEnumerable<ComponentInfo>>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                request.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<IEnumerable<ComponentInfo>>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -107,16 +103,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/data/eventsinks/{Uri.EscapeDataString(eventSinkName)}");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
-
-            try {
-                using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
-                    await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<ComponentInfo>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                request.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Get, url, context))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<ComponentInfo>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -156,18 +145,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/security/event-sink/{Uri.EscapeDataString(request.EventSinkName)}/is-in-role");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<IEnumerable<string>>(roleNames, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ComponentRoles>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, roleNames))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<ComponentRoles>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -224,6 +204,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
                 HttpClient,
                 GetAbsoluteUrl("api/rpc"),
                 request,
+                Options,
                 context,
                 cancellationToken
             ).ConfigureAwait(false);

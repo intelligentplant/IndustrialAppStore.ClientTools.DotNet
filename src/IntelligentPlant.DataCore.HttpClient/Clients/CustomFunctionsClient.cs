@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,6 +53,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The custom function request.
         /// </param>
+        /// <param name="options">
+        ///   The Data Core client options.
+        /// </param>
         /// <param name="context">
         ///   The context for the operation. If the request pipeline contains a handler created 
         ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
@@ -70,6 +72,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             HttpClient httpClient, 
             Uri url,
             CustomFunctionRequest request,
+            TOptions options,
             TContext context = default,
             CancellationToken cancellationToken = default
         ) {
@@ -78,18 +81,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             }
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<CustomFunctionRequest>(request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
-
-            try {
-                using (var response = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                    await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<T>(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            finally {
-                httpRequest.Dispose();
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request, options?.JsonOptions))
+            using (var httpResponse = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<T>(httpResponse, options?.JsonOptions, cancellationToken).ConfigureAwait(false);
             }
         }
 

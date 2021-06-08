@@ -11,7 +11,6 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// Gets or sets the priority for the event.
         /// </summary>
         [DefaultValue(ScriptTagEventPriority.Unknown)]
-        [Newtonsoft.Json.JsonProperty(DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Populate)]
         public ScriptTagEventPriority Priority { get; set; }
 
         /// <summary>
@@ -36,7 +35,6 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// Gets or sets a flag specifying if the event must reset before it can trigger again.
         /// </summary>
         [DefaultValue(true)]
-        [Newtonsoft.Json.JsonProperty(DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Populate)]
         public bool RequiresReset { get; set; }
 
         /// <summary>

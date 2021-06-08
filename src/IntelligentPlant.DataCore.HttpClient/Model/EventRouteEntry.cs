@@ -8,7 +8,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
     /// The <see cref="EventRouteEntry"/> class allows the journeys of items such as events that can be passed through a 
     /// chain of event sources and event sinks to be tracked.
     /// </remarks>
-    public class EventRouteEntry : IEventRouteEntry {
+    public class EventRouteEntry {
 
         /// <summary>
         /// Gets or sets the UTC timestamp for the entry.

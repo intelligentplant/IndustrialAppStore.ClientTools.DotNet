@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace IntelligentPlant.DataCore.Client.Queries {
 
@@ -15,7 +14,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         /// The data source to query.
         /// </summary>
         [Required]
-        [JsonProperty("dsn")]
+        [JsonPropertyName("dsn")]
         public string DataSourceName { get; set; }
 
         /// <summary>
@@ -23,21 +22,21 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         /// </summary>
         [Required]
         [MinLength(1)]
-        [JsonProperty("tags")]
+        [JsonPropertyName("tags")]
         public string[] TagNames { get; set; }
 
         /// <summary>
         /// The UTC start time for the query.
         /// </summary>
         [Required]
-        [JsonProperty("start")]
+        [JsonPropertyName("start")]
         public DateTime StartTime { get; set; }
 
         /// <summary>
         /// The UTC end time for the query.
         /// </summary>
         [Required]
-        [JsonProperty("end")]
+        [JsonPropertyName("end")]
         public DateTime EndTime { get; set; }
 
 
