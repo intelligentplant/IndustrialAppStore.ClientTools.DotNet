@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using IntelligentPlant.DataCore.Client.Clients;
@@ -100,6 +102,13 @@ namespace IntelligentPlant.DataCore.Client {
             if (Options.DataCoreUrl == null) {
                 throw new ArgumentException(Resources.Error_BaseUrlIsRequired, nameof(options));
             }
+
+            if (Options.JsonOptions == null) {
+                Options.JsonOptions = new JsonSerializerOptions();
+            }
+            Options.JsonOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            Options.JsonOptions.PropertyNameCaseInsensitive = true;
+            Options.JsonOptions.Converters.Add(new JsonStringEnumConverter());
 
             AssetModel = new AssetModelClient<TContext, TOptions>(HttpClient, Options);
             Info = new InfoClient<TContext, TOptions>(HttpClient, Options);
