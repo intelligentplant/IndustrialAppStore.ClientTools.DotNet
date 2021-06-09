@@ -66,7 +66,8 @@ namespace Microsoft.Extensions.DependencyInjection {
             services.AddSingleton(opts);
             services.AddSingleton(new IndustrialAppStoreHttpClientOptions() { 
                 IndustrialAppStoreUrl = new Uri(opts.IndustrialAppStoreUrl),
-                DataCoreUrl = new Uri(opts.DataCoreUrl)
+                DataCoreUrl = new Uri(opts.DataCoreUrl),
+                JsonOptions = opts.JsonOptions
             });
 
             services.AddHttpContextAccessor();
@@ -138,17 +139,14 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <param name="builder">
         ///   The authentication builder.
         /// </param>
-        /// <param name="configure">
-        ///   A callback that is used to configure the authentication options.
+        /// <param name="opts">
+        ///   The authentication options.
         /// </param>
         /// <returns>
         ///   The authentication builder.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="builder"/> is <see langword="null"/>.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///   <paramref name="configure"/> is <see langword="null"/>.
         /// </exception>
         private static AuthenticationBuilder AddIndustrialAppStoreAuthenticationInternal(
             this AuthenticationBuilder builder,

@@ -60,5 +60,10 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// </summary>
         public bool ShowConsentPrompt { get; set; }
 
+        /// <summary>
+        /// JSON serialization options to use when sending or receiving JSON payloads.
+        /// </summary>
+        public System.Text.Json.JsonSerializerOptions JsonOptions { get; set; }
+
     }
 }
