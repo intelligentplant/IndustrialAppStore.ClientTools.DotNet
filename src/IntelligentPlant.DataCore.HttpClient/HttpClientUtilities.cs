@@ -21,7 +21,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="url">
         ///   The request URL.
         /// </param>
-        /// <param name="context">
+        /// <param name="requestContext">
         ///   The request context.
         /// </param>
         /// <returns>
@@ -36,12 +36,12 @@ namespace IntelligentPlant.DataCore.Client {
         public static HttpRequestMessage CreateHttpRequestMessage<TContext>(
             HttpMethod method,
             Uri url,
-            TContext context
+            TContext requestContext
         ) {
             return new HttpRequestMessage(
                 method ?? throw new ArgumentNullException(nameof(method)),
                 url ?? throw new ArgumentNullException(nameof(url))
-            ).AddStateProperty(context);
+            ).AddStateProperty(requestContext);
         }
 
 
@@ -57,7 +57,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="url">
         ///   The request URL.
         /// </param>
-        /// <param name="context">
+        /// <param name="requestContext">
         ///   The request context.
         /// </param>
         /// <returns>
@@ -72,12 +72,12 @@ namespace IntelligentPlant.DataCore.Client {
         public static HttpRequestMessage CreateHttpRequestMessage<TContext>(
             HttpMethod method,
             string url,
-            TContext context
+            TContext requestContext
         ) {
             return CreateHttpRequestMessage(
                 method,
                 new Uri(url ?? throw new ArgumentNullException(nameof(url)), UriKind.RelativeOrAbsolute),
-                context
+                requestContext
             );
         }
 
@@ -101,7 +101,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="content">
         ///   The content for the request. The content will be serialized to JSON.
         /// </param>
-        /// <param name="context">
+        /// <param name="requestContext">
         ///   The request context.
         /// </param>
         /// <param name="options">
@@ -119,11 +119,11 @@ namespace IntelligentPlant.DataCore.Client {
         public static HttpRequestMessage CreateHttpRequestMessage<TContext, TContent>(
             HttpMethod method,
             Uri url,
+            TContext requestContext,
             TContent content,
-            TContext context,
             JsonSerializerOptions options
         ) {
-            var result = CreateHttpRequestMessage(method, url, context);
+            var result = CreateHttpRequestMessage(method, url, requestContext);
             result.Content = System.Net.Http.Json.JsonContent.Create(content, options: options);
 
             return result;
@@ -150,7 +150,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="content">
         ///   The content for the request. The content will be serialized to JSON.
         /// </param>
-        /// <param name="context">
+        /// <param name="requestContext">
         ///   The request context.
         /// </param>
         /// <param name="options">
@@ -168,15 +168,15 @@ namespace IntelligentPlant.DataCore.Client {
         public static HttpRequestMessage CreateHttpRequestMessage<TContext, TContent>(
             HttpMethod method,
             string url,
+            TContext requestContext,
             TContent content,
-            TContext context,
             JsonSerializerOptions options
         ) {
             return CreateHttpRequestMessage(
                 method,
                 new Uri(url ?? throw new ArgumentNullException(nameof(url)), UriKind.RelativeOrAbsolute),
+                requestContext,
                 content,
-                context,
                 options
             );
         }

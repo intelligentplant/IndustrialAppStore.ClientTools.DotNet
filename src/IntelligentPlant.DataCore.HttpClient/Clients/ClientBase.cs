@@ -161,32 +161,152 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         }
 
 
-        protected internal static HttpRequestMessage CreateHttpRequestMessage<TContext>(HttpMethod method, Uri url, TContext context) {
-            return HttpClientUtilities.CreateHttpRequestMessage(method, url, context);
+        /// <summary>
+        /// Creates an HTTP request message with no body content.
+        /// </summary>
+        /// <typeparam name="TContext">
+        ///   The request context type.
+        /// </typeparam>
+        /// <param name="method">
+        ///   The HTTP method.
+        /// </param>
+        /// <param name="url">
+        ///   The request URI.
+        /// </param>
+        /// <param name="requestContext">
+        ///   The request context.
+        /// </param>
+        /// <returns>
+        ///   A new <see cref="HttpRequestMessage"/> instance.
+        /// </returns>
+        protected internal static HttpRequestMessage CreateHttpRequestMessage<TContext>(HttpMethod method, Uri url, TContext requestContext) {
+            return HttpClientUtilities.CreateHttpRequestMessage(method, url, requestContext);
         }
 
 
-        protected internal static HttpRequestMessage CreateHttpRequestMessage<TContext, TContent>(HttpMethod method, Uri url, TContext context, TContent content, JsonSerializerOptions jsonOptions) {
-            return HttpClientUtilities.CreateHttpRequestMessage(method, url, content, context, jsonOptions);
+        /// <summary>
+        /// Creates an HTTP request message with the specified body content.
+        /// </summary>
+        /// <typeparam name="TContext">
+        ///   The request context type.
+        /// </typeparam>
+        /// <typeparam name="TContent">
+        ///   The request content type.
+        /// </typeparam>
+        /// <param name="method">
+        ///   The HTTP method.
+        /// </param>
+        /// <param name="url">
+        ///   The request URI.
+        /// </param>
+        /// <param name="requestContext">
+        ///   The request context.
+        /// </param>
+        /// <param name="content">
+        ///   The request content. The content will be serialized to JSON using <see cref="JsonSerializer"/>.
+        /// </param>
+        /// <param name="jsonOptions">
+        ///   The options for <see cref="JsonSerializer"/>.
+        /// </param>
+        /// <returns>
+        ///   A new <see cref="HttpRequestMessage"/> instance.
+        /// </returns>
+        protected internal static HttpRequestMessage CreateHttpRequestMessage<TContext, TContent>(HttpMethod method, Uri url, TContext requestContext, TContent content, JsonSerializerOptions jsonOptions) {
+            return HttpClientUtilities.CreateHttpRequestMessage(method, url, requestContext, content, jsonOptions);
         }
 
 
-        protected internal HttpRequestMessage CreateHttpRequestMessage<TContext, TContent>(HttpMethod method, Uri url, TContext context, TContent content) {
-            return CreateHttpRequestMessage(method, url, content, context, Options.JsonOptions);
+        /// <summary>
+        /// Creates an HTTP request message with the specified body content.
+        /// </summary>
+        /// <typeparam name="TContext">
+        ///   The request context type.
+        /// </typeparam>
+        /// <typeparam name="TContent">
+        ///   The request content type.
+        /// </typeparam>
+        /// <param name="method">
+        ///   The HTTP method.
+        /// </param>
+        /// <param name="url">
+        ///   The request URI.
+        /// </param>
+        /// <param name="requestContext">
+        ///   The request context.
+        /// </param>
+        /// <param name="content">
+        ///   The request content. The content will be serialized to JSON using <see cref="JsonSerializer"/>.
+        /// </param>
+        /// <returns>
+        ///   A new <see cref="HttpRequestMessage"/> instance.
+        /// </returns>
+        protected internal HttpRequestMessage CreateHttpRequestMessage<TContext, TContent>(HttpMethod method, Uri url, TContext requestContext, TContent content) {
+            return CreateHttpRequestMessage(method, url, requestContext, content, Options.JsonOptions);
         }
 
 
+        /// <summary>
+        /// Ensures that an HTTP response has a valid status code.
+        /// </summary>
+        /// <param name="response">
+        ///   The HTTP response message.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="Task"/> that will verify the response and throw a <see cref="DataCoreHttpClientException"/> 
+        ///   if a non-good status code is returned.
+        /// </returns>
+        /// <exception cref="DataCoreHttpClientException">
+        ///   <paramref name="response"/> contains a non-good status code.
+        /// </exception>
+        /// <remarks>
+        ///   If the <paramref name="response"/> contains an RFC 7807 problem details object, this 
+        ///   will be deserialized and assigned to the <see cref="DataCoreHttpClientException.ProblemDetails"/> 
+        ///   property on the thrown exception.
+        /// </remarks>
         protected internal static async Task VerifyResponseAsync(HttpResponseMessage response) {
             await response.ThrowOnErrorResponse().ConfigureAwait(false);
         }
 
 
+        /// <summary>
+        /// Deserializes the JSON payload in the specified HTTP response using <see cref="JsonSerializer"/>.
+        /// </summary>
+        /// <typeparam name="T">
+        ///   The type to deserialize the JSON response to.
+        /// </typeparam>
+        /// <param name="response">
+        ///   The HTTP response message.
+        /// </param>
+        /// <param name="jsonOptions">
+        ///   The options for <see cref="JsonSerializer"/>.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="Task{TResult}"/> that will return the deserialized response.
+        /// </returns>
         protected internal static async Task<T> ReadFromJsonAsync<T>(HttpResponseMessage response, JsonSerializerOptions jsonOptions, CancellationToken cancellationToken) {
             await VerifyResponseAsync(response).ConfigureAwait(false);
             return await response.Content.ReadFromJsonAsync<T>(jsonOptions, cancellationToken).ConfigureAwait(false);
         }
 
 
+        /// <summary>
+        /// Deserializes the JSON payload in the specified HTTP response using <see cref="JsonSerializer"/>.
+        /// </summary>
+        /// <typeparam name="T">
+        ///   The type to deserialize the JSON response to.
+        /// </typeparam>
+        /// <param name="response">
+        ///   The HTTP response message.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="Task{TResult}"/> that will return the deserialized response.
+        /// </returns>
         protected internal Task<T> ReadFromJsonAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken) {
             return ReadFromJsonAsync<T>(response, Options.JsonOptions, cancellationToken);
         }
