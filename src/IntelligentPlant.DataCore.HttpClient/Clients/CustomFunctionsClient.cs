@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,13 +30,19 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="options">
         ///   The HTTP client options.
         /// </param>
+        /// <param name="jsonOptions">
+        ///   JSON serializer options.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
         /// </exception>
         ///<exception cref="ArgumentNullException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public CustomFunctionsClient(HttpClient httpClient, TOptions options) : base(httpClient, options) { }
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="jsonOptions"/> is <see langword="null"/>.
+        /// </exception>
+        public CustomFunctionsClient(HttpClient httpClient, TOptions options, JsonSerializerOptions jsonOptions) : base(httpClient, options, jsonOptions) { }
 
 
         /// <summary>
@@ -44,17 +51,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <typeparam name="T">
         ///   The function return type.
         /// </typeparam>
-        /// <param name="httpClient">
-        ///   The HTTP client to use.
-        /// </param>
-        /// <param name="url">
-        ///   The custom function URL.
-        /// </param>
         /// <param name="request">
         ///   The custom function request.
-        /// </param>
-        /// <param name="options">
-        ///   The Data Core client options.
         /// </param>
         /// <param name="context">
         ///   The context for the operation. If the request pipeline contains a handler created 
@@ -68,11 +66,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <returns>
         ///   A task that will return the custom function result.
         /// </returns>
-        internal static async Task<T> RunCustomFunctionAsync<T>(
-            HttpClient httpClient, 
-            Uri url,
+        internal async Task<T> RunCustomFunctionAsync<T>(
             CustomFunctionRequest request,
-            TOptions options,
             TContext context = default,
             CancellationToken cancellationToken = default
         ) {
@@ -81,9 +76,11 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             }
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
-            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request, options?.JsonOptions))
-            using (var httpResponse = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
-                return await ReadFromJsonAsync<T>(httpResponse, options?.JsonOptions, cancellationToken).ConfigureAwait(false);
+            var url = GetAbsoluteUrl("api/rpc");
+
+            using (var httpRequest = CreateHttpRequestMessage(HttpMethod.Post, url, context, request))
+            using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                return await ReadFromJsonAsync<T>(httpResponse, cancellationToken).ConfigureAwait(false);
             }
         }
 

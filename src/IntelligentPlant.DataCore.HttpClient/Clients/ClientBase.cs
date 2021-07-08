@@ -26,6 +26,11 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         protected TOptions Options { get; }
 
         /// <summary>
+        /// JSON serializer options.
+        /// </summary>
+        protected JsonSerializerOptions JsonOptions { get; }
+
+        /// <summary>
         /// The base URL for the client.
         /// </summary>
         protected virtual Uri BaseUrl => Options.DataCoreUrl;
@@ -40,15 +45,22 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="options">>
         ///   The HTTP client options.
         /// </param>
+        /// <param name="jsonOptions">
+        ///   JSON serializer options.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        protected ClientBase(HttpClient httpClient, TOptions options) {
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="jsonOptions"/> is <see langword="null"/>.
+        /// </exception>
+        protected ClientBase(HttpClient httpClient, TOptions options, JsonSerializerOptions jsonOptions) {
             HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             Options = options ?? throw new ArgumentNullException(nameof(options));
+            JsonOptions = jsonOptions ?? throw new ArgumentNullException(nameof(jsonOptions));
         }
 
 
@@ -205,43 +217,11 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="content">
         ///   The request content. The content will be serialized to JSON using <see cref="JsonSerializer"/>.
         /// </param>
-        /// <param name="jsonOptions">
-        ///   The options for <see cref="JsonSerializer"/>.
-        /// </param>
-        /// <returns>
-        ///   A new <see cref="HttpRequestMessage"/> instance.
-        /// </returns>
-        protected internal static HttpRequestMessage CreateHttpRequestMessage<TContext, TContent>(HttpMethod method, Uri url, TContext requestContext, TContent content, JsonSerializerOptions jsonOptions) {
-            return HttpClientUtilities.CreateHttpRequestMessage(method, url, requestContext, content, jsonOptions);
-        }
-
-
-        /// <summary>
-        /// Creates an HTTP request message with the specified body content.
-        /// </summary>
-        /// <typeparam name="TContext">
-        ///   The request context type.
-        /// </typeparam>
-        /// <typeparam name="TContent">
-        ///   The request content type.
-        /// </typeparam>
-        /// <param name="method">
-        ///   The HTTP method.
-        /// </param>
-        /// <param name="url">
-        ///   The request URI.
-        /// </param>
-        /// <param name="requestContext">
-        ///   The request context.
-        /// </param>
-        /// <param name="content">
-        ///   The request content. The content will be serialized to JSON using <see cref="JsonSerializer"/>.
-        /// </param>
         /// <returns>
         ///   A new <see cref="HttpRequestMessage"/> instance.
         /// </returns>
         protected internal HttpRequestMessage CreateHttpRequestMessage<TContext, TContent>(HttpMethod method, Uri url, TContext requestContext, TContent content) {
-            return CreateHttpRequestMessage(method, url, requestContext, content, Options.JsonOptions);
+            return HttpClientUtilities.CreateHttpRequestMessage(method, url, requestContext, content, JsonOptions);
         }
 
 
@@ -277,38 +257,15 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="response">
         ///   The HTTP response message.
         /// </param>
-        /// <param name="jsonOptions">
-        ///   The options for <see cref="JsonSerializer"/>.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   A <see cref="Task{TResult}"/> that will return the deserialized response.
         /// </returns>
-        protected internal static async Task<T> ReadFromJsonAsync<T>(HttpResponseMessage response, JsonSerializerOptions jsonOptions, CancellationToken cancellationToken) {
+        protected internal async Task<T> ReadFromJsonAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken) {
             await VerifyResponseAsync(response).ConfigureAwait(false);
-            return await response.Content.ReadFromJsonAsync<T>(jsonOptions, cancellationToken).ConfigureAwait(false);
-        }
-
-
-        /// <summary>
-        /// Deserializes the JSON payload in the specified HTTP response using <see cref="JsonSerializer"/>.
-        /// </summary>
-        /// <typeparam name="T">
-        ///   The type to deserialize the JSON response to.
-        /// </typeparam>
-        /// <param name="response">
-        ///   The HTTP response message.
-        /// </param>
-        /// <param name="cancellationToken">
-        ///   The cancellation token for the operation.
-        /// </param>
-        /// <returns>
-        ///   A <see cref="Task{TResult}"/> that will return the deserialized response.
-        /// </returns>
-        protected internal Task<T> ReadFromJsonAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken) {
-            return ReadFromJsonAsync<T>(response, Options.JsonOptions, cancellationToken);
+            return await response.Content.ReadFromJsonAsync<T>(JsonOptions, cancellationToken).ConfigureAwait(false);
         }
 
     }

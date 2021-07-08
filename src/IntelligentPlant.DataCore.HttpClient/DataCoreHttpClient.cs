@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+
 using IntelligentPlant.DataCore.Client.Clients;
 
 namespace IntelligentPlant.DataCore.Client {
@@ -41,6 +42,11 @@ namespace IntelligentPlant.DataCore.Client {
         /// The HTTP client options.
         /// </summary>
         protected TOptions Options { get; }
+
+        /// <summary>
+        /// JSON serializer options.
+        /// </summary>
+        protected JsonSerializerOptions JsonOptions { get; }
 
         /// <summary>
         /// The asset model client.
@@ -103,18 +109,20 @@ namespace IntelligentPlant.DataCore.Client {
                 throw new ArgumentException(Resources.Error_BaseUrlIsRequired, nameof(options));
             }
 
-            if (Options.JsonOptions == null) {
-                Options.JsonOptions = new JsonSerializerOptions();
-            }
-            Options.JsonOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            Options.JsonOptions.PropertyNameCaseInsensitive = true;
-            Options.JsonOptions.Converters.Add(new JsonStringEnumConverter());
+            JsonOptions = Options.JsonOptions == null
+                ? new JsonSerializerOptions()
+                : new JsonSerializerOptions(Options.JsonOptions);
 
-            AssetModel = new AssetModelClient<TContext, TOptions>(HttpClient, Options);
-            Info = new InfoClient<TContext, TOptions>(HttpClient, Options);
-            DataSources = new DataSourcesClient<TContext, TOptions>(HttpClient, Options);
-            EventSources = new EventSourcesClient<TContext, TOptions>(HttpClient, Options);
-            EventSinks = new EventSinksClient<TContext, TOptions>(HttpClient, Options);
+            JsonOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            JsonOptions.PropertyNameCaseInsensitive = true;
+            JsonOptions.Converters.Add(new JsonStringEnumConverter());
+            JsonOptions.AddIntelligentPlantConverters();
+
+            AssetModel = new AssetModelClient<TContext, TOptions>(HttpClient, Options, JsonOptions);
+            Info = new InfoClient<TContext, TOptions>(HttpClient, Options, JsonOptions);
+            DataSources = new DataSourcesClient<TContext, TOptions>(HttpClient, Options, JsonOptions);
+            EventSources = new EventSourcesClient<TContext, TOptions>(HttpClient, Options, JsonOptions);
+            EventSinks = new EventSinksClient<TContext, TOptions>(HttpClient, Options, JsonOptions);
         }
 
         #endregion

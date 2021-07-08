@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using IntelligentPlant.DataCore.Client.Queries;
 using IntelligentPlant.DataCore.Client.Model;
 using IntelligentPlant.DataCore.Client.Model.Queries;
+using System.Text.Json;
 
 namespace IntelligentPlant.DataCore.Client.Clients {
     /// <summary>
@@ -23,6 +24,15 @@ namespace IntelligentPlant.DataCore.Client.Clients {
     /// </typeparam>
     public class EventSinksClient<TContext, TOptions> : ClientBase<TOptions> where TOptions : DataCoreHttpClientOptions {
 
+        #region [ Fields / Properties ]
+
+        /// <summary>
+        /// Client for calling custom event sink functions.
+        /// </summary>
+        private readonly CustomFunctionsClient<TContext, TOptions> _customFunctionsClient;
+
+        #endregion
+
         #region [ Constructor ]
 
         /// <summary>
@@ -34,13 +44,22 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="options">
         ///   The HTTP client options to use.
         /// </param>
+        /// <param name="jsonOptions">
+        ///   JSON serializer options.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public EventSinksClient(HttpClient httpClient, TOptions options) : base(httpClient, options) { }
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="jsonOptions"/> is <see langword="null"/>.
+        /// </exception>
+        public EventSinksClient(HttpClient httpClient, TOptions options, JsonSerializerOptions jsonOptions) 
+            : base(httpClient, options, jsonOptions) {
+            _customFunctionsClient = new CustomFunctionsClient<TContext, TOptions>(httpClient, options, jsonOptions);
+        }
 
         #endregion
 
@@ -200,11 +219,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
                     : new Dictionary<string, string>(parameters)
             };
 
-            return await CustomFunctionsClient<TContext, TOptions>.RunCustomFunctionAsync<T>(
-                HttpClient,
-                GetAbsoluteUrl("api/rpc"),
+            return await _customFunctionsClient.RunCustomFunctionAsync<T>(
                 request,
-                Options,
                 context,
                 cancellationToken
             ).ConfigureAwait(false);

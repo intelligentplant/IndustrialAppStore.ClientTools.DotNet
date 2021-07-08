@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,13 +27,19 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="options">
         ///   The HTTP client options to use.
         /// </param>
+        /// <param name="jsonOptions">
+        ///   JSON serializer options.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public InfoClient(HttpClient httpClient, TOptions options) : base(httpClient, options) { }
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="jsonOptions"/> is <see langword="null"/>.
+        /// </exception>
+        public InfoClient(HttpClient httpClient, TOptions options, JsonSerializerOptions jsonOptions) : base(httpClient, options, jsonOptions) { }
 
 
         /// <summary>

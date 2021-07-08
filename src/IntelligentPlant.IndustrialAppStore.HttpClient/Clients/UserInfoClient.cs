@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,14 +27,20 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// <param name="options">
         ///   The HTTP client options.
         /// </param>
+        /// <param name="jsonOptions">
+        ///   JSON serializer options.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public UserInfoClient(HttpClient httpClient, IndustrialAppStoreHttpClientOptions options)
-            : base(httpClient, options) { }
+        /// <exception cref="ArgumentException">
+        ///   <paramref name="jsonOptions"/> is <see langword="null"/>.
+        /// </exception>
+        public UserInfoClient(HttpClient httpClient, IndustrialAppStoreHttpClientOptions options, JsonSerializerOptions jsonOptions)
+            : base(httpClient, options, jsonOptions) { }
 
 
         /// <summary>

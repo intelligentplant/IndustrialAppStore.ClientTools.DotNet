@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+
 using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.IndustrialAppStore.Client.Clients;
 
@@ -66,16 +67,16 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
                 throw new ArgumentException(Resources.Error_BaseUrlIsRequired, nameof(options));
             }
 
-            UserInfo = new UserInfoClient<TContext>(HttpClient, Options);
-            Organization = new OrganizationInfoClient<TContext>(HttpClient, Options);
-            AccountTransactions = new AccountTransactionsClient<TContext>(HttpClient, Options);
+            UserInfo = new UserInfoClient<TContext>(HttpClient, Options, JsonOptions);
+            Organization = new OrganizationInfoClient<TContext>(HttpClient, Options, JsonOptions);
+            AccountTransactions = new AccountTransactionsClient<TContext>(HttpClient, Options, JsonOptions);
         }
 
 
         /// <summary>
         /// Creates a <see cref="DelegatingHandler"/> that can be added to an <see cref="HttpClient"/> 
         /// message pipeline, that will set the <c>Authorize</c> header on outgoing requests based 
-        /// on the <typeparamref name="TContext"/> object passed to an <see cref="IndustrialAppStoreHttpClient"/> 
+        /// on the <typeparamref name="TContext"/> object passed to an <see cref="IndustrialAppStoreHttpClient{TContext}"/> 
         /// method.
         /// </summary>
         /// <param name="callback">

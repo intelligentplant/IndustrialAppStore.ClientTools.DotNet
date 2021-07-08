@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using IntelligentPlant.DataCore.Client.Queries;
 using IntelligentPlant.DataCore.Client.Model;
 using IntelligentPlant.DataCore.Client.Model.AssetModel;
+using System.Text.Json;
 
 namespace IntelligentPlant.DataCore.Client.Clients {
 
@@ -33,13 +34,19 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="options">
         ///   The HTTP client options.
         /// </param>
+        /// <param name="jsonOptions">
+        ///   JSON serializer options.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public AssetModelClient(HttpClient httpClient, TOptions options) : base(httpClient, options) { }
+        /// <exception cref="ArgumentException">
+        ///   <paramref name="jsonOptions"/> is <see langword="null"/>.
+        /// </exception>
+        public AssetModelClient(HttpClient httpClient, TOptions options, JsonSerializerOptions jsonOptions) : base(httpClient, options, jsonOptions) { }
 
 
         /// <summary>
