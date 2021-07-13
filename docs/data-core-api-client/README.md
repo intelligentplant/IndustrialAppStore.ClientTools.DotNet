@@ -10,7 +10,7 @@ The [Industrial App Store](https://appstore.intelligentplant.com) (IAS) is a clo
 
 # What is Data Core?
 
-Data Core is Intelligent Plant's data access API for industrial process and alarm & event data. It is primarily used by apps on the [Industrial App Store](https://appstore.intelligentplant.com), but can also be used to integrate with standalone Intelligent Plant applications.
+Data Core is Intelligent Plant's data access API for industrial process and alarm & event data. It is primarily used by apps on the [Industrial App Store](https://appstore.intelligentplant.com), but can also be used by on-premises applications to access data via the local network (see below for details).
 
 
 # Configuration
