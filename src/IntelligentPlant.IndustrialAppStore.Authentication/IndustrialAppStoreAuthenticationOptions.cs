@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+
 using IntelligentPlant.IndustrialAppStore.Client;
+
 using Microsoft.AspNetCore.Http;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
@@ -18,6 +20,34 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// The base URL for the Data Core.
         /// </summary>
         public string DataCoreUrl { get; set; } = IndustrialAppStoreHttpClientDefaults.DataCoreUrl;
+
+        /// <summary>
+        /// When <see langword="true"/>, the Industrial App Store authentication handler will not be 
+        /// added to the application. Other associated services (such as <see cref="IndustrialAppStoreHttpClient"/>) 
+        /// will still be added.
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// <para>
+        ///   Set this property to <see langword="true"/> when you want to authenticate access to 
+        ///   your application using an authentication provider other than the Industrial App 
+        ///   Store. 
+        /// </para>
+        /// 
+        /// <para>
+        ///   In the majority of cases, you should not modify the value of this property. However, 
+        ///   if you are writing an app that can run against either the Industrial App Store or an 
+        ///   on-premises Data Core API endpoint, you should set this property to <see langword="true"/> 
+        ///   when you are running against a local Data Core API endpoint.
+        /// </para>
+        /// 
+        /// <para>
+        ///   When running against an on-premises Data Core API endpoint, it is the responsibility 
+        ///   of the hosting application to provide an authentication mechanism.
+        /// </para>
+        /// 
+        /// </remarks>
+        public bool UseExternalAuthentication { get; set; }
 
         /// <summary>
         /// The Industrial App Store client ID.

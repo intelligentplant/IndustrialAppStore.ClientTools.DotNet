@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -26,7 +27,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets the HTTP status code that was returned.
         /// </summary>
-        public HttpStatusCode StatusCode { get; }
+        public int StatusCode { get; }
 
         /// <summary>
         /// The HTTP request headers.
@@ -42,6 +43,12 @@ namespace IntelligentPlant.DataCore.Client {
         /// Gets the response content that was returned.
         /// </summary>
         public string Content { get; }
+
+        /// <summary>
+        /// If a <c>Retry-After</c> header was included in the response, this property specifies 
+        /// the UTC time that the application must wait until before attempting the request again.
+        /// </summary>
+        public DateTime? UtcRetryAfter { get; }
 
         /// <summary>
         /// The RFC 7807 problem details object that was returned in the response body. This will 
@@ -78,8 +85,11 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="problemDetails">
         ///   The RFC 7807 problem details object describing the error.
         /// </param>
-        public DataCoreHttpClientException(string message, string verb, string url, HttpStatusCode statusCode, IDictionary<string, string[]> requestHeaders, IDictionary<string, string[]> responseHeaders, string responseContent, ProblemDetails.ProblemDetails problemDetails) 
-            : this(message, verb, url, statusCode, requestHeaders, responseHeaders, responseContent, problemDetails, null) { }
+        /// <param name="utcRetryAfter">
+        ///   The UTC time that the caller must wait until before retrying the request.
+        /// </param>
+        public DataCoreHttpClientException(string message, string verb, string url, HttpStatusCode statusCode, IDictionary<string, string[]> requestHeaders, IDictionary<string, string[]> responseHeaders, string responseContent, ProblemDetails.ProblemDetails problemDetails, DateTime? utcRetryAfter) 
+            : this(message, verb, url, statusCode, requestHeaders, responseHeaders, responseContent, problemDetails, utcRetryAfter, null) { }
 
 
         /// <summary>
@@ -109,18 +119,22 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="problemDetails">
         ///   The RFC 7807 problem details object describing the error.
         /// </param>
+        /// <param name="utcRetryAfter">
+        ///   The UTC time that the caller must wait until before retrying the request.
+        /// </param>
         /// <param name="inner">
         ///   The inner exception.
         /// </param>
-        public DataCoreHttpClientException(string message, string verb, string url, HttpStatusCode statusCode, IDictionary<string, string[]> requestHeaders, IDictionary<string, string[]> responseHeaders, string responseContent, ProblemDetails.ProblemDetails problemDetails, Exception inner) 
+        public DataCoreHttpClientException(string message, string verb, string url, HttpStatusCode statusCode, IDictionary<string, string[]> requestHeaders, IDictionary<string, string[]> responseHeaders, string responseContent, ProblemDetails.ProblemDetails problemDetails, DateTime? utcRetryAfter, Exception inner) 
             : base(message, inner) {
             Verb = verb;
             Url = url;
-            StatusCode = statusCode;
+            StatusCode = (int) statusCode;
             RequestHeaders = new ReadOnlyDictionary<string, string[]>(requestHeaders ?? new Dictionary<string, string[]>());
             ResponseHeaders = new ReadOnlyDictionary<string, string[]>(responseHeaders ?? new Dictionary<string, string[]>());
             Content = responseContent;
             ProblemDetails = problemDetails;
+            UtcRetryAfter = utcRetryAfter;
         }
 
 
@@ -191,6 +205,12 @@ namespace IntelligentPlant.DataCore.Client {
                 ? Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemDetails.ProblemDetails>(content)
                 : null;
 
+            var retryAfter = response.Headers.RetryAfter?.Date.HasValue ?? false
+                ? response.Headers.RetryAfter.Date.Value.UtcDateTime
+                : response.Headers.RetryAfter?.Delta.HasValue ?? false
+                    ? DateTime.UtcNow.Add(response.Headers.RetryAfter.Delta.Value)
+                    : (DateTime?) null;
+
             return new DataCoreHttpClientException(
                 problemDetails == null
                     ? errorMessage
@@ -202,6 +222,7 @@ namespace IntelligentPlant.DataCore.Client {
                 responseHeaders,
                 content, 
                 problemDetails,
+                retryAfter,
                 inner
             );
         }

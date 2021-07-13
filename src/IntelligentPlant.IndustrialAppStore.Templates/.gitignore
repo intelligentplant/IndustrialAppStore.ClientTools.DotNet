@@ -3,3 +3,6 @@ templates/iasmvc/*.csproj
 
 # Ignore files obtained from libman.
 templates/iasmvc/wwwroot/lib/*
+
+# Allow publish profiles included in templates
+!templates/iasmvc/Properties/PublishProfiles/*.pubxml

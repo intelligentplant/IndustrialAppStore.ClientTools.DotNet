@@ -70,7 +70,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
             var refreshResponse = await backchannel.SendAsync(refreshRequest, cancellationToken);
 
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1_OR_GREATER
             var tokenResponseJson = System.Text.Json.JsonDocument.Parse(await refreshRequest.Content.ReadAsStreamAsync());
 #else
             var tokenResponseJson = Newtonsoft.Json.Linq.JObject.Parse(await refreshResponse.Content.ReadAsStringAsync());

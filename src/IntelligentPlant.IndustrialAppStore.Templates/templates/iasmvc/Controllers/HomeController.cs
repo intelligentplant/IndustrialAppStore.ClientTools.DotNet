@@ -4,10 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using ExampleMvcApplication.Models;
+
 using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.DataCore.Client.Model;
 using IntelligentPlant.IndustrialAppStore.Authentication;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;

@@ -4,9 +4,11 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+
 using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.IndustrialAppStore.Authentication;
 using IntelligentPlant.IndustrialAppStore.Client;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
@@ -19,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection {
     /// </summary>
     public static class IndustrialAppStoreAuthenticationExtensions {
 
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1_OR_GREATER
         /// <summary>
         /// A client secret must always be specified in the OAuth options, but it is possible that 
         /// the app has not been issued with a client secret and is using PKCE, so it is still able 
@@ -71,61 +73,76 @@ namespace Microsoft.Extensions.DependencyInjection {
 
             services.AddHttpContextAccessor();
             services.AddHttpClient<ITokenStore, DefaultTokenStore>();
-            services.AddHttpClient<IndustrialAppStoreHttpClient>(options => {
+
+            var httpBuilder = services.AddHttpClient<IndustrialAppStoreHttpClient>(options => {
                 options.BaseAddress = new Uri(opts.DataCoreUrl);
-            }).AddHttpMessageHandler(() => {
-                return DataCoreHttpClient.CreateAuthenticationMessageHandler<HttpContext>(
-                    async (req, ctx, ct) => { 
-                        if (ctx == null) {
-                            return null;
-                        }
-                        return await ctx
-                            .RequestServices
-                            .GetRequiredService<ITokenStore>()
-                            .GetAuthenticationHeaderAsync();
-                    }
-                );
             });
 
-            services.AddAuthentication(options => {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            if (opts.UseExternalAuthentication) {
+                services.AddAuthentication();
+                httpBuilder.ConfigurePrimaryHttpMessageHandler(() => {
+                    var result = new HttpClientHandler() {
+                        Credentials = System.Net.CredentialCache.DefaultNetworkCredentials
+                    };
 
-                if (PathString.Empty.Equals(opts.LoginPath)) {
-                    // No login path specified; challenges will be issued automatically by IAS authentication.
-                    options.DefaultChallengeScheme = IndustrialAppStoreAuthenticationDefaults.AuthenticationScheme;
-                }
-                else {
-                    // Login path specified; challenges will be issued externally.
-                    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                }
-            })
-            .AddCookie(options => {
-                if (!PathString.Empty.Equals(opts.LoginPath)) {
-                    options.LoginPath = opts.LoginPath;
-                }
+                    return result;
+                });
+            } 
+            else {
+                httpBuilder.AddHttpMessageHandler(() => {
+                    return DataCoreHttpClient.CreateAuthenticationMessageHandler<HttpContext>(
+                        async (req, ctx, ct) => {
+                            if (ctx == null) {
+                                return null;
+                            }
+                            return await ctx
+                                .RequestServices
+                                .GetRequiredService<ITokenStore>()
+                                .GetAuthenticationHeaderAsync();
+                        }
+                    );
+                });
 
-                options.Events = new CookieAuthenticationEvents() { 
-                    OnValidatePrincipal = async ctx => {
-                        var httpClientFactory = ctx.HttpContext.RequestServices.GetRequiredService<IHttpClientFactory>();
-                        var httpClient = httpClientFactory.CreateClient(nameof(DefaultTokenStore));
-                        var accessToken = await ctx.Properties.GetAccessTokenAsync(
-                            ctx.HttpContext.RequestServices.GetRequiredService<IndustrialAppStoreAuthenticationOptions>(),
-                            httpClient,
-                            ctx.HttpContext.RequestServices.GetRequiredService<ISystemClock>(),
-                            ctx.HttpContext.RequestAborted
-                        );
+                services.AddAuthentication(options => {
+                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
-                        if (string.IsNullOrWhiteSpace(accessToken)) {
+                    if (PathString.Empty.Equals(opts.LoginPath)) {
+                        // No login path specified; challenges will be issued automatically by IAS authentication.
+                        options.DefaultChallengeScheme = IndustrialAppStoreAuthenticationDefaults.AuthenticationScheme;
+                    }
+                    else {
+                        // Login path specified; challenges will be issued externally.
+                        options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    }
+                })
+                .AddCookie(options => {
+                    if (!PathString.Empty.Equals(opts.LoginPath)) {
+                        options.LoginPath = opts.LoginPath;
+                    }
+
+                    options.Events = new CookieAuthenticationEvents() {
+                        OnValidatePrincipal = async ctx => {
+                            var httpClientFactory = ctx.HttpContext.RequestServices.GetRequiredService<IHttpClientFactory>();
+                            var httpClient = httpClientFactory.CreateClient(nameof(DefaultTokenStore));
+                            var accessToken = await ctx.Properties.GetAccessTokenAsync(
+                                ctx.HttpContext.RequestServices.GetRequiredService<IndustrialAppStoreAuthenticationOptions>(),
+                                httpClient,
+                                ctx.HttpContext.RequestServices.GetRequiredService<ISystemClock>(),
+                                ctx.HttpContext.RequestAborted
+                            );
+
+                            if (string.IsNullOrWhiteSpace(accessToken)) {
                             // We do not have a valid access token for the calling user, so we 
                             // will consider the cookie to be invalid.
                             ctx.RejectPrincipal();
+                            }
                         }
-                    }
-                };
-            })
-            .AddIndustrialAppStoreAuthenticationInternal(opts);
+                    };
+                })
+                .AddIndustrialAppStoreOAuthAuthentication(opts);
+            }
 
             return services;
         }
@@ -138,8 +155,8 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <param name="builder">
         ///   The authentication builder.
         /// </param>
-        /// <param name="configure">
-        ///   A callback that is used to configure the authentication options.
+        /// <param name="opts">
+        ///   The authentication options.
         /// </param>
         /// <returns>
         ///   The authentication builder.
@@ -147,10 +164,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///   <paramref name="configure"/> is <see langword="null"/>.
-        /// </exception>
-        private static AuthenticationBuilder AddIndustrialAppStoreAuthenticationInternal(
+        private static AuthenticationBuilder AddIndustrialAppStoreOAuthAuthentication(
             this AuthenticationBuilder builder,
             IndustrialAppStoreAuthenticationOptions opts
         ) {
@@ -173,7 +187,7 @@ namespace Microsoft.Extensions.DependencyInjection {
 
                     options.ClientId = opts.ClientId;
                     options.ClientSecret = opts.ClientSecret;
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1_OR_GREATER
                     options.UsePkce = true;
                     // Microsoft OAuth authentication middleware requires a client secret to be 
                     // specified, even when PKCE is being used. This can be any non-empty value; 
@@ -225,7 +239,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                             var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
                             response.EnsureSuccessStatusCode();
 
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1_OR_GREATER
                             var user = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(
                                 await response.Content.ReadAsStringAsync()
                             );

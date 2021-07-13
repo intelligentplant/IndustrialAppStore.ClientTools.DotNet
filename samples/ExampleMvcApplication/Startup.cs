@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +32,12 @@ namespace ExampleMvcApplication {
                 // Set the login path to be our login page.
                 options.LoginPath = new PathString("/Account/Login");
             });
+
+            if (Configuration.GetValue<bool>("IAS:UseExternalAuthentication")) {
+                // App is configured to use an authentication provider other than the Industrial
+                // App Store, so we will use IIS to handle Windows authentication for us.
+                services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
+            }
 
             services.AddControllersWithViews().AddNewtonsoftJson();
         }

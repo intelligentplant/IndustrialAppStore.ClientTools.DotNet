@@ -30,6 +30,19 @@ namespace ExampleMvcApplication {
                 options.LoginPath = new PathString("/Account/Login");
             });
 
+            if (Configuration.GetValue<bool>("IAS:UseExternalAuthentication")) {
+                // App is configured to use an authentication provider other than the Industrial
+                // App Store, so we will use IIS to handle Windows authentication for us.
+                //
+                // To use Windows authentication when hosting your app using Kestrel or HTTP.sys
+                // rather than IIS, please follow Microsoft's instructions here:
+                // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/windowsauth
+                // 
+                // If you want to use an external authentication scheme other than Windows
+                // authentication, you must supply and configure this yourself.
+                services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
+            }
+
             services.AddControllersWithViews().AddNewtonsoftJson();
         }
 
