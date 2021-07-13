@@ -106,6 +106,15 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Industrial App Store operations have been disabled for this client..
+        /// </summary>
+        internal static string Error_IasOperationsAreNotAllowed {
+            get {
+                return ResourceManager.GetString("Error_IasOperationsAreNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Refund Failed: {0}.
         /// </summary>
         internal static string RefundUserResponse_Message_Failed {

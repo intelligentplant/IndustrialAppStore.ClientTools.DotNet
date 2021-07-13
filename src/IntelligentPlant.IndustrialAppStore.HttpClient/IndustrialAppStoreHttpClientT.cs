@@ -16,19 +16,50 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
     public class IndustrialAppStoreHttpClient<TContext> : DataCoreHttpClient<TContext, IndustrialAppStoreHttpClientOptions> {
 
         /// <summary>
+        /// Specifies if Industrial App Store-specific API operations are allowed. When <see langword="false"/>, 
+        /// attempts to access the <see cref="UserInfo"/>, <see cref="Organization"/> and <see cref="AccountTransactions"/> 
+        /// properties will cause an <see cref="InvalidOperationException"/> to be thrown.
+        /// </summary>
+        public virtual bool AllowIasApiOperations => true;
+
+        /// <summary>
         /// The client for retrieving information about the authenticated user.
         /// </summary>
-        public UserInfoClient<TContext> UserInfo { get; }
+        private readonly UserInfoClient<TContext> _userInfo;
 
         /// <summary>
         /// The client for retrieving information about the authenticated user's organization.
         /// </summary>
-        public OrganizationInfoClient<TContext> Organization { get; }
+        private readonly OrganizationInfoClient<TContext> _organization;
 
         /// <summary>
         /// The client for performing account transactions.
         /// </summary>
-        public AccountTransactionsClient<TContext> AccountTransactions { get; }
+        private readonly AccountTransactionsClient<TContext> _accountTransactions;
+
+        /// <summary>
+        /// The client for retrieving information about the authenticated user.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </exception>
+        public UserInfoClient<TContext> UserInfo => AllowIasApiOperations ? _userInfo : throw new InvalidOperationException(Resources.Error_IasOperationsAreNotAllowed);
+
+        /// <summary>
+        /// The client for retrieving information about the authenticated user's organization.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </exception>
+        public OrganizationInfoClient<TContext> Organization => AllowIasApiOperations ? _organization : throw new InvalidOperationException(Resources.Error_IasOperationsAreNotAllowed);
+
+        /// <summary>
+        /// The client for performing account transactions.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </exception>
+        public AccountTransactionsClient<TContext> AccountTransactions => AllowIasApiOperations ? _accountTransactions : throw new InvalidOperationException(Resources.Error_IasOperationsAreNotAllowed);
 
 
         /// <summary>
@@ -66,16 +97,16 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
                 throw new ArgumentException(Resources.Error_BaseUrlIsRequired, nameof(options));
             }
 
-            UserInfo = new UserInfoClient<TContext>(HttpClient, Options);
-            Organization = new OrganizationInfoClient<TContext>(HttpClient, Options);
-            AccountTransactions = new AccountTransactionsClient<TContext>(HttpClient, Options);
+            _userInfo = new UserInfoClient<TContext>(HttpClient, Options);
+            _organization = new OrganizationInfoClient<TContext>(HttpClient, Options);
+            _accountTransactions = new AccountTransactionsClient<TContext>(HttpClient, Options);
         }
 
 
         /// <summary>
         /// Creates a <see cref="DelegatingHandler"/> that can be added to an <see cref="HttpClient"/> 
         /// message pipeline, that will set the <c>Authorize</c> header on outgoing requests based 
-        /// on the <typeparamref name="TContext"/> object passed to an <see cref="IndustrialAppStoreHttpClient"/> 
+        /// on the <typeparamref name="TContext"/> object passed to an <see cref="IndustrialAppStoreHttpClient{TContext}"/> 
         /// method.
         /// </summary>
         /// <param name="callback">

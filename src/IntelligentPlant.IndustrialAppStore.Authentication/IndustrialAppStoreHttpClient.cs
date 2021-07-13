@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.IndustrialAppStore.Client;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,9 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
     /// user.
     /// </summary>
     public class IndustrialAppStoreHttpClient : IndustrialAppStoreHttpClient<HttpContext> {
+
+        /// <inheritdoc/>
+        public override bool AllowIasApiOperations { get; }
 
         /// <summary>
         /// Creates a new <see cref="IndustrialAppStoreHttpClient"/> object.
@@ -29,11 +33,19 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <param name="options">
         ///   The HTTP client options.
         /// </param>
+        /// <param name="authenticationOptions">
+        ///   The authentication options for the host app. When the <see cref="IndustrialAppStoreAuthenticationOptions.UseExternalAuthentication"/> 
+        ///   property is <see langword="true"/>, the <see cref="AllowIasApiOperations"/> flag will be 
+        ///   set to <see langword="false"/>.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="options"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="authenticationOptions"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         ///   <see cref="DataCoreHttpClientOptions.DataCoreUrl"/> on <paramref name="options"/> is 
@@ -43,8 +55,17 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   <see cref="IndustrialAppStoreHttpClientOptions.IndustrialAppStoreUrl"/> on 
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public IndustrialAppStoreHttpClient(HttpClient httpClient, IndustrialAppStoreHttpClientOptions options) 
-            : base(httpClient, options) { }
+        public IndustrialAppStoreHttpClient(
+            HttpClient httpClient, 
+            IndustrialAppStoreHttpClientOptions options, 
+            IndustrialAppStoreAuthenticationOptions authenticationOptions
+        ) : base(httpClient, options) { 
+            if (authenticationOptions == null) {
+                throw new ArgumentNullException(nameof(authenticationOptions));
+            }
+
+            AllowIasApiOperations = !authenticationOptions.UseExternalAuthentication;
+        }
 
 
         /// <summary>
