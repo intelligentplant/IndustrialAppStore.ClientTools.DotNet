@@ -14,9 +14,13 @@ you want to deploy an on-premises app rather than an Industrial App Store app.
       </security>
       <aspNetCore>
         <environmentVariables xdt:Transform="InsertIfMissing">
+          <!-- 
+          The following parameter tells your app that is is running in on-premises mode instead of 
+          Industrial App Store mode.
+          -->
           <environmentVariable name="IAS__USEEXTERNALAUTHENTICATION" value="true" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
           <!-- 
-          Update the following two items to specify the URL of your on-premises Data Core API 
+          Update the following two parameters to specify the URL of your on-premises Data Core API 
           instance. You *must* include a trailing / at the end of the URL!
           -->
           <environmentVariable name="IAS__DATACOREURL" value="http://localhost:8080/" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
