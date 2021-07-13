@@ -165,10 +165,10 @@ By default, your app is configured to use the Industrial App Store for both auth
 
 The project contains the following debugging profiles in its [launchSettings.json](./Properties/launchSettings.json) file:
 
-- Kestrel (IAS Authentication)
-- IIS Express (Windows Authentication)
+- Kestrel (IAS Mode)
+- IIS Express (On-Premises Mode)
 
-The Kestrel profile is used to run and debug your application using ASP.NET Core's Kestrel web server, using the Industrial App Store for authentication and data queries, whereas the IIS Express profile is used to run and debug your application using IIS Express, using Windows authentication and a local Data Core API instance for data queries.
+The Kestrel profile is used to run and debug your application in Industrial App Store Mode. It runs ASP.NET Core's Kestrel web server, using the Industrial App Store for authentication and data queries. The IIS Express profile is used to run and debug your application in on-premises mode. It runs IIS Express, using Windows authentication and a local Data Core API instance for data queries.
 
 > The IIS Express profile in `launchSettings.json` is commented out by default; uncomment it if you are developing an on-premises app.
 
