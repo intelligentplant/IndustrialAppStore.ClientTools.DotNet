@@ -149,7 +149,7 @@ If you choose the second option, the `appsettings.json` file is updated as follo
 
 # Preparing Your App For Publication
 
-The project contains a Visual Studio publish profile (found in `Properties/PublishProfiles/IndustrialAppStoreAuth.pubxml`) that can be used to build your app using the Release configuration and create a set of files that can be copied to your deployment destination.
+The project contains a Visual Studio [publish profile](./Properties/PublishProfiles/IndustrialAppStoreAuth.pubxml) that can be used to build your app using the Release configuration and create a set of files that can be copied to your deployment destination.
 
 See [here](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/visual-studio-publish-profiles#publish-profiles) for more information about publish profiles.
 
@@ -186,9 +186,9 @@ You can detect if your app is running in Industrial App Store or on-premises mod
 
 When running in Industrial App Store mode, your app will automatically add a bearer token to outgoing requests made on behalf of the calling user, allowing the Industrial App Store to authenticate and authorize the request on a per-user basis. When running in on-premises mode, the default network credentials (i.e. [CredentialCache.DefaultNetworkCredentials](https://docs.microsoft.com/en-us/dotnet/api/system.net.credentialcache.defaultnetworkcredentials)) are added to outgoing HTTP requests instead.
 
-> Note that this means that it may not be possible to pass through the identity of the calling user to calls to the on-premises Data Core API. It may be required to apply your own authorization scheme when running in on-premises mode in order to restrict access to data sources configured in the Data Core API.
+> Note that the differences in API authentication mean that it may not be possible to perform per-user authentication when calling the on-premises Data Core API. You should be prepared to apply your own authorization scheme when running in on-premises mode in order to restrict access to the data sources configured in the Data Core API where appropriate.
 
 
 ### Publish Profile for On-Premises Deployment
 
-The `Properties/PublishProfiles/IISWindowsAuth.pubxml` publish profile can be used to prepare your app for publishing to an on-premises instance of IIS.
+In addition to the [Industrial App Store publish profile](./Properties/PublishProfiles/IndustrialAppStoreAuth.pubxml) described above, the project also contains an [alternative publish profile](./Properties/PublishProfiles/IISWindowsAuth.pubxml) publish profile can be used to prepare your app for publishing to an on-premises instance of IIS.
