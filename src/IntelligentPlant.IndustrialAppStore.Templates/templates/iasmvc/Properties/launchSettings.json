@@ -7,7 +7,7 @@
     }
   },
   "profiles": {
-    "Kestrel (IAS Authentication)": {
+    "Kestrel (IAS Mode)": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "https://localhost:44300",
@@ -16,7 +16,7 @@
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"
       }
     },
-    //"IIS Express (Windows Authentication)": {
+    //"IIS Express (On-Premises Mode)": {
     //  "commandName": "IISExpress",
     //  "launchBrowser": true,
     //  "environmentVariables": {
