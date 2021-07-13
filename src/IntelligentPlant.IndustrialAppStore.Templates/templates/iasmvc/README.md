@@ -163,12 +163,14 @@ By default, your app is configured to use the Industrial App Store for both auth
 
 ## Debugging an On-Premises App
 
-The Visual Studio solution for your app contains two debugging profiles:
+The project contains the following debugging profiles in its [launchSettings.json](./Properties/launchSettings.json) file:
 
 - Kestrel (IAS Authentication)
 - IIS Express (Windows Authentication)
 
 The Kestrel profile is used to run and debug your application using ASP.NET Core's Kestrel web server, using the Industrial App Store for authentication and data queries, whereas the IIS Express profile is used to run and debug your application using IIS Express, using Windows authentication and a local Data Core API instance for data queries.
+
+> The IIS Express profile in `launchSettings.json` is commented out by default; uncomment it if you are developing an on-premises app.
 
 
 ## Differences Between Industrial App Store and On-Premises Apps
