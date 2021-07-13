@@ -27,6 +27,8 @@ You can also create applications that run against an on-premises instance of the
 
 # API Client Operations
 
+Documentation about specific API operations can be found in the following pages:
+
 - [Getting Started](./Getting-Started.md)
 - [Requesting Data Sources](./Requesting-Data-Sources.md)
 - [Tag Searches](./Tag-Searches.md)
