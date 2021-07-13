@@ -110,7 +110,7 @@ public async Task<IActionResult> Index(
 }
 ```
 
-The `IndustrialAppStoreHttpClient` uses a service called `ITokenStore` to automatically retrieve the Industrial App Store access token from the calling user's `HttpContext` and add it to outgoing requests made on behalf of the calling user.
+The `IndustrialAppStoreHttpClient` uses a service called `ITokenStore` to automatically retrieve an Industrial App Store access token from the calling user's `HttpContext` and add it to outgoing requests made on behalf of the calling user.
 
 > The `ITokenStore` service is not used to authenticate outgoing requests if your app is running in on-premises mode rather than Industrial App Store mode. See below for more details.
 
