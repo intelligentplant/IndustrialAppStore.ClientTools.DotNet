@@ -156,7 +156,7 @@ See [here](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/visual-s
 
 # Creating an On-Premises App
 
-By default, your app is configured to use the Industrial App Store for authentication and as the Data Core API end point for data queries. However, it is also possible to write an app that is hosted on-premises, using Windows authentication and querying a local Data Core API instance instead of the Industrial App Store.
+By default, your app is configured to use the Industrial App Store for both authentication and as the end point for Data Core API queries. However, it is also possible to write an app that is hosted on-premises, using Windows authentication and querying a local Data Core API instance instead of the Industrial App Store.
 
 > If you want to develop an on-premises app (or an app that can be accessed both on-premises and through the Industrial App Store), please [contact Intelligent Plant](https://www.intelligentplant.com/contact-us) to request an on-premises Data Core API installation.
 
