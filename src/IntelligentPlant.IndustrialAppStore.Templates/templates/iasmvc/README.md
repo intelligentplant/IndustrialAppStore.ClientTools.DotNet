@@ -199,3 +199,5 @@ When running in Industrial App Store mode, your app will automatically add a bea
 ### Publish Profile for On-Premises Deployment
 
 In addition to the [Industrial App Store publish profile](./Properties/PublishProfiles/IndustrialAppStoreAuth.pubxml) described above, the project also contains an [on-premises publish profile](./Properties/PublishProfiles/IISWindowsAuth.pubxml) that can be used to prepare your app for publishing to an on-premises instance of IIS.
+
+The [IISWindowsAuth.transform](./IISWindowsAuth.transform) file is used to transform the application's [web.config](./web.config) file during an on-premises publish operation.
