@@ -95,4 +95,6 @@ Note that it is not possible to specify the client secret when creating the proj
 
 ## Writing an On-Premises App
 
-The `README.md` file created by the template in the project folder contains instructions for writing an on-premises app, as well as highlighting differences in behaviour between Industrial App Store and on-premises apps.
+The `README.md` file created by the template in the project folder contains instructions for writing an app that can use an on-premises Data Core API instance instead of (or in addition to) the Industrial App Store, as well as highlighting differences in behaviour between Industrial App Store and on-premises apps.
+
+> If you want to develop an on-premises app (or an app that can be accessed both on-premises and through the Industrial App Store), please [contact Intelligent Plant](https://www.intelligentplant.com/contact-us) to request an on-premises Data Core API installation.
