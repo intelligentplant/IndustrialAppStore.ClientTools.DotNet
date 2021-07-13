@@ -40,12 +40,12 @@ Please refer to the list below for details on how to configure the API client:
 
 ## App Authentication
 
-When running in on-premises mode, you must supply your own authentication mechanism. The [IAS ASP.NET Core template](/src/IntelligentPlant.IndustrialAppStore.Templates) makes it easy to switch between using the Industrial App Store for authentication and using Windows authentication via IIS.
+When running in on-premises mode, you must supply your own authentication mechanism. The app template referenced above makes it easy to switch between using the Industrial App Store for authentication when running in IAS mode, and using Windows authentication via IIS when running in on-premises mode.
 
 
 ## Data Core API Availability
 
-The Industrial App Store defines APIs for app billing, organisation, and user information queries. These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself. 
+The Industrial App Store defines APIs for app billing, organisation, and user information queries. These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself. The app template referenced above simplifies this task.
 
 
 ## Data Core API Authentication and Authorization
