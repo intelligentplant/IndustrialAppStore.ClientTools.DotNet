@@ -47,12 +47,12 @@ Documentation about specific API operations can be found in the following pages:
 When running in on-premises mode, you must supply your own authentication mechanism. The app template referenced above makes it easy to switch between using the Industrial App Store for authentication when running in IAS mode, and using Windows authentication via IIS when running in on-premises mode.
 
 
-## Data Core API Availability
+## API Availability
 
 The Industrial App Store defines APIs for app billing and organisation and user information queries. These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself. The app template referenced above simplifies this task.
 
 
-## Data Core API Authentication and Authorization
+## API Authentication and Authorization
 
 When running in Industrial App Store mode, your app will automatically add a bearer token to outgoing requests made on behalf of the calling user, allowing the Industrial App Store to authenticate and authorize the request on a per-user basis. When running in on-premises mode, the default network credentials (i.e. [CredentialCache.DefaultNetworkCredentials](https://docs.microsoft.com/en-us/dotnet/api/system.net.credentialcache.defaultnetworkcredentials)) are added to outgoing HTTP requests instead.
 

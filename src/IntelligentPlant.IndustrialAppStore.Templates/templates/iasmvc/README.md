@@ -186,7 +186,7 @@ You can detect if your app is running in Industrial App Store or on-premises mod
 > See the [AccountController.cs](./Controllers/AccountController.cs) file in this project for an example of how to perform the check as described above.
 
 
-### API Authentication
+### API Authentication and Authorization
 
 When running in Industrial App Store mode, your app will automatically add a bearer token to outgoing requests made on behalf of the calling user, allowing the Industrial App Store to authenticate and authorize the request on a per-user basis. When running in on-premises mode, the default network credentials (i.e. [CredentialCache.DefaultNetworkCredentials](https://docs.microsoft.com/en-us/dotnet/api/system.net.credentialcache.defaultnetworkcredentials)) are added to outgoing HTTP requests instead.
 
