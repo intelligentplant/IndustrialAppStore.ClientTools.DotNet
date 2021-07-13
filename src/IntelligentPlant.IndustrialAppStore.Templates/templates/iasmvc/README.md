@@ -179,7 +179,7 @@ The Kestrel profile is used to run and debug your application in Industrial App 
 
 ### API Availability
 
-The Industrial App Store defines APIs for app billing, organisation, and user information queries (accessed via the `AccountTransactions`, `Organization` and `UserInfo` properties on the `IndustrialAppStoreHttpClient` class respectively). These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself.
+The Industrial App Store defines APIs for app billing, and organisation and user information queries (accessed via the `AccountTransactions`, `Organization` and `UserInfo` properties on the `IndustrialAppStoreHttpClient` class respectively). These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself.
 
 You can detect if your app is running in Industrial App Store or on-premises mode by injecting the `IndustrialAppStoreAuthenticationOptions` service into your classes and getting the value of its `UseExternalAuthentication` property. The `UseExternalAuthentication` property will be `true` when your app is running in on-premises mode.
 

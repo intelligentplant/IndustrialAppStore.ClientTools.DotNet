@@ -49,7 +49,7 @@ When running in on-premises mode, you must supply your own authentication mechan
 
 ## Data Core API Availability
 
-The Industrial App Store defines APIs for app billing, organisation, and user information queries. These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself. The app template referenced above simplifies this task.
+The Industrial App Store defines APIs for app billing and organisation and user information queries. These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself. The app template referenced above simplifies this task.
 
 
 ## Data Core API Authentication and Authorization
