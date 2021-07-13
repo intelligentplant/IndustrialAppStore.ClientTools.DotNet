@@ -22,7 +22,7 @@ Please refer to the list below for details on how to configure the API client:
 
 You can also create applications that run against an on-premises instance of the Data Core API. The easiest way to do this is to create a project using the [IAS ASP.NET Core template](/src/IntelligentPlant.IndustrialAppStore.Templates) and following the instructions in your project's README file. See below for important differences between IAS apps and on-premises apps.
 
-> Important: if you want to develop an on-premises app (or an app that can be accessed both on-premises and through the Industrial App Store), please [contact Intelligent Plant](https://www.intelligentplant.com/contact-us) to request an on-premises Data Core API installation.
+> If you want to develop an on-premises app (or an app that can be accessed both on-premises and through the Industrial App Store), please [contact Intelligent Plant](https://www.intelligentplant.com/contact-us) to request an on-premises Data Core API installation.
 
 
 # API Client Operations
