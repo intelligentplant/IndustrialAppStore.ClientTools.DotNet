@@ -16,16 +16,16 @@
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"
       }
     },
-    "IIS Express (Windows Authentication)": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation",
-        "IAS__USEEXTERNALAUTHENTICATION": "true",
-        "IAS__DATACOREURL": "http://localhost:8080/",
-        "IAS__INDUSTRIALAPPSTOREURL": "http://localhost:8080/"
-      }
-    }
+    //"IIS Express (Windows Authentication)": {
+    //  "commandName": "IISExpress",
+    //  "launchBrowser": true,
+    //  "environmentVariables": {
+    //    "ASPNETCORE_ENVIRONMENT": "Development",
+    //    "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation",
+    //    "IAS__USEEXTERNALAUTHENTICATION": "true",
+    //    "IAS__DATACOREURL": "http://localhost:8080/",
+    //    "IAS__INDUSTRIALAPPSTOREURL": "http://localhost:8080/"
+    //  }
+    //}
   }
 }
