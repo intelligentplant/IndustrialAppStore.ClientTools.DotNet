@@ -184,7 +184,7 @@ The Industrial App Store defines APIs for app billing, and organisation and user
 You can detect if your app is running in Industrial App Store or on-premises mode using any of the following methods:
 
 1. Inject the `IndustrialAppStoreAuthenticationOptions` service into your class and get the value of its `UseExternalAuthentication` property. The `UseExternalAuthentication` property will be `true` when your app is running in on-premises mode.
-2. Inject the `IndustrialAppStoreHttpClient` service into your class and get the value of its `AllowIasApiOperations` property. The `AllowIasApiOperations` property will be `false` when your app is running in on-premises mode
+2. Inject the `IndustrialAppStoreHttpClient` service into your class and get the value of its `AllowIasApiOperations` property. The `AllowIasApiOperations` property will be `false` when your app is running in on-premises mode.
 
 > See the [AccountController.cs](./Controllers/AccountController.cs) file in this project for an example of how to perform the check using the first method described above.
 
