@@ -20,7 +20,9 @@ Please refer to the list below for details on how to configure the API client:
 - IAS applications written with ASP.NET Core should use the [IntelligentPlant.IndustrialAppStore.Authentication](/src/IntelligentPlant.IndustrialAppStore.Authentication) library. Apps created using the [IAS ASP.NET Core template](/src/IntelligentPlant.IndustrialAppStore.Templates) are pre-configured to use this library.
 - IAS applications written in .NET without ASP.NET Core should use the [IntelligentPlant.IndustrialAppStore.HttpClient](/src/IntelligentPlant.IndustrialAppStore.HttpClient) library.
 
-> You can also create applications that run against an on-premises instance of the Data Core API. The easiest way to do this is to create a project using the [IAS ASP.NET Core template](/src/IntelligentPlant.IndustrialAppStore.Templates) and following the instructions in your project's README file.
+You can also create applications that run against an on-premises instance of the Data Core API. The easiest way to do this is to create a project using the [IAS ASP.NET Core template](/src/IntelligentPlant.IndustrialAppStore.Templates) and following the instructions in your project's README file. See below for important differences between IAS apps and on-premises apps.
+
+> Important: if you want to develop an on-premises app (or an app that can be accessed both on-premises and through the Industrial App Store), please [contact Intelligent Plant](https://www.intelligentplant.com/contact-us) to request an on-premises Data Core API installation.
 
 
 # API Client Operations
