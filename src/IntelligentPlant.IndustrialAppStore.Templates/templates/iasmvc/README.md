@@ -75,9 +75,9 @@ Alternatively, you can specify the client secret directly in the `appsettings.js
 __NOTE THAT IT IS STRONGLY RECOMMENDED THAT YOU DO NOT STORE CLIENT SECRETS IN THE `appsettings.json` FILE!__
 
 
-# Calling IAS APIs
+# Calling Data Core and Industrial App Store APIs
 
-To call Industrial App Store APIs, inject the `IndustrialAppStoreHttpClient` into your controllers, for example:
+To call Data Core and Industrial App Store APIs, inject the `IndustrialAppStoreHttpClient` into your controllers, for example:
 
 ```csharp
 [Authorize]
@@ -111,6 +111,8 @@ public async Task<IActionResult> Index(
 ```
 
 The `IndustrialAppStoreHttpClient` uses a service called `ITokenStore` to automatically retrieve the Industrial App Store access token from the calling user's `HttpContext` and add it to outgoing requests made on behalf of the calling user.
+
+> The `ITokenStore` service is not used to authenticate outgoing requests if your app is running in on-premises mode rather than Industrial App Store mode. See below for more details.
 
 
 # Advanced Configuration
