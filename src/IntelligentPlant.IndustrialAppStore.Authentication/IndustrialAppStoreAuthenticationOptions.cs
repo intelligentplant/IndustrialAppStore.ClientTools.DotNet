@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using IntelligentPlant.IndustrialAppStore.Client;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
@@ -89,6 +91,13 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// since the last time the user signed in.
         /// </summary>
         public bool ShowConsentPrompt { get; set; }
+
+        /// <summary>
+        /// A callback that can be used to customise the <see cref="IHttpClientBuilder"/> 
+        /// registration used by the <see cref="IndustrialAppStoreHttpClient"/> application 
+        /// service.
+        /// </summary>
+        public Action<IHttpClientBuilder> ConfigureHttpClient { get; set; }
 
     }
 }

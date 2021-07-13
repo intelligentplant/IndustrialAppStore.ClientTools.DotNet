@@ -1,6 +1,4 @@
-﻿using System;
-
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -29,8 +27,13 @@ namespace ExampleMvcApplication {
                 // Bind the settings from the app configuration to the Industrial App Store 
                 // authentication options.
                 Configuration.GetSection("IAS").Bind(options);
-                // Set the login path to be our login page.
+
+                // Specify the path to be our login page.
                 options.LoginPath = new PathString("/Account/Login");
+
+                // The IndustrialAppStoreAuthenticationOptions.ConfigureHttpClient property can be
+                // used to customise the HttpClient that is used for Data Core API calls e.g. 
+                //options.ConfigureHttpClient = builder => builder.AddHttpMessageHandler<MyCustomHandler>();
             });
 
             if (Configuration.GetValue<bool>("IAS:UseExternalAuthentication")) {

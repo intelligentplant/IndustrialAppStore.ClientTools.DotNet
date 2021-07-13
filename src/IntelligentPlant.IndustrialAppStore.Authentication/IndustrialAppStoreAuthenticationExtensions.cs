@@ -144,6 +144,8 @@ namespace Microsoft.Extensions.DependencyInjection {
                 .AddIndustrialAppStoreOAuthAuthentication(opts);
             }
 
+            opts.ConfigureHttpClient?.Invoke(httpBuilder);
+
             return services;
         }
 
