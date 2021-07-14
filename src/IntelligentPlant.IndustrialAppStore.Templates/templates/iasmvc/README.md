@@ -104,6 +104,18 @@ The `IndustrialAppStoreHttpClient` uses a service called `ITokenStore` to automa
 > The `ITokenStore` service is not used to authenticate outgoing requests if your app is running in on-premises mode rather than Industrial App Store mode. See below for more details.
 
 
+# Debugging Your App
+
+The project contains the following Visual Studio debugging profiles in its [launchSettings.json](./Properties/launchSettings.json) file:
+
+- `Kestrel (IAS Mode)`
+- `IIS Express (On-Premises Mode)` (disabled by default)
+
+The Kestrel profile is used to run and debug your application in Industrial App Store Mode. It runs ASP.NET Core's Kestrel web server, using the Industrial App Store for authentication and data queries. The IIS Express profile is used to run and debug your application in on-premises mode. It runs IIS Express, using Windows authentication and a local Data Core API instance for data queries.
+
+> See below for more information about writing an on-premises app. The IIS Express profile in `launchSettings.json` is commented out by default; There is no need to uncomment it unless you are writing an on-premises app.
+
+
 # Advanced Configuration
 
 ## Scopes
@@ -150,18 +162,6 @@ See [here](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/visual-s
 By default, your app is configured to use the Industrial App Store for both authentication and as the end point for Data Core API queries. However, it is also possible to write an app that is hosted on-premises, using Windows authentication and querying a local Data Core API instance instead of the Industrial App Store.
 
 > If you want to develop an on-premises app (or an app that can be deployed both on-premises and through the Industrial App Store), please [contact Intelligent Plant](https://www.intelligentplant.com/contact-us) to request an on-premises Data Core API installation.
-
-
-## Debugging an On-Premises App
-
-The project contains the following debugging profiles in its [launchSettings.json](./Properties/launchSettings.json) file:
-
-- Kestrel (IAS Mode)
-- IIS Express (On-Premises Mode)
-
-The Kestrel profile is used to run and debug your application in Industrial App Store Mode. It runs ASP.NET Core's Kestrel web server, using the Industrial App Store for authentication and data queries. The IIS Express profile is used to run and debug your application in on-premises mode. It runs IIS Express, using Windows authentication and a local Data Core API instance for data queries.
-
-> The IIS Express profile in `launchSettings.json` is commented out by default; uncomment it if you are developing an on-premises app.
 
 
 ## Differences Between Industrial App Store and On-Premises Apps
