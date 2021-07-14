@@ -111,7 +111,9 @@ The project contains the following Visual Studio debugging profiles in its [laun
 - `Kestrel (IAS Mode)`
 - `IIS Express (On-Premises Mode)` (disabled by default)
 
-The Kestrel profile is used to run and debug your application in Industrial App Store Mode. It runs ASP.NET Core's Kestrel web server, using the Industrial App Store for authentication and data queries. The IIS Express profile is used to run and debug your application in on-premises mode. It runs IIS Express, using Windows authentication and a local Data Core API instance for data queries.
+The Kestrel profile is used to run and debug your application in Industrial App Store mode. It runs ASP.NET Core's Kestrel web server, using the Industrial App Store for authentication and data queries. 
+
+The IIS Express profile is used to run and debug your application in on-premises mode. It runs IIS Express, using Windows authentication and a local Data Core API instance for data queries.
 
 > See below for more information about writing an on-premises app. The IIS Express profile in `launchSettings.json` is commented out by default; There is no need to uncomment it unless you are writing an on-premises app.
 
