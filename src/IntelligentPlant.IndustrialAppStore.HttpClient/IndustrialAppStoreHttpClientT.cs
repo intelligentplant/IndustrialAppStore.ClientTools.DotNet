@@ -43,7 +43,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         /// <exception cref="InvalidOperationException">
         ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
         /// </exception>
-        public UserInfoClient<TContext> UserInfo => AllowIasApiOperations ? _userInfo : throw new InvalidOperationException(Resources.Error_IasOperationsAreNotAllowed);
+        public UserInfoClient<TContext> UserInfo => AssertIasOperationAllowed(_userInfo);
 
         /// <summary>
         /// The client for retrieving information about the authenticated user's organization.
@@ -51,7 +51,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         /// <exception cref="InvalidOperationException">
         ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
         /// </exception>
-        public OrganizationInfoClient<TContext> Organization => AllowIasApiOperations ? _organization : throw new InvalidOperationException(Resources.Error_IasOperationsAreNotAllowed);
+        public OrganizationInfoClient<TContext> Organization => AssertIasOperationAllowed(_organization);
 
         /// <summary>
         /// The client for performing account transactions.
@@ -59,7 +59,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         /// <exception cref="InvalidOperationException">
         ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
         /// </exception>
-        public AccountTransactionsClient<TContext> AccountTransactions => AllowIasApiOperations ? _accountTransactions : throw new InvalidOperationException(Resources.Error_IasOperationsAreNotAllowed);
+        public AccountTransactionsClient<TContext> AccountTransactions => AssertIasOperationAllowed(_accountTransactions);
 
 
         /// <summary>
@@ -100,6 +100,48 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
             _userInfo = new UserInfoClient<TContext>(HttpClient, Options);
             _organization = new OrganizationInfoClient<TContext>(HttpClient, Options);
             _accountTransactions = new AccountTransactionsClient<TContext>(HttpClient, Options);
+        }
+
+
+        /// <summary>
+        /// Throws an <see cref="InvalidOperationException"/> if <see cref="AllowIasApiOperations"/> 
+        /// is <see langword="false"/>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </exception>
+        protected void AssertIasOperationAllowed() {
+            if (!AllowIasApiOperations) {
+                throw new InvalidOperationException(Resources.Error_IasOperationsAreNotAllowed);
+            }
+        }
+
+
+        /// <summary>
+        /// Returns the specified <paramref name="value"/> if <see cref="AllowIasApiOperations"/> 
+        /// is <see langword="true"/>, or throws an <see cref="InvalidOperationException"/> if 
+        /// <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </summary>
+        /// <typeparam name="T">
+        ///   The value type.
+        /// </typeparam>
+        /// <param name="value">
+        ///   The value to return.
+        /// </param>
+        /// <returns>
+        ///   The <paramref name="value"/>.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </exception>
+        /// <remarks>
+        ///   Call this method to guard against attempts to perform Industrial App Store-specific 
+        ///   operations when an app is running in on-premises mode.
+        /// </remarks>
+        protected T AssertIasOperationAllowed<T>(T value) {
+            AssertIasOperationAllowed();
+
+            return value;
         }
 
 
