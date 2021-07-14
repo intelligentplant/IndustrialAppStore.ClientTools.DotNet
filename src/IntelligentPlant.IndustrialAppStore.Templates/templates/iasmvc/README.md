@@ -168,6 +168,9 @@ By default, your app is configured to use the Industrial App Store for both auth
 
 ## Differences Between Industrial App Store and On-Premises Apps
 
+There are some notable differences between Industrial App Store and on-premises apps. Please read the following sections carefully.
+
+
 ### API Availability
 
 The Industrial App Store defines APIs for app billing, and organisation and user information queries (accessed via the `AccountTransactions`, `Organization` and `UserInfo` properties on the `IndustrialAppStoreHttpClient` class respectively). These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself.
