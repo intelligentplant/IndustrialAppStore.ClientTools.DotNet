@@ -11,6 +11,10 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
+
+    /// <summary>
+    /// Extenrions for <see cref="AuthenticationProperties"/>.
+    /// </summary>
     public static class AuthenticationPropertiesExtensions {
 
         /// <inheritdoc/>
@@ -52,7 +56,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 ["refresh_token"] = refreshToken
             };
 
-#if NETCOREAPP3_1
+#if NETCOREAPP
             tokenRequestParameters["client_id"] = options.ClientId;
             if (!string.IsNullOrWhiteSpace(options.ClientSecret) && !string.Equals(options.ClientSecret, IndustrialAppStoreAuthenticationExtensions.DefaultClientSecret, StringComparison.OrdinalIgnoreCase)) {
                 tokenRequestParameters["client_secret"] = options.ClientSecret;
@@ -70,7 +74,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
             var refreshResponse = await backchannel.SendAsync(refreshRequest, cancellationToken);
 
-#if NETCOREAPP3_1_OR_GREATER
+#if NETCOREAPP
             var tokenResponseJson = System.Text.Json.JsonDocument.Parse(await refreshRequest.Content.ReadAsStreamAsync());
 #else
             var tokenResponseJson = Newtonsoft.Json.Linq.JObject.Parse(await refreshResponse.Content.ReadAsStringAsync());

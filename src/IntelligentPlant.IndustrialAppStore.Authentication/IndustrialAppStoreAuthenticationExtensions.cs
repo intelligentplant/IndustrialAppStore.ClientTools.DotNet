@@ -21,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection {
     /// </summary>
     public static class IndustrialAppStoreAuthenticationExtensions {
 
-#if NETCOREAPP3_1_OR_GREATER
+#if NETCOREAPP
         /// <summary>
         /// A client secret must always be specified in the OAuth options, but it is possible that 
         /// the app has not been issued with a client secret and is using PKCE, so it is still able 
@@ -189,7 +189,7 @@ namespace Microsoft.Extensions.DependencyInjection {
 
                     options.ClientId = opts.ClientId;
                     options.ClientSecret = opts.ClientSecret;
-#if NETCOREAPP3_1_OR_GREATER
+#if NETCOREAPP
                     options.UsePkce = true;
                     // Microsoft OAuth authentication middleware requires a client secret to be 
                     // specified, even when PKCE is being used. This can be any non-empty value; 
@@ -241,7 +241,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                             var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
                             response.EnsureSuccessStatusCode();
 
-#if NETCOREAPP3_1_OR_GREATER
+#if NETCOREAPP
                             var user = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(
                                 await response.Content.ReadAsStringAsync()
                             );
