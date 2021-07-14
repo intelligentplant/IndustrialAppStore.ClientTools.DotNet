@@ -49,9 +49,6 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <param name="clock">
         ///   The system clock.
         /// </param>
-        /// <param name="logger">
-        ///   The logger for the service.
-        /// </param>
         public DefaultTokenStore(
             IndustrialAppStoreAuthenticationOptions options, 
             HttpClient httpClient, 

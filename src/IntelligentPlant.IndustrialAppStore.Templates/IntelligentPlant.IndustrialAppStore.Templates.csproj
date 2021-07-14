@@ -26,8 +26,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="templates\iasmvc\web.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="ExampleMvcApplication.csproj.in">
       <DependentUpon>templates\iasmvc\ExampleMvcApplication.csproj</DependentUpon>
+    </None>
+    <None Update="templates\iasmvc\Properties\PublishProfiles\IISWindowsAuth.pubxml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+    <None Update="templates\iasmvc\Properties\PublishProfiles\IndustrialAppStoreAuth.pubxml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
 

@@ -17,7 +17,12 @@ Client libraries are managed using [LibMan](https://docs.microsoft.com/en-us/asp
 
 # Getting Started
 
+## Register as an App Developer
+
 If you have not done so already, you can register as an Industrial App Store developer [here](https://appstore.intelligentplant.com/Developer/RegisterDeveloper).
+
+
+## Create App Registration
 
 Once you have registered as a developer, you can create a new app registration for your app. Make a note of the app ID that is generated for your app. You will also need to add the following redirect URL to the app registration:
 
@@ -34,6 +39,9 @@ Next, update the default scopes requested by your app on the app registration pa
 
 In order for this app to function correctly, both "Personal Info" and "Data Read" scopes must be requested.
 
+
+## Configure App Settings
+
 Next, you must update the `appsettings.json` file (in the same folder as this README):
 
 ```json
@@ -45,7 +53,7 @@ Next, you must update the `appsettings.json` file (in the same folder as this RE
 ```
 
 
-## Client Secrets
+### Client Secrets
 
 If you generated a secret key for your app, use the [ASP.NET Core Secret Manager](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets) to save the secret using the following command:
 
@@ -53,23 +61,12 @@ If you generated a secret key for your app, use the [ASP.NET Core Secret Manager
 
 > Note that the Secret Manager is intended for use in development environments only; you should use a secure store such as [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) to keep secrets safe in production environments.
 
-Alternatively, you can specify the client secret directly in the `appsettings.json` file:
-
-```json
-{
-    "IAS": {
-        "ClientId": "<YOUR CLIENT ID>",
-        "ClientSecret": "<YOUR CLIENT SECRET>"
-    }
-}
-```
-
-__NOTE THAT IT IS STRONGLY RECOMMENDED THAT YOU DO NOT STORE CLIENT SECRETS IN THE `appsettings.json` FILE!__
+__DO NOT STORE CLIENT SECRETS IN THE `appsettings.json` FILE OR IN ANY OTHER FILE THAT IS CHECKED INTO SOURCE CONTROL!__
 
 
-# Calling IAS APIs
+# Calling Data Core and Industrial App Store APIs
 
-To call Industrial App Store APIs, inject the `IndustrialAppStoreHttpClient` into your controllers, for example:
+To call Data Core and Industrial App Store APIs, inject the `IndustrialAppStoreHttpClient` into your controllers, for example:
 
 ```csharp
 [Authorize]
@@ -102,7 +99,23 @@ public async Task<IActionResult> Index(
 }
 ```
 
-The `IndustrialAppStoreHttpClient` uses a service called `ITokenStore` to automatically retrieve the Industrial App Store access token from the calling user's `HttpContext` and add it to outgoing requests made on behalf of the calling user.
+The `IndustrialAppStoreHttpClient` uses a service called `ITokenStore` to automatically retrieve an Industrial App Store access token from the calling user's `HttpContext` and add it to outgoing requests made on behalf of the calling user.
+
+> The `ITokenStore` service is not used to authenticate outgoing requests if your app is running in on-premises mode rather than Industrial App Store mode. See below for more details.
+
+
+# Debugging Your App
+
+The project contains the following Visual Studio debugging profiles in its [launchSettings.json](./Properties/launchSettings.json) file:
+
+- `Kestrel (IAS Mode)`
+- `IIS Express (On-Premises Mode)` (disabled by default)
+
+The Kestrel profile is used to run and debug your application in Industrial App Store mode. It runs ASP.NET Core's Kestrel web server, using the Industrial App Store for authentication and data queries. 
+
+The IIS Express profile is used to run and debug your application in on-premises mode. It runs IIS Express, using Windows authentication and a local Data Core API instance for data queries.
+
+> See below for more information about writing an on-premises app. The IIS Express profile in `launchSettings.json` is commented out by default; There is no need to uncomment it unless you are writing an on-premises app.
 
 
 # Advanced Configuration
@@ -138,3 +151,47 @@ If you choose the second option, the `appsettings.json` file is updated as follo
     }
 }
 ```
+
+# Preparing Your App For Publication
+
+The project contains a Visual Studio [publish profile](./Properties/PublishProfiles/IndustrialAppStoreAuth.pubxml) that can be used to build your app using the Release configuration and create a set of files that can be copied to your deployment destination.
+
+See [here](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/visual-studio-publish-profiles#publish-profiles) for more information about publish profiles.
+
+
+# Creating an On-Premises App
+
+By default, your app is configured to use the Industrial App Store for both authentication and as the end point for Data Core API queries. However, it is also possible to write an app that is hosted on-premises, using Windows authentication and querying a local Data Core API instance instead of the Industrial App Store.
+
+> If you want to develop an on-premises app (or an app that can be deployed both on-premises and through the Industrial App Store), please [contact Intelligent Plant](https://www.intelligentplant.com/contact-us) to request an on-premises Data Core API installation.
+
+
+## Differences Between Industrial App Store and On-Premises Apps
+
+There are some notable differences between Industrial App Store and on-premises apps. Please read the following sections carefully.
+
+
+### API Availability
+
+The Industrial App Store defines APIs for app billing, and organisation and user information queries (accessed via the `AccountTransactions`, `Organization` and `UserInfo` properties on the `IndustrialAppStoreHttpClient` class respectively). These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself.
+
+You can detect if your app is running in Industrial App Store or on-premises mode using any of the following methods:
+
+1. Inject the `IndustrialAppStoreAuthenticationOptions` service into your class and get the value of its `UseExternalAuthentication` property. The `UseExternalAuthentication` property will be `true` when your app is running in on-premises mode.
+2. Inject the `IndustrialAppStoreHttpClient` service into your class and get the value of its `AllowIasApiOperations` property. The `AllowIasApiOperations` property will be `false` when your app is running in on-premises mode.
+
+> See the [AccountController.cs](./Controllers/AccountController.cs) file in this project for an example of how to perform the check using the first method described above.
+
+
+### API Authentication and Authorization
+
+When running in Industrial App Store mode, your app will automatically add a bearer token to outgoing requests made on behalf of the calling user, allowing the Industrial App Store to authenticate and authorize the request on a per-user basis. When running in on-premises mode, the default network credentials (i.e. [CredentialCache.DefaultNetworkCredentials](https://docs.microsoft.com/en-us/dotnet/api/system.net.credentialcache.defaultnetworkcredentials)) are added to outgoing HTTP requests instead.
+
+> Note that the differences in API authentication mean that it may not be possible to perform per-user authentication when calling the on-premises Data Core API. You should be prepared to apply your own authorization scheme when running in on-premises mode in order to restrict access to the data sources configured in the Data Core API where appropriate.
+
+
+### Publish Profile for On-Premises Deployment
+
+In addition to the [Industrial App Store publish profile](./Properties/PublishProfiles/IndustrialAppStoreAuth.pubxml) described above, the project also contains an [on-premises publish profile](./Properties/PublishProfiles/IISWindowsAuth.pubxml) that can be used to prepare your app for publishing to an on-premises instance of IIS.
+
+The [IISWindowsAuth.transform](./IISWindowsAuth.transform) file is used to transform the application's [web.config](./web.config) file during an on-premises publish operation.

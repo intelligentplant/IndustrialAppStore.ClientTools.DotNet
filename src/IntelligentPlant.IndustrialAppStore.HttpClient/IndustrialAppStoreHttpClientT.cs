@@ -16,19 +16,50 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
     public class IndustrialAppStoreHttpClient<TContext> : DataCoreHttpClient<TContext, IndustrialAppStoreHttpClientOptions> {
 
         /// <summary>
+        /// Specifies if Industrial App Store-specific API operations are allowed. When <see langword="false"/>, 
+        /// attempts to access the <see cref="UserInfo"/>, <see cref="Organization"/> and <see cref="AccountTransactions"/> 
+        /// properties will cause an <see cref="InvalidOperationException"/> to be thrown.
+        /// </summary>
+        public virtual bool AllowIasApiOperations => true;
+
+        /// <summary>
         /// The client for retrieving information about the authenticated user.
         /// </summary>
-        public UserInfoClient<TContext> UserInfo { get; }
+        private readonly UserInfoClient<TContext> _userInfo;
 
         /// <summary>
         /// The client for retrieving information about the authenticated user's organization.
         /// </summary>
-        public OrganizationInfoClient<TContext> Organization { get; }
+        private readonly OrganizationInfoClient<TContext> _organization;
 
         /// <summary>
         /// The client for performing account transactions.
         /// </summary>
-        public AccountTransactionsClient<TContext> AccountTransactions { get; }
+        private readonly AccountTransactionsClient<TContext> _accountTransactions;
+
+        /// <summary>
+        /// The client for retrieving information about the authenticated user.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </exception>
+        public UserInfoClient<TContext> UserInfo => AssertIasOperationAllowed(_userInfo);
+
+        /// <summary>
+        /// The client for retrieving information about the authenticated user's organization.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </exception>
+        public OrganizationInfoClient<TContext> Organization => AssertIasOperationAllowed(_organization);
+
+        /// <summary>
+        /// The client for performing account transactions.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </exception>
+        public AccountTransactionsClient<TContext> AccountTransactions => AssertIasOperationAllowed(_accountTransactions);
 
 
         /// <summary>
@@ -66,16 +97,58 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
                 throw new ArgumentException(Resources.Error_BaseUrlIsRequired, nameof(options));
             }
 
-            UserInfo = new UserInfoClient<TContext>(HttpClient, Options);
-            Organization = new OrganizationInfoClient<TContext>(HttpClient, Options);
-            AccountTransactions = new AccountTransactionsClient<TContext>(HttpClient, Options);
+            _userInfo = new UserInfoClient<TContext>(HttpClient, Options);
+            _organization = new OrganizationInfoClient<TContext>(HttpClient, Options);
+            _accountTransactions = new AccountTransactionsClient<TContext>(HttpClient, Options);
+        }
+
+
+        /// <summary>
+        /// Throws an <see cref="InvalidOperationException"/> if <see cref="AllowIasApiOperations"/> 
+        /// is <see langword="false"/>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </exception>
+        protected void AssertIasOperationAllowed() {
+            if (!AllowIasApiOperations) {
+                throw new InvalidOperationException(Resources.Error_IasOperationsAreNotAllowed);
+            }
+        }
+
+
+        /// <summary>
+        /// Returns the specified <paramref name="value"/> if <see cref="AllowIasApiOperations"/> 
+        /// is <see langword="true"/>, or throws an <see cref="InvalidOperationException"/> if 
+        /// <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </summary>
+        /// <typeparam name="T">
+        ///   The value type.
+        /// </typeparam>
+        /// <param name="value">
+        ///   The value to return.
+        /// </param>
+        /// <returns>
+        ///   The <paramref name="value"/>.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        ///   <see cref="AllowIasApiOperations"/> is <see langword="false"/>.
+        /// </exception>
+        /// <remarks>
+        ///   Call this method to guard against attempts to perform Industrial App Store-specific 
+        ///   operations when an app is running in on-premises mode.
+        /// </remarks>
+        protected T AssertIasOperationAllowed<T>(T value) {
+            AssertIasOperationAllowed();
+
+            return value;
         }
 
 
         /// <summary>
         /// Creates a <see cref="DelegatingHandler"/> that can be added to an <see cref="HttpClient"/> 
         /// message pipeline, that will set the <c>Authorize</c> header on outgoing requests based 
-        /// on the <typeparamref name="TContext"/> object passed to an <see cref="IndustrialAppStoreHttpClient"/> 
+        /// on the <typeparamref name="TContext"/> object passed to an <see cref="IndustrialAppStoreHttpClient{TContext}"/> 
         /// method.
         /// </summary>
         /// <param name="callback">

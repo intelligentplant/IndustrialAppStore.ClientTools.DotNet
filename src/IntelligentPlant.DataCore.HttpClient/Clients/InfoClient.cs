@@ -23,6 +23,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="httpClient">
         ///   The HTTP client to use.
         /// </param>
+        /// <param name="options">
+        ///   The HTTP client options to use.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
         /// </exception>

@@ -133,6 +133,9 @@
   <data name="Error_BaseUrlIsRequired" xml:space="preserve">
     <value>A base Industrial App Store API URL must be provided.</value>
   </data>
+  <data name="Error_IasOperationsAreNotAllowed" xml:space="preserve">
+    <value>Industrial App Store operations have been disabled for this client.</value>
+  </data>
   <data name="RefundUserResponse_Message_Failed" xml:space="preserve">
     <value>Refund Failed: {0}</value>
     <comment>{0} - reason</comment>
