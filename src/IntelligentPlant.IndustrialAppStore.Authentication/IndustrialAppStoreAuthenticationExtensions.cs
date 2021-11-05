@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
 
+using HttpHandlerType = System.Net.Http.SocketsHttpHandler;
+
 namespace Microsoft.Extensions.DependencyInjection {
 
     /// <summary>
@@ -21,7 +23,6 @@ namespace Microsoft.Extensions.DependencyInjection {
     /// </summary>
     public static class IndustrialAppStoreAuthenticationExtensions {
 
-#if NETCOREAPP
         /// <summary>
         /// A client secret must always be specified in the OAuth options, but it is possible that 
         /// the app has not been issued with a client secret and is using PKCE, so it is still able 
@@ -29,11 +30,10 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// client secret in the OAuth options so that the options pass validation.
         /// </summary>
         internal const string DefaultClientSecret = "IndustrialAppStore";
-#endif
+
 
         /// <summary>
         /// Adds Industrial App Store authentication and required services to the application. 
-        /// Register your app at https://appstore.intelligentplant.com!
         /// </summary>
         /// <param name="services">
         ///   The <see cref="IServiceCollection"/>.
@@ -50,10 +50,44 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="configure"/> is <see langword="null"/>.
         /// </exception>
+        /// <remarks>
+        ///   Register your app <a href="https://appstore.intelligentplant.com">here</a>!
+        /// </remarks>
         public static IServiceCollection AddIndustrialAppStoreAuthentication(
             this IServiceCollection services,
             Action<IndustrialAppStoreAuthenticationOptions> configure
         ) {
+            return services.AddIndustrialAppStoreAuthentication<DefaultTokenStore>(configure);
+        }
+
+
+        /// <summary>
+        /// Adds Industrial App Store authentication and required services to the application, 
+        /// using a custom <see cref="ITokenStore"/> implementation to store and retrieve access 
+        /// tokens for signed-in users. 
+        /// </summary>
+        /// <param name="services">
+        ///   The <see cref="IServiceCollection"/>.
+        /// </param>
+        /// <param name="configure">
+        ///   A callback that is used to configure the authentication options.
+        /// </param>
+        /// <returns>
+        ///   The <see cref="IServiceCollection"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="services"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="configure"/> is <see langword="null"/>.
+        /// </exception>
+        /// <remarks>
+        ///   Register your app <a href="https://appstore.intelligentplant.com">here</a>!
+        /// </remarks>
+        public static IServiceCollection AddIndustrialAppStoreAuthentication<TTokenStore>(
+            this IServiceCollection services,
+            Action<IndustrialAppStoreAuthenticationOptions> configure
+        ) where TTokenStore : TokenStore {
             if (services == null) {
                 throw new ArgumentNullException(nameof(services));
             }
@@ -72,8 +106,18 @@ namespace Microsoft.Extensions.DependencyInjection {
             });
 
             services.AddHttpContextAccessor();
-            services.AddHttpClient<ITokenStore, DefaultTokenStore>();
+            services.AddSession();
 
+            // HTTP client for backchannel communication with IAS.
+            services.AddHttpClient("ias_backchannel");
+
+            // ITokenStore is a scoped service, so that we get one per HTTP request.
+            services.AddScoped<ITokenStore, TTokenStore>(sp => {
+                var http = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ias_backchannel");
+                return ActivatorUtilities.CreateInstance<TTokenStore>(sp, http);
+            });
+
+            // HTTP client used by IndustrialAppStoreHttpClient.
             var httpBuilder = services.AddHttpClient<IndustrialAppStoreHttpClient>(options => {
                 options.BaseAddress = new Uri(opts.DataCoreUrl);
             });
@@ -81,7 +125,7 @@ namespace Microsoft.Extensions.DependencyInjection {
             if (opts.UseExternalAuthentication) {
                 services.AddAuthentication();
                 httpBuilder.ConfigurePrimaryHttpMessageHandler(() => {
-                    var result = new HttpClientHandler() {
+                    var result = new HttpHandlerType() {
                         Credentials = System.Net.CredentialCache.DefaultNetworkCredentials
                     };
 
@@ -124,19 +168,15 @@ namespace Microsoft.Extensions.DependencyInjection {
 
                     options.Events = new CookieAuthenticationEvents() {
                         OnValidatePrincipal = async ctx => {
-                            var httpClientFactory = ctx.HttpContext.RequestServices.GetRequiredService<IHttpClientFactory>();
-                            var httpClient = httpClientFactory.CreateClient(nameof(DefaultTokenStore));
-                            var accessToken = await ctx.Properties.GetAccessTokenAsync(
-                                ctx.HttpContext.RequestServices.GetRequiredService<IndustrialAppStoreAuthenticationOptions>(),
-                                httpClient,
-                                ctx.HttpContext.RequestServices.GetRequiredService<ISystemClock>(),
-                                ctx.HttpContext.RequestAborted
-                            );
+                            var tokenStore = ctx.HttpContext.RequestServices.GetRequiredService<ITokenStore>();
+                            await InitTokenStoreAsync(tokenStore, ctx.Principal, ctx.Properties);
 
-                            if (string.IsNullOrWhiteSpace(accessToken)) {
-                            // We do not have a valid access token for the calling user, so we 
-                            // will consider the cookie to be invalid.
-                            ctx.RejectPrincipal();
+                            var accessToken = await tokenStore.GetTokensAsync();
+
+                            if (accessToken == null) {
+                                // We do not have a valid access token for the calling user, so we 
+                                // will consider the cookie to be invalid.
+                                ctx.RejectPrincipal();
                             }
                         }
                     };
@@ -151,8 +191,7 @@ namespace Microsoft.Extensions.DependencyInjection {
 
 
         /// <summary>
-        /// Adds Industrial App Store authentication to the application. Register your app at 
-        /// https://appstore.intelligentplant.com!
+        /// Adds Industrial App Store authentication to the application.
         /// </summary>
         /// <param name="builder">
         ///   The authentication builder.
@@ -189,7 +228,7 @@ namespace Microsoft.Extensions.DependencyInjection {
 
                     options.ClientId = opts.ClientId;
                     options.ClientSecret = opts.ClientSecret;
-#if NETCOREAPP
+
                     options.UsePkce = true;
                     // Microsoft OAuth authentication middleware requires a client secret to be 
                     // specified, even when PKCE is being used. This can be any non-empty value; 
@@ -197,7 +236,6 @@ namespace Microsoft.Extensions.DependencyInjection {
                     if (string.IsNullOrWhiteSpace(options.ClientSecret)) {
                         options.ClientSecret = DefaultClientSecret;
                     }
-#endif
 
                     foreach (var scope in opts.Scope) {
                         options.Scope.Add(scope);
@@ -209,11 +247,46 @@ namespace Microsoft.Extensions.DependencyInjection {
                     options.ClaimActions.MapJsonKey(IndustrialAppStoreAuthenticationDefaults.OrgNameClaimType, "org");
                     options.ClaimActions.MapJsonKey(IndustrialAppStoreAuthenticationDefaults.PictureClaimType, "picUrl");
 
-                    // Save the tokens into authentication ticket properties.
-                    options.SaveTokens = true;
-
                     options.Events = new OAuthEvents() {
-                        OnRedirectToAuthorizationEndpoint = context => {
+                        OnAccessDenied = async context => {
+                            if (opts.Events?.OnAccessDenied != null) {
+                                await opts.Events.OnAccessDenied(context);
+                            }
+                        },
+                        OnCreatingTicket = async context => {
+                            if (opts.Events?.OnCreatingTicket != null) {
+                                await opts.Events.OnCreatingTicket(context);
+                            }
+
+                            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+                            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+
+                            var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
+                            response.EnsureSuccessStatusCode();
+
+                            var user = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(
+                                await response.Content.ReadAsStringAsync()
+                            );
+
+                            context.RunClaimActions(user);
+
+                            // Add session ID claim to identity. This can be used by custom
+                            // ITokenStore implementations to distinguish between different login
+                            // sessions from the same account.
+                            var sessionId = Guid.NewGuid().ToString("N");
+                            context.Identity.AddClaim(new Claim(IndustrialAppStoreAuthenticationDefaults.AppSessionIdClaimType, sessionId));
+
+                            var tokenStore = (TokenStore) context.HttpContext.RequestServices.GetRequiredService<ITokenStore>();
+                            var tokens = tokenStore.CreateOAuthTokens(context.TokenType, context.AccessToken, context.ExpiresIn, context.RefreshToken);
+
+                            context.HttpContext.Items["ias_tokens"] = tokens;
+                        },
+                        OnRedirectToAuthorizationEndpoint = async context => {
+                            if (opts.Events?.OnRedirectToAuthorizationEndpoint != null) {
+                                await opts.Events.OnRedirectToAuthorizationEndpoint(context);
+                            }
+
                             var queryParameters = new Dictionary<string, string>();
 
                             if (opts.ShowConsentPrompt) {
@@ -231,31 +304,43 @@ namespace Microsoft.Extensions.DependencyInjection {
                             }
 
                             context.Response.Redirect(context.RedirectUri);
-                            return Task.CompletedTask;
                         },
-                        OnCreatingTicket = async context => {
-                            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-                            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+                        OnRemoteFailure = async context => { 
+                            if (opts.Events?.OnRemoteFailure != null) {
+                                await opts.Events.OnRemoteFailure(context);
+                            }
+                        },
+                        OnTicketReceived = async context => {
+                            if (opts.Events?.OnTicketReceived != null) {
+                                await opts.Events.OnTicketReceived(context);
+                            }
 
-                            var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
-                            response.EnsureSuccessStatusCode();
+                            if (!context.HttpContext.Items.TryGetValue("ias_tokens", out var o) || o == null) {
+                                return;
+                            }
+                            var tokens = (OAuthTokens) o;
 
-#if NETCOREAPP
-                            var user = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(
-                                await response.Content.ReadAsStringAsync()
-                            );
-#else
-                            var user = Newtonsoft.Json.Linq.JObject.Parse(await response.Content.ReadAsStringAsync());
-#endif
+                            context.HttpContext.Items.Remove("ias_tokens");
 
-                            context.RunClaimActions(user);
+                            var tokenStore = context.HttpContext.RequestServices.GetRequiredService<ITokenStore>();
+                            await InitTokenStoreAsync(tokenStore, context.Principal, context.Properties);
+
+                            await tokenStore.SaveTokensAsync(tokens);
                         }
                     };
                 }
             );
 
             return builder;
+        }
+
+
+        private static async ValueTask InitTokenStoreAsync(ITokenStore tokenStore, ClaimsPrincipal principal, AuthenticationProperties properties) {
+            if (tokenStore is TokenStore ts) {
+                var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+                var sessionId = principal.FindFirstValue(IndustrialAppStoreAuthenticationDefaults.AppSessionIdClaimType);
+                await ts.InitAsync(userId, sessionId, properties);
+            }
         }
 
     }

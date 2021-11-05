@@ -120,6 +120,9 @@
   <data name="AuthDefaults_DisplayName" xml:space="preserve">
     <value>Industrial App Store</value>
   </data>
+  <data name="Error_AuthenticationSessionIsRequired" xml:space="preserve">
+    <value>Request is not authenticated.</value>
+  </data>
   <data name="Log_ErrorDuringRefreshTokenRequest" xml:space="preserve">
     <value>Error while refreshing access token.</value>
   </data>

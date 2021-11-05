@@ -70,6 +70,15 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Request is not authenticated..
+        /// </summary>
+        internal static string Error_AuthenticationSessionIsRequired {
+            get {
+                return ResourceManager.GetString("Error_AuthenticationSessionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error while refreshing access token..
         /// </summary>
         internal static string Log_ErrorDuringRefreshTokenRequest {
