@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authentication;
@@ -27,9 +28,30 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         private readonly HttpClient _backchannelHttpClient;
 
         /// <summary>
+        /// Flags if <see cref="ITokenStore.InitAsync"/> has been called.
+        /// </summary>
+        private int _initialised;
+
+        /// <summary>
         /// The system clock.
         /// </summary>
         internal ISystemClock Clock { get; }
+
+        /// <summary>
+        /// The user ID for the token store.
+        /// </summary>
+        protected string UserId { get; private set; }
+
+        /// <summary>
+        /// The session ID for the token store.
+        /// </summary>
+        protected string SessionId { get; private set; }
+
+        /// <summary>
+        /// The <see cref="Microsoft.AspNetCore.Authentication.AuthenticationProperties"/> for the 
+        /// token store.
+        /// </summary>
+        protected AuthenticationProperties AuthenticationProperties { get; private set; }
 
 
         /// <summary>
@@ -55,26 +77,34 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         }
 
 
-        /// <summary>
-        /// Initialises the token store for the specified user session.
-        /// </summary>
-        /// <param name="userId">
-        ///   The user ID.
-        /// </param>
-        /// <param name="sessionId">
-        ///   The session ID.
-        /// </param>
-        /// <param name="properties">
-        ///   The authentication properties for the user session.
-        /// </param>
-        /// <returns>
-        ///   A <see cref="ValueTask"/> that will initialise the token store.
-        /// </returns>
-        protected internal abstract ValueTask InitAsync(string userId, string sessionId, AuthenticationProperties properties);
+        async ValueTask ITokenStore.InitAsync(string userId, string sessionId, AuthenticationProperties properties) {
+            if (userId == null) {
+                throw new ArgumentNullException(nameof(userId));
+            }
+            if (sessionId == null) {
+                throw new ArgumentNullException(nameof(sessionId));
+            }
+            if (properties == null) {
+                throw new ArgumentNullException(nameof(properties));
+            }
+            if (Interlocked.CompareExchange(ref _initialised, 1, 0) != 0) {
+                throw new InvalidOperationException(Resources.Error_TokenStoreHasAlreadyBeenInitialised);
+            }
+
+            UserId = userId;
+            SessionId = sessionId;
+            AuthenticationProperties = properties;
+
+            await InitAsync();
+        }
 
 
         /// <inheritdoc/>
         async ValueTask<OAuthTokens?> ITokenStore.GetTokensAsync() {
+            if (_initialised == 0) {
+                throw new InvalidOperationException(Resources.Error_TokenStoreHasNotBeenInitialised);
+            }
+
             var oauthTokens = await GetTokensAsync();
             
             if (string.IsNullOrWhiteSpace(oauthTokens?.AccessToken)) {
@@ -117,6 +147,9 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
         /// <inheritdoc/>
         async ValueTask ITokenStore.SaveTokensAsync(OAuthTokens tokens) {
+            if (_initialised == 0) {
+                throw new InvalidOperationException(Resources.Error_TokenStoreHasNotBeenInitialised);
+            }
             await SaveTokensAsync(tokens);
         }
 
@@ -165,25 +198,35 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
 
         /// <summary>
-        /// Gets the OAuth tokens for the current context.
+        /// Initialises the token store for the configured user session.
         /// </summary>
         /// <returns>
-        ///   A <see cref="Task{TResult}"/> that will return the associated <see cref="OAuthTokens"/> 
-        ///   for the identity.
+        ///   A <see cref="ValueTask"/> that will initialise the token store.
         /// </returns>
-        protected abstract Task<OAuthTokens?> GetTokensAsync();
+        protected abstract ValueTask InitAsync();
 
 
         /// <summary>
-        /// Saves the OAuth tokens for the current context.
+        /// Gets the tokens associated with the authenticated user.
+        /// </summary>
+        /// <returns>
+        ///   A <see cref="ValueTask{TResult}"/> that will return either the tokens for the 
+        ///   authenticated user, or <see langword="null"/> if the access token is unavailable or 
+        ///   has expired.
+        /// </returns>
+        protected abstract ValueTask<OAuthTokens?> GetTokensAsync();
+
+
+        /// <summary>
+        /// Saves tokens associated with the authenticated user.
         /// </summary>
         /// <param name="tokens">
-        ///   The tokens.
+        ///   The tokens to save.
         /// </param>
         /// <returns>
-        ///   A <see cref="Task"/> that will save the tokens.
+        ///   A <see cref="ValueTask"/> that will save the tokens.
         /// </returns>
-        protected internal abstract Task SaveTokensAsync(OAuthTokens tokens);
+        protected internal abstract ValueTask SaveTokensAsync(OAuthTokens tokens);
 
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Authentication;
+
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
     /// <summary>
@@ -8,13 +10,31 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
     /// </summary>
     /// <remarks>
     ///   <see cref="ITokenStore"/> is registered as a scoped service. All <see cref="ITokenStore"/> 
-    ///   implementations must inherit from <see cref="TokenStore"/>.
+    ///   implementations should inherit from <see cref="TokenStore"/>.
     /// </remarks>
     /// <seealso cref="TokenStore"/>
     public interface ITokenStore {
 
         /// <summary>
-        /// Gets the access token for the authenticated user.
+        /// Initialises the <see cref="ITokenStore"/> using the specified settings.
+        /// </summary>
+        /// <param name="userId">
+        ///   The user ID of the authenticated user.
+        /// </param>
+        /// <param name="sessionId">
+        ///   The login session ID for the authenticated user.
+        /// </param>
+        /// <param name="properties">
+        ///   The <see cref="AuthenticationProperties"/> for the authenticated user.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="ValueTask"/> that will perform any required implementation-specific 
+        ///   initialisation.
+        /// </returns>
+        ValueTask InitAsync(string userId, string sessionId, AuthenticationProperties properties);
+
+        /// <summary>
+        /// Gets the tokens associated with the authenticated user.
         /// </summary>
         /// <returns>
         ///   A <see cref="ValueTask{TResult}"/> that will return either the tokens for the 
@@ -24,7 +44,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ValueTask<OAuthTokens?> GetTokensAsync();
 
         /// <summary>
-        /// Saves tokens for the authenticated user.
+        /// Saves tokens associated with the authenticated user.
         /// </summary>
         /// <param name="tokens">
         ///   The tokens to save.

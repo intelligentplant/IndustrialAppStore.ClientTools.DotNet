@@ -33,7 +33,9 @@ namespace Microsoft.Extensions.DependencyInjection {
 
 
         /// <summary>
-        /// Adds Industrial App Store authentication and required services to the application. 
+        /// Adds Industrial App Store authentication and required services to the application, 
+        /// using a default <see cref="ITokenStore"/> implementation that stores access tokens 
+        /// in the application's session cookies. 
         /// </summary>
         /// <param name="services">
         ///   The <see cref="IServiceCollection"/>.
@@ -72,6 +74,9 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <param name="configure">
         ///   A callback that is used to configure the authentication options.
         /// </param>
+        /// <param name="factory">
+        ///   An optional factory method for creating an instance of <typeparamref name="TTokenStore"/>.
+        /// </param>
         /// <returns>
         ///   The <see cref="IServiceCollection"/>.
         /// </returns>
@@ -86,8 +91,9 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// </remarks>
         public static IServiceCollection AddIndustrialAppStoreAuthentication<TTokenStore>(
             this IServiceCollection services,
-            Action<IndustrialAppStoreAuthenticationOptions> configure
-        ) where TTokenStore : TokenStore {
+            Action<IndustrialAppStoreAuthenticationOptions> configure,
+            Func<IServiceProvider, HttpClient, TTokenStore> factory = null
+        ) where TTokenStore : class, ITokenStore {
             if (services == null) {
                 throw new ArgumentNullException(nameof(services));
             }
@@ -114,7 +120,9 @@ namespace Microsoft.Extensions.DependencyInjection {
             // ITokenStore is a scoped service, so that we get one per HTTP request.
             services.AddScoped<ITokenStore, TTokenStore>(sp => {
                 var http = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ias_backchannel");
-                return ActivatorUtilities.CreateInstance<TTokenStore>(sp, http);
+                return factory == null 
+                    ? ActivatorUtilities.CreateInstance<TTokenStore>(sp, http)
+                    : factory.Invoke(sp, http);
             });
 
             // HTTP client used by IndustrialAppStoreHttpClient.
@@ -335,12 +343,25 @@ namespace Microsoft.Extensions.DependencyInjection {
         }
 
 
+        /// <summary>
+        /// Initialises the token store using the specified principal and authentication properties.
+        /// </summary>
+        /// <param name="tokenStore">
+        ///   The token store.
+        /// </param>
+        /// <param name="principal">
+        ///   The principal to retrieve the user ID and session ID from.
+        /// </param>
+        /// <param name="properties">
+        ///   The authentication properties.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="ValueTask"/> that will initialise the token store.
+        /// </returns>
         private static async ValueTask InitTokenStoreAsync(ITokenStore tokenStore, ClaimsPrincipal principal, AuthenticationProperties properties) {
-            if (tokenStore is TokenStore ts) {
-                var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-                var sessionId = principal.FindFirstValue(IndustrialAppStoreAuthenticationDefaults.AppSessionIdClaimType);
-                await ts.InitAsync(userId, sessionId, properties);
-            }
+            var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            var sessionId = principal.FindFirstValue(IndustrialAppStoreAuthenticationDefaults.AppSessionIdClaimType);
+            await tokenStore.InitAsync(userId, sessionId, properties);
         }
 
     }

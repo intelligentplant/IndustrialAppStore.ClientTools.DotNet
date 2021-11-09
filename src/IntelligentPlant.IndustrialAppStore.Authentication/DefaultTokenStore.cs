@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
@@ -16,9 +13,6 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
     /// authentication session.
     /// </summary>
     internal class DefaultTokenStore : TokenStore {
-
-        private AuthenticationProperties _authProperties;
-
 
         /// <summary>
         /// Creates a new <see cref="DefaultTokenStore"/> object.
@@ -39,40 +33,38 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ) : base(options, httpClient, clock) { }
 
 
-        protected internal override ValueTask InitAsync(string userId, string sessionId, AuthenticationProperties properties) {
-            _authProperties = properties;
-            return new ValueTask();
+        /// <inheritdoc/>
+        protected override ValueTask InitAsync() {
+            return default;
         }
 
 
-        protected override Task<OAuthTokens?> GetTokensAsync() {
-            if (_authProperties == null) {
-                throw new InvalidOperationException(Resources.Error_AuthenticationSessionIsRequired);
-            }
-
-            var accessToken = _authProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.AccessTokenName);
+        /// <inheritdoc/>
+        protected override ValueTask<OAuthTokens?> GetTokensAsync() {
+            var accessToken = AuthenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.AccessTokenName);
             if (string.IsNullOrWhiteSpace(accessToken)) {
-                return null;
+                return new ValueTask<OAuthTokens?>();
             }
 
-            var tokenType = _authProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.TokenTypeTokenName);
+            var tokenType = AuthenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.TokenTypeTokenName);
 
-            var expiresAt = _authProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.ExpiresAtTokenName);
+            var expiresAt = AuthenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.ExpiresAtTokenName);
             DateTimeOffset? accessTokenExpiry = null;
 
             if (!string.IsNullOrWhiteSpace(expiresAt) && DateTimeOffset.TryParseExact(expiresAt, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var exp)) {
                 accessTokenExpiry = exp;
             }
 
-            var refreshToken = _authProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.RefreshTokenName);
+            var refreshToken = AuthenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.RefreshTokenName);
 
-            return Task.FromResult((OAuthTokens?) new OAuthTokens(tokenType, accessToken, refreshToken, accessTokenExpiry));
+            return new ValueTask<OAuthTokens?>(new OAuthTokens(tokenType, accessToken, refreshToken, accessTokenExpiry));
         }
 
 
-        protected internal override Task SaveTokensAsync(OAuthTokens tokens) {
-            if (_authProperties == null) {
-                throw new InvalidOperationException(Resources.Error_AuthenticationSessionIsRequired);
+        /// <inheritdoc/>
+        protected internal override ValueTask SaveTokensAsync(OAuthTokens tokens) {
+            if (AuthenticationProperties == null) {
+                throw new InvalidOperationException(Resources.Error_TokenStoreHasNotBeenInitialised);
             }
  
             var authTokens = new List<AuthenticationToken>();
@@ -105,9 +97,9 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 });
             }
 
-            _authProperties.StoreTokens(authTokens);
+            AuthenticationProperties.StoreTokens(authTokens);
 
-            return Task.CompletedTask;
+            return default;
         }
 
     }

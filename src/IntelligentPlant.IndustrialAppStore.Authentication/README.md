@@ -85,11 +85,6 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
 ```
 
 
-# PKCE
-
-If you are using ASP.NET Core 3.0 or greater, [PKCE](https://oauth.net/2/pkce/) support is automatically enabled.
-
-
 # Calling Industrial App Store APIs
 
 The `IndustrialAppStoreHttpClient` service is automatically registered with the dependency injection container to allow you to call Industrial App Store (and Data Core) APIs. When calling API methods, you must pass the `HttpContext` for the calling user to allow the client to use the caller's IAS access token to authorize the call:
@@ -118,3 +113,44 @@ public class ExampleController : ControllerBase {
 ```
 
 Refer to the [API client documentation](/docs/data-core-api-client) for more details on available API calls.
+
+
+# Using a Custom Token Store
+
+The [ITokenStore](./ITokenStore.cs) service is used to store and retrieve Industrial App Store access tokens for calling users. The [default implementation](./DefaultTokenStore.cs) uses the ASP.NET Core `AuthenticationProperties` from the calling user's authentication ticket to hold the user's access token, meaning that the token is stored in the browser's session cookie.
+
+Under many circumstances, this approach is perfectly valid. However, if your application performs some sort of background data processing on behalf of a user (e.g. an app that periodically retrieves historian data, performs some calculations, and then writes the calculation results back to an Edge Historian), you will need to provide a custom `ITokenStore` implementation so that access tokens (and refresh tokens) can be persisted to somewhere other than a user's browser session cookie.
+
+>> **NOTE:**
+>> Access tokens and refresh tokens should be treated with the same level of security as passwords. They should never be persisted without being encrypted first.
+
+An example project showing how to write a custom `ITokenStore` implementation that uses Entity Framework Core to persist tokens to a SQLite database can be found [here](../../samples/CustomTokenStoreExample).
+
+When writing a custom `ITokenStore`, you can inherit from the abstract [TokenStore](./TokenStore.cs) base class. The custom token store type is then specified when adding Industrial App Store authentication to your project:
+
+```csharp
+services.AddIndustrialAppStoreAuthentication<MyCustomTokenStore>(options => {
+    // Bind the settings from the app configuration to the Industrial App Store 
+    // authentication options.
+    Configuration.GetSection("IAS").Bind(options);
+    // Set the login path to be our login page.
+    options.LoginPath = new PathString("/Account/Login");
+});
+```
+
+You can also provide a factory function to create the token store instance:
+
+```csharp
+services.AddIndustrialAppStoreAuthentication<MyCustomTokenStore>(
+    options => {
+        // Bind the settings from the app configuration to the Industrial App Store 
+        // authentication options.
+        Configuration.GetSection("IAS").Bind(options);
+        // Set the login path to be our login page.
+        options.LoginPath = new PathString("/Account/Login");
+    }, 
+    (serviceProvider, httpClient) => ActivatorUtils.CreateInstance<MyCustomTokenStore>(serviceProvider, httpClient)
+);
+```
+
+>> The `ITokenStore` service is always registered as a *scoped* service.

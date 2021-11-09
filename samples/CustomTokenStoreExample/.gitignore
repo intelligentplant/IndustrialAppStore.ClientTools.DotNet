@@ -1,0 +1,6 @@
+﻿# Exclude static lib files
+wwwroot/lib/*
+
+# Allow specific publish profiles that do not include any credentials
+!Properties/PublishProfiles/IISWindowsAuth.pubxml
+!Properties/PublishProfiles/IndustrialAppStoreAuth.pubxml
