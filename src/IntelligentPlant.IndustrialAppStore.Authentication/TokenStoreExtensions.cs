@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
@@ -26,24 +26,13 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
             if (tokenStore == null) {
                 throw new ArgumentNullException(nameof(tokenStore));
             }
-            
+
             var accessToken = await tokenStore.GetTokensAsync();
             if (string.IsNullOrWhiteSpace(accessToken?.AccessToken)) {
                 return null;
             }
 
             return new AuthenticationHeaderValue("Bearer", accessToken.Value.AccessToken);
-        }
-
-
-        internal static OAuthTokens CreateOAuthTokens(this TokenStore tokenStore, string tokenType, string accessToken, TimeSpan? expiresIn, string refreshToken) {
-            DateTimeOffset? utcExpiresAt = null;
-
-            if (expiresIn != null) {
-                utcExpiresAt = tokenStore.Clock.UtcNow.Add(expiresIn.Value);
-            }
-
-            return new OAuthTokens(tokenType, accessToken, refreshToken, utcExpiresAt);
         }
 
     }

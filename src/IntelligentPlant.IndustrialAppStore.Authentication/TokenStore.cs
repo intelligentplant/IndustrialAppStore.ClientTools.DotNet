@@ -28,14 +28,14 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         private readonly HttpClient _backchannelHttpClient;
 
         /// <summary>
+        /// The system clock.
+        /// </summary>
+        private readonly ISystemClock _clock;
+
+        /// <summary>
         /// Flags if <see cref="ITokenStore.InitAsync"/> has been called.
         /// </summary>
         private int _initialised;
-
-        /// <summary>
-        /// The system clock.
-        /// </summary>
-        internal ISystemClock Clock { get; }
 
         /// <summary>
         /// The user ID for the token store.
@@ -73,10 +73,11 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ) {
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _backchannelHttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            Clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
 
+        /// <inheritdoc/>
         async ValueTask ITokenStore.InitAsync(string userId, string sessionId, AuthenticationProperties properties) {
             if (userId == null) {
                 throw new ArgumentNullException(nameof(userId));
@@ -128,17 +129,14 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 return null;
             }
 
-            var tokensResponse = await UseRefreshTokenAsync(oauthTokens.Value.RefreshToken);
-
-            DateTimeOffset? utcExpiresAt = null;
-
-            if (!string.IsNullOrEmpty(tokensResponse.ExpiresIn)) {
-                if (int.TryParse(tokensResponse.ExpiresIn, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)) {
-                    utcExpiresAt = Clock.UtcNow.AddSeconds(value);
-                }
-            }
-
-            var tokens = new OAuthTokens(tokensResponse.TokenType, tokensResponse.AccessToken, tokensResponse.RefreshToken, utcExpiresAt);
+            var tokens = await UseRefreshTokenAsync(
+                oauthTokens.Value.RefreshToken, 
+                _options.ClientId, 
+                _options.ClientSecret, 
+                _options.GetTokenEndpoint(), 
+                _backchannelHttpClient, 
+                _clock
+            );
             await SaveTokensAsync(tokens);
 
             return tokens;
@@ -160,40 +158,124 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <param name="refreshToken">
         ///   The refresh token.
         /// </param>
+        /// <param name="clientId">
+        ///   The OAuth client ID for the application.
+        /// </param>
+        /// <param name="clientSecret">
+        ///   The OAuth client secret for the application. Can be <see langword="null"/>.
+        /// </param>
+        /// <param name="tokenEndpoint">
+        ///   The OAuth token endpoint to use.
+        /// </param>
+        /// <param name="httpClient">
+        ///   The HTTP client to use.
+        /// </param>
+        /// <param name="clock">
+        ///   The system clock to use when determining the expiry time for the new access token.
+        /// </param>
         /// <returns>
         ///   The OAuth token response.
         /// </returns>
-        private async Task<OAuthTokenResponse> UseRefreshTokenAsync(string refreshToken) {
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="refreshToken"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="clientId"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="tokenEndpoint"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="httpClient"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="clock"/> is <see langword="null"/>.
+        /// </exception>
+        public static async Task<OAuthTokens> UseRefreshTokenAsync(
+            string refreshToken,
+            string clientId,
+            string clientSecret,
+            string tokenEndpoint,
+            HttpClient httpClient,
+            ISystemClock clock
+        ) {
+            if (refreshToken == null) {
+                throw new ArgumentNullException(nameof(refreshToken));
+            }
+            if (clientId == null) {
+                throw new ArgumentNullException(nameof(clientId));
+            }
+            if (tokenEndpoint == null) {
+                throw new ArgumentNullException(nameof(tokenEndpoint));
+            }
+            if (httpClient == null) {
+                throw new ArgumentNullException(nameof(httpClient));
+            }
+            if (clock == null) {
+                throw new ArgumentNullException(nameof(clock));
+            }
+
             var tokenRequestParameters = new Dictionary<string, string>() {
                 ["grant_type"] = "refresh_token",
                 ["refresh_token"] = refreshToken
             };
 
-#if NETCOREAPP
-            tokenRequestParameters["client_id"] = _options.ClientId;
-            if (!string.IsNullOrWhiteSpace(_options.ClientSecret) && !string.Equals(_options.ClientSecret, IndustrialAppStoreAuthenticationExtensions.DefaultClientSecret, StringComparison.OrdinalIgnoreCase)) {
-                tokenRequestParameters["client_secret"] = _options.ClientSecret;
+            tokenRequestParameters["client_id"] = clientId;
+            if (!string.IsNullOrWhiteSpace(clientSecret) && !string.Equals(clientSecret, IndustrialAppStoreAuthenticationExtensions.DefaultClientSecret, StringComparison.OrdinalIgnoreCase)) {
+                tokenRequestParameters["client_secret"] = clientSecret;
             }
-#else
-            tokenRequestParameters["client_id"] = _options.ClientId;
-            tokenRequestParameters["client_secret"] = _options.ClientSecret;
-#endif
 
             var refreshRequestContent = new FormUrlEncodedContent(tokenRequestParameters);
-            var refreshRequest = new HttpRequestMessage(HttpMethod.Post, _options.GetTokenEndpoint()) {
+            var refreshRequest = new HttpRequestMessage(HttpMethod.Post, tokenEndpoint) {
                 Content = refreshRequestContent
             };
             refreshRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var refreshResponse = await _backchannelHttpClient.SendAsync(refreshRequest, default);
+            var refreshResponse = await httpClient.SendAsync(refreshRequest, default);
+            refreshResponse.EnsureSuccessStatusCode();
 
-#if NETCOREAPP
-            var tokenResponseJson = System.Text.Json.JsonDocument.Parse(await refreshRequest.Content.ReadAsStreamAsync());
-#else
-            var tokenResponseJson = Newtonsoft.Json.Linq.JObject.Parse(await refreshResponse.Content.ReadAsStringAsync());
-#endif
+            var tokenResponseJson = System.Text.Json.JsonDocument.Parse(await refreshResponse.Content.ReadAsStreamAsync());
+            var tokensResponse = OAuthTokenResponse.Success(tokenResponseJson);
 
-            return OAuthTokenResponse.Success(tokenResponseJson);
+            TimeSpan? expiresIn = null;
+            if (int.TryParse(tokensResponse.ExpiresIn, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)) {
+                expiresIn = TimeSpan.FromSeconds(value);
+            }
+
+            var tokens = CreateOAuthTokens(tokensResponse.TokenType, tokensResponse.AccessToken, expiresIn, tokensResponse.RefreshToken, clock);
+            return tokens;
+        }
+
+
+        /// <summary>
+        /// Creates a new <see cref="OAuthTokens"/> instance.
+        /// </summary>
+        /// <param name="tokenType">
+        ///   The access token type.
+        /// </param>
+        /// <param name="accessToken">
+        ///   The access token.
+        /// </param>
+        /// <param name="expiresIn">
+        ///   The token validity period.
+        /// </param>
+        /// <param name="refreshToken">
+        ///   The refresh token.
+        /// </param>
+        /// <param name="clock">
+        ///   The system clock.
+        /// </param>
+        /// <returns>
+        ///   A new <see cref="OAuthTokens"/> instance.
+        /// </returns>
+        internal static OAuthTokens CreateOAuthTokens(string tokenType, string accessToken, TimeSpan? expiresIn, string refreshToken, ISystemClock clock) {
+            DateTimeOffset? utcExpiresAt = null;
+
+            if (expiresIn != null) {
+                utcExpiresAt = clock.UtcNow.Add(expiresIn.Value);
+            }
+
+            return new OAuthTokens(tokenType, accessToken, refreshToken, utcExpiresAt);
         }
 
 
