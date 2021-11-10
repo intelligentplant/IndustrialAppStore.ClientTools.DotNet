@@ -44,10 +44,12 @@ After selecting the template, you will be prompted to select a project location 
 
 ![Visual Studio 2022 template parameters window](./img/template_parameters.png)
 
+The template will create a new ASP.NET Core MVC application that is pre-configured to use the Industrial App Store for authentication. The `README.md` file for the new project provides additional instructions for completing the setup.
+
 
 # Creating an App using `dotnet new`
 
-After your app registration has been completed, you can create a new C# project using the `dotnet new` command from the command line as follows:
+If you are not using Visual Studio 2022, you can create a new C# project using the `dotnet new` command from the command line as follows:
 
 ```
 mkdir MyNewApp.Web
@@ -55,9 +57,7 @@ cd MyNewApp.Web
 dotnet new iasmvc
 ```
 
-This will create a new ASP.NET Core MVC application that is pre-configured to use the Industrial App Store for authentication. The `README.md` file for the new project provides additional instructions for completing the setup.
-
-You can also open the project in Visual Studio by double clicking it.
+> Note that projects created using the template target .NET 6. If you are using a version of Visual Studio earlier than 2022 (e.g. Visual Studio 2019), you will have to modify the `<TargetFramework>` property in the project file to target .NET 5 or .NET Core 3.1, as versions of Visual Stduo earlier than 2022 cannot build .NET 6 projects. 
 
 
 ## Specifying Project Parameters
