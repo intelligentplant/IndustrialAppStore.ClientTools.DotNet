@@ -57,7 +57,7 @@ cd MyNewApp.Web
 dotnet new iasmvc
 ```
 
-> Note that projects created using the template target .NET 6. If you are using a version of Visual Studio earlier than 2022 (e.g. Visual Studio 2019), you will have to modify the `<TargetFramework>` property in the project file to target .NET 5 or .NET Core 3.1, as versions of Visual Stduo earlier than 2022 cannot build .NET 6 projects. 
+> Note that projects created using the template target .NET 6. If you are using a version of Visual Studio earlier than 2022 (e.g. Visual Studio 2019), you will have to modify the `<TargetFramework>` property in the project file to target .NET 5 or .NET Core 3.1, as versions of Visual Studio earlier than 2022 cannot build .NET 6 projects. 
 
 
 ## Specifying Project Parameters
