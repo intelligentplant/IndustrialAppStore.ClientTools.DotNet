@@ -2,7 +2,7 @@
 
 This project defines [Industrial App Store](https://appstore.intelligentplant.com) templates for Visual Studio 2022 and the [dotnet new](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new) command.
 
->> Unlike previous versions, templates installed by `dotnet new` command are also visible in Visual Studio 2022.
+> Unlike previous versions of Visual Studio, templates installed by `dotnet new` command are also visible in Visual Studio 2022.
 
 
 # Installing Templates
