@@ -7,7 +7,7 @@ This project defines [Industrial App Store](https://appstore.intelligentplant.co
 
 # Installing Templates
 
-You can install the [Industrial App Store templates](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.Templates) as follows:
+You can install the [Industrial App Store template package](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.Templates) as follows:
 
 __Latest Version from NuGet.org:__
 
@@ -23,13 +23,13 @@ dotnet new --install IntelligentPlant.IndustrialAppStore.Templates::1.2.3
 
 __From Source:__
 
-Alternatively, you can install the template from source by checking out this repository, building the solution, navigating to the [root templates folder](/src/IntelligentPlant.IndustrialAppStore.Templates) from the command line, and running the following command:
+Alternatively, you can install the templates from source by checking out this repository, building the solution, navigating to the [root templates folder](/src/IntelligentPlant.IndustrialAppStore.Templates) from the command line, and running the following command:
 
 ```
 dotnet new --install .\
 ```
 
-Note that, when installing the template from source, the reference to the `IntelligentPlant.IndustrialAppStore.Authentication` NuGet package in projects generated using the template may use an incorrect version. You will have to update generated projects to use the correct package version, or replace the package reference with a project reference to the `IntelligentPlant.IndustrialAppStore.Authentication` project in this repository.
+Note that, when installing the templates from source, the reference to the `IntelligentPlant.IndustrialAppStore.Authentication` NuGet package in projects generated using templates may use an incorrect version. You will have to update generated projects to use the correct package version, or replace the package reference with a project reference to the `IntelligentPlant.IndustrialAppStore.Authentication` project in this repository.
 
 
 # Creating an App using Visual Studio 2022
