@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.0" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.113" />
   </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\..\src\IntelligentPlant.IndustrialAppStore.Authentication\IntelligentPlant.IndustrialAppStore.Authentication.csproj" />
   </ItemGroup>
