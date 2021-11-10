@@ -1,6 +1,6 @@
 ﻿# CustomTokenStoreExample
 
-This project demonstrates how to use a custom [ITokenStore](../src/IntelligentPlant.IndustrialAppStore.Authentication/ITokenStore.cs) to store access and refresh tokens obtained by an [Industrial App Store](https://appstore.intelligentplant.com) app.
+This project demonstrates how to use a custom [ITokenStore](../../src/IntelligentPlant.IndustrialAppStore.Authentication/ITokenStore.cs) to store access and refresh tokens obtained by an [Industrial App Store](https://appstore.intelligentplant.com) app.
 
 The functionality of the app itself is identical to the example MVC application found [here](../ExampleMvcApplication).
 
