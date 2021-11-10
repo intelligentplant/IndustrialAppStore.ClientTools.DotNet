@@ -7,7 +7,7 @@ This project defines [Industrial App Store](https://appstore.intelligentplant.co
 
 # Installing Templates
 
-You can install the [Industrial App Store templates](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.Templates) for `dotnet new` as follows:
+You can install the [Industrial App Store templates](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.Templates) as follows:
 
 __Latest Version:__
 
