@@ -87,8 +87,20 @@ namespace Microsoft.Extensions.DependencyInjection {
         ///   <paramref name="configure"/> is <see langword="null"/>.
         /// </exception>
         /// <remarks>
+        /// 
+        /// <para>
         ///   Register your app <a href="https://appstore.intelligentplant.com">here</a>!
+        /// </para>
+        /// 
+        /// <para>
+        ///   If the <paramref name="configure"/> callback sets <see cref="IndustrialAppStoreAuthenticationOptions.UseExternalAuthentication"/> 
+        ///   to <see langword="true"/>, no <see cref="ITokenStore"/> service will be registered 
+        ///   with the <paramref name="services"/> collection.
+        /// </para>
+        /// 
         /// </remarks>
+        /// <seealso cref="ITokenStore"/>
+        /// <seealso cref="TokenStore"/>
         public static IServiceCollection AddIndustrialAppStoreAuthentication<TTokenStore>(
             this IServiceCollection services,
             Action<IndustrialAppStoreAuthenticationOptions> configure,
@@ -114,87 +126,130 @@ namespace Microsoft.Extensions.DependencyInjection {
             services.AddHttpContextAccessor();
             services.AddSession();
 
-            // HTTP client for backchannel communication with IAS.
-            services.AddHttpClient("ias_backchannel");
-
-            // ITokenStore is a scoped service, so that we get one per HTTP request.
-            services.AddScoped<ITokenStore, TTokenStore>(sp => {
-                var http = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ias_backchannel");
-                return factory == null 
-                    ? ActivatorUtilities.CreateInstance<TTokenStore>(sp, http)
-                    : factory.Invoke(sp, http);
-            });
-
             // HTTP client used by IndustrialAppStoreHttpClient.
             var httpBuilder = services.AddHttpClient<IndustrialAppStoreHttpClient>(options => {
                 options.BaseAddress = new Uri(opts.DataCoreUrl);
             });
 
             if (opts.UseExternalAuthentication) {
-                services.AddAuthentication();
-                httpBuilder.ConfigurePrimaryHttpMessageHandler(() => {
-                    var result = new HttpHandlerType() {
-                        Credentials = System.Net.CredentialCache.DefaultNetworkCredentials
-                    };
-
-                    return result;
-                });
+                ConfigureExternalAuthentication(services, httpBuilder);
             } 
             else {
-                httpBuilder.AddHttpMessageHandler(() => {
-                    return DataCoreHttpClient.CreateAuthenticationMessageHandler<HttpContext>(
-                        async (req, ctx, ct) => {
-                            if (ctx == null) {
-                                return null;
-                            }
-                            return await ctx
-                                .RequestServices
-                                .GetRequiredService<ITokenStore>()
-                                .GetAuthenticationHeaderAsync();
-                        }
-                    );
-                });
-
-                services.AddAuthentication(options => {
-                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-
-                    if (PathString.Empty.Equals(opts.LoginPath)) {
-                        // No login path specified; challenges will be issued automatically by IAS authentication.
-                        options.DefaultChallengeScheme = IndustrialAppStoreAuthenticationDefaults.AuthenticationScheme;
-                    }
-                    else {
-                        // Login path specified; challenges will be issued externally.
-                        options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    }
-                })
-                .AddCookie(options => {
-                    if (!PathString.Empty.Equals(opts.LoginPath)) {
-                        options.LoginPath = opts.LoginPath;
-                    }
-
-                    options.Events = new CookieAuthenticationEvents() {
-                        OnValidatePrincipal = async ctx => {
-                            var tokenStore = ctx.HttpContext.RequestServices.GetRequiredService<ITokenStore>();
-                            await InitTokenStoreAsync(tokenStore, ctx.Principal, ctx.Properties);
-
-                            var accessToken = await tokenStore.GetTokensAsync();
-
-                            if (accessToken == null) {
-                                // We do not have a valid access token for the calling user, so we 
-                                // will consider the cookie to be invalid.
-                                ctx.RejectPrincipal();
-                            }
-                        }
-                    };
-                })
-                .AddIndustrialAppStoreOAuthAuthentication(opts);
+                ConfigureIndustrialAppStoreAuthentication(services, httpBuilder, opts, factory);
             }
 
             opts.ConfigureHttpClient?.Invoke(httpBuilder);
 
             return services;
+        }
+
+
+        /// <summary>
+        ///   Performs configuration related to non-Industrial App Store authentication.
+        /// </summary>
+        /// <param name="services">
+        ///   The application service collection.
+        /// </param>
+        /// <param name="httpBuilder">
+        ///   The <see cref="IHttpClientBuilder"/> for the <see cref="IndustrialAppStoreHttpClient"/> 
+        ///   type.
+        /// </param>
+        private static void ConfigureExternalAuthentication(IServiceCollection services, IHttpClientBuilder httpBuilder) {
+            services.AddAuthentication();
+            httpBuilder.ConfigurePrimaryHttpMessageHandler(() => {
+                var result = new HttpHandlerType() {
+                    Credentials = System.Net.CredentialCache.DefaultNetworkCredentials
+                };
+
+                return result;
+            });
+        }
+
+
+        /// <summary>
+        /// Configures Industrial App Store authentication for the application.
+        /// </summary>
+        /// <typeparam name="TTokenStore">
+        ///   The <see cref="ITokenStore"/> implementation to use.
+        /// </typeparam>
+        /// <param name="services">
+        ///   The application service collection.
+        /// </param>
+        /// <param name="httpBuilder">
+        ///   The <see cref="IHttpClientBuilder"/> for the <see cref="IndustrialAppStoreHttpClient"/> 
+        ///   type.
+        /// </param>
+        /// <param name="iasOptions">
+        ///   The <see cref="IndustrialAppStoreAuthenticationOptions"/> for the application.
+        /// </param>
+        /// <param name="factory">
+        ///   An optional factory method for creating <typeparamref name="TTokenStore"/> instances.
+        /// </param>
+        private static void ConfigureIndustrialAppStoreAuthentication<TTokenStore>(
+            IServiceCollection services, 
+            IHttpClientBuilder httpBuilder,
+            IndustrialAppStoreAuthenticationOptions iasOptions,
+            Func<IServiceProvider, HttpClient, TTokenStore> factory
+        ) where TTokenStore : class, ITokenStore {
+            // HTTP client for backchannel communication with IAS.
+            services.AddHttpClient("ias_backchannel");
+
+            services.AddScoped<ITokenStore, TTokenStore>(sp => {
+                var http = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ias_backchannel");
+                return factory == null
+                    ? ActivatorUtilities.CreateInstance<TTokenStore>(sp, http)
+                    : factory.Invoke(sp, http);
+            });
+
+            httpBuilder.AddHttpMessageHandler(() => {
+                return DataCoreHttpClient.CreateAuthenticationMessageHandler<HttpContext>(
+                    async (req, ctx, ct) => {
+                        if (ctx == null) {
+                            return null;
+                        }
+                        return await ctx
+                            .RequestServices
+                            .GetRequiredService<ITokenStore>()
+                            .GetAuthenticationHeaderAsync();
+                    }
+                );
+            });
+
+            services.AddAuthentication(authOptions => {
+                authOptions.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                authOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                authOptions.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+                if (PathString.Empty.Equals(iasOptions.LoginPath)) {
+                    // No login path specified; challenges will be issued automatically by IAS authentication.
+                    authOptions.DefaultChallengeScheme = IndustrialAppStoreAuthenticationDefaults.AuthenticationScheme;
+                }
+                else {
+                    // Login path specified; challenges will be issued externally.
+                    authOptions.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                }
+            })
+            .AddCookie(cookieOptions => {
+                if (!PathString.Empty.Equals(iasOptions.LoginPath)) {
+                    cookieOptions.LoginPath = iasOptions.LoginPath;
+                }
+
+                cookieOptions.Events = new CookieAuthenticationEvents() {
+                    OnValidatePrincipal = async ctx => {
+                        var tokenStore = ctx.HttpContext.RequestServices.GetRequiredService<ITokenStore>();
+                        await InitTokenStoreAsync(tokenStore, ctx.Principal, ctx.Properties);
+
+                        var accessToken = await tokenStore.GetTokensAsync();
+
+                        if (accessToken == null) {
+                            // We do not have a valid access token for the calling user, so we 
+                            // will consider the cookie to be invalid.
+                            ctx.RejectPrincipal();
+                        }
+                    }
+                };
+            })
+            .AddIndustrialAppStoreOAuthAuthentication(iasOptions);
         }
 
 
@@ -285,8 +340,13 @@ namespace Microsoft.Extensions.DependencyInjection {
                             var sessionId = Guid.NewGuid().ToString("N");
                             context.Identity.AddClaim(new Claim(IndustrialAppStoreAuthenticationDefaults.AppSessionIdClaimType, sessionId));
 
-                            var tokenStore = (TokenStore) context.HttpContext.RequestServices.GetRequiredService<ITokenStore>();
-                            var tokens = tokenStore.CreateOAuthTokens(context.TokenType, context.AccessToken, context.ExpiresIn, context.RefreshToken);
+                            var tokens = TokenStore.CreateOAuthTokens(
+                                context.TokenType, 
+                                context.AccessToken, 
+                                context.ExpiresIn, 
+                                context.RefreshToken,
+                                context.HttpContext.RequestServices.GetRequiredService<ISystemClock>()
+                            );
 
                             context.HttpContext.Items["ias_tokens"] = tokens;
                         },
