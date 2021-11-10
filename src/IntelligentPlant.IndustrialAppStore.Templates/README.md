@@ -9,13 +9,13 @@ This project defines [Industrial App Store](https://appstore.intelligentplant.co
 
 You can install the [Industrial App Store templates](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.Templates) as follows:
 
-__Latest Version:__
+__Latest Version from NuGet.org:__
 
 ```
 dotnet new --install IntelligentPlant.IndustrialAppStore.Templates
 ```
 
-__Specific Version:__
+__Specific Version from NuGet.org:__
 
 ```
 dotnet new --install IntelligentPlant.IndustrialAppStore.Templates::1.2.3
