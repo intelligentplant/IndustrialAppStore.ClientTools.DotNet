@@ -5,6 +5,13 @@ This project defines [Industrial App Store](https://appstore.intelligentplant.co
 > Templates installed using the `dotnet new` command are also visible in Visual Studio 2022 and Visual Studio 2019 (v16.9 or later).
 
 
+# Quick Start
+
+1. Run the following command from the command line: `dotnet new --install IntelligentPlant.IndustrialAppStore.Templates`
+2. Open Visual Studio, create a new project, and search for "Industrial App Store" in the project templates list.
+3. Follow the instructions in your project's `README.md` file to register your app with the Industrial App Store.
+
+
 # Installing Templates
 
 You can install the Industrial App Store [templates package](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.Templates) as follows:
