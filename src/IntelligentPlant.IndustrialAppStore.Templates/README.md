@@ -1,8 +1,8 @@
 ﻿# IntelligentPlant.IndustrialAppStore.Templates
 
-This project defines [Industrial App Store](https://appstore.intelligentplant.com) templates for Visual Studio 2022 and the [dotnet new](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new) command.
+This project defines [Industrial App Store](https://appstore.intelligentplant.com) templates for Visual Studio 2022, Visual Studio 2019, and the [dotnet new](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new) command.
 
-> Unlike previous versions of Visual Studio, templates installed by `dotnet new` command are also visible in Visual Studio 2022.
+> Templates installed using the `dotnet new` command are also visible in Visual Studio 2022 and Visual Studio 2019 (v16.9 or later).
 
 
 # Installing Templates
@@ -32,7 +32,7 @@ dotnet new --install .\
 Note that, when installing the templates from source, the reference to the `IntelligentPlant.IndustrialAppStore.Authentication` NuGet package in projects generated using templates may use an incorrect version. You will have to update generated projects to use the correct package version, or replace the package reference with a project reference to the `IntelligentPlant.IndustrialAppStore.Authentication` project in this repository.
 
 
-# Creating an App using Visual Studio 2022
+# Creating an App using Visual Studio
 
 Before creating a new app, you should [create an app registration](https://appstore.intelligentplant.com/Developer/AddApplication) on the Industrial App Store. 
 
@@ -44,20 +44,20 @@ After selecting the template, you will be prompted to select a project location 
 
 ![Visual Studio 2022 template parameters window](./img/template_parameters.png)
 
+> Note that, unlike Visual Studio 2022, Visual Studio 2019 does not give you the option to configure the template parameters; your app will be created with the default values.
+
 The template will create a new ASP.NET Core MVC application that is pre-configured to use the Industrial App Store for authentication. The `README.md` file for the new project provides additional instructions for completing the setup.
 
 
 # Creating an App using `dotnet new`
 
-If you are not using Visual Studio 2022, you can create a new C# project using the `dotnet new` command from the command line as follows:
+If you are not using Visual Studio, you can create a new C# project using the `dotnet new` command from the command line as follows:
 
 ```
 mkdir MyNewApp.Web
 cd MyNewApp.Web
 dotnet new iasmvc
 ```
-
-> Note that projects created using the template target .NET 6. If you are using a version of Visual Studio earlier than 2022 (e.g. Visual Studio 2019), you will have to modify the `<TargetFramework>` property in the project file to target .NET 5 or .NET Core 3.1, as versions of Visual Studio earlier than 2022 cannot build .NET 6 projects. 
 
 
 ## Specifying Project Parameters
@@ -73,9 +73,9 @@ dotnet new iasmvc --app-name "My First App" --client-id "abcdef0123456789"
 ```
 
 ```
-# Specifies the local HTTPS port to use instead of randomly choosing a port.
+# Creates a project that targets .NET 6 (not compatible with Visual Studio 2019!)
 
-dotnet new iasmvc --port 43789
+dotnet new iasmvc --Framework net6.0
 ```
 
 Note that it is not possible to specify the client secret when creating the project; the `README.md` file created by the template in the project folder contains instructions for setting the client secret.
