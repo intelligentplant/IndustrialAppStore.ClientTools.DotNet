@@ -44,7 +44,7 @@ After selecting the template, you will be prompted to select a project location 
 
 ![Visual Studio 2022 template parameters window](./img/template_parameters.png)
 
-> Note that, unlike Visual Studio 2022, Visual Studio 2019 does not give you the option to configure the template parameters; your app will be created with the default values.
+> Note that, unlike Visual Studio 2022, Visual Studio 2019 does not give you the option to configure the template parameters. When creating an app in Visual Studio 2019, the app will be created using the default template values and will target .NET Core 3.1.
 
 The template will create a new ASP.NET Core MVC application that is pre-configured to use the Industrial App Store for authentication. The `README.md` file for the new project provides additional instructions for completing the setup.
 
