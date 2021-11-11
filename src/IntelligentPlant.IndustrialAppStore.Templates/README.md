@@ -5,11 +5,18 @@ This project defines [Industrial App Store](https://appstore.intelligentplant.co
 > Templates installed using the `dotnet new` command are also visible in Visual Studio 2022 and Visual Studio 2019 (v16.9 or later).
 
 
+# Quick Start
+
+1. Run the following command from the command line: `dotnet new --install IntelligentPlant.IndustrialAppStore.Templates`
+2. Open Visual Studio, create a new project, and search for "Industrial App Store" in the project templates list.
+3. Follow the instructions in your project's `README.md` file to register your app with the Industrial App Store.
+
+
 # Installing Templates
 
-You can install the [Industrial App Store template package](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.Templates) as follows:
+You can install the Industrial App Store [templates package](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.Templates) as follows:
 
-__Latest Version from NuGet.org:__
+__Latest Release Version from NuGet.org:__
 
 ```
 dotnet new --install IntelligentPlant.IndustrialAppStore.Templates
@@ -29,7 +36,7 @@ Alternatively, you can install the templates from source by checking out this re
 dotnet new --install .\
 ```
 
-Note that, when installing the templates from source, the reference to the `IntelligentPlant.IndustrialAppStore.Authentication` NuGet package in projects generated using templates may use an incorrect version. You will have to update generated projects to use the correct package version, or replace the package reference with a project reference to the `IntelligentPlant.IndustrialAppStore.Authentication` project in this repository.
+Note that, when installing the templates from source, the reference to the `IntelligentPlant.IndustrialAppStore.Authentication` NuGet package in projects generated using templates will specify an incorrect version. You will have to update generated projects to use the correct package version, or replace the package reference with a project reference to the `IntelligentPlant.IndustrialAppStore.Authentication` project in this repository.
 
 
 # Creating an App using Visual Studio
@@ -44,7 +51,7 @@ After selecting the template, you will be prompted to select a project location 
 
 ![Visual Studio 2022 template parameters window](./img/template_parameters.png)
 
-> Note that, unlike Visual Studio 2022, Visual Studio 2019 does not give you the option to configure the template parameters; your app will be created with the default values.
+> Note that, unlike Visual Studio 2022, Visual Studio 2019 does not give you the option to configure the template parameters. When creating an app in Visual Studio 2019, the app will be created using the default template values and will target .NET Core 3.1.
 
 The template will create a new ASP.NET Core MVC application that is pre-configured to use the Industrial App Store for authentication. The `README.md` file for the new project provides additional instructions for completing the setup.
 

@@ -4,6 +4,7 @@
   "classifications": [ "Industrial App Store", "Web", "MVC", "IoT" ],
   "identity": "IntelligentPlant.IndustrialAppStore.StarterMvcTemplate",
   "name": "Industrial App Store App",
+  "description": "A project template for creating an ASP.NET Core application that integrates with Intelligent Plant's Industrial App Store.",
   "shortName": "iasmvc",
   "tags": {
     "language": "C#",
