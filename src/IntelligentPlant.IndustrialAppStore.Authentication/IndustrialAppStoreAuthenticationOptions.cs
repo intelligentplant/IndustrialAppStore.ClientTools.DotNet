@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using IntelligentPlant.IndustrialAppStore.Client;
 
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -98,6 +99,11 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// service.
         /// </summary>
         public Action<IHttpClientBuilder> ConfigureHttpClient { get; set; }
+
+        /// <summary>
+        /// Additional event handlers for OAuth authentication events.
+        /// </summary>
+        public OAuthEvents Events { get; set; }
 
     }
 }

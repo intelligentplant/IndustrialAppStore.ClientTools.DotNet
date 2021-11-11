@@ -58,6 +58,11 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         public const string OrgNameClaimType = "urn:ias:org_name";
 
         /// <summary>
+        /// The claim type that specifies the session ID for the user in the app.
+        /// </summary>
+        public const string AppSessionIdClaimType = "urn:ias:app_session_id";
+
+        /// <summary>
         /// The token name for the OAuth access token.
         /// </summary>
         internal const string AccessTokenName = "access_token";

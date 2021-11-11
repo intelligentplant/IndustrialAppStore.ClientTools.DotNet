@@ -107,10 +107,10 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
             var token = await context
                 .RequestServices
                 .GetRequiredService<ITokenStore>()
-                .GetAccessTokenAsync()
+                .GetTokensAsync()
                 .ConfigureAwait(false);
 
-            return !string.IsNullOrWhiteSpace(token);
+            return !string.IsNullOrWhiteSpace(token?.AccessToken);
         }
 
     }

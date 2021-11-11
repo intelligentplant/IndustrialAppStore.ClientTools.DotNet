@@ -120,6 +120,12 @@
   <data name="AuthDefaults_DisplayName" xml:space="preserve">
     <value>Industrial App Store</value>
   </data>
+  <data name="Error_TokenStoreHasAlreadyBeenInitialised" xml:space="preserve">
+    <value>The token store has already been initialised.</value>
+  </data>
+  <data name="Error_TokenStoreHasNotBeenInitialised" xml:space="preserve">
+    <value>The token store has not been initialiased.</value>
+  </data>
   <data name="Log_ErrorDuringRefreshTokenRequest" xml:space="preserve">
     <value>Error while refreshing access token.</value>
   </data>

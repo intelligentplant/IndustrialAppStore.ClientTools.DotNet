@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
@@ -25,13 +26,13 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
             if (tokenStore == null) {
                 throw new ArgumentNullException(nameof(tokenStore));
             }
-            
-            var accessToken = await tokenStore.GetAccessTokenAsync();
-            if (string.IsNullOrWhiteSpace(accessToken)) {
+
+            var accessToken = await tokenStore.GetTokensAsync();
+            if (string.IsNullOrWhiteSpace(accessToken?.AccessToken)) {
                 return null;
             }
 
-            return new AuthenticationHeaderValue("Bearer", accessToken);
+            return new AuthenticationHeaderValue("Bearer", accessToken.Value.AccessToken);
         }
 
     }
