@@ -2,7 +2,7 @@
 
 This project defines [Industrial App Store](https://appstore.intelligentplant.com) templates for Visual Studio 2022, Visual Studio 2019, and the [dotnet new](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new) command.
 
-> Templates installed using the `dotnet new` command are also visible in Visual Studio 2022 and Visual Studio 2019 (v16.9 or later).
+> Templates installed using the `dotnet new` command can be used in Visual Studio 2022 and Visual Studio 2019 (v16.9 or later).
 
 
 # Quick Start
@@ -22,10 +22,10 @@ __Latest Release Version from NuGet.org:__
 dotnet new --install IntelligentPlant.IndustrialAppStore.Templates
 ```
 
-__Specific Version from NuGet.org:__
+__Specific Version from NuGet.org (including pre-release versions):__
 
 ```
-dotnet new --install IntelligentPlant.IndustrialAppStore.Templates::1.2.3
+dotnet new --install IntelligentPlant.IndustrialAppStore.Templates::1.2.3-alpha.4
 ```
 
 __From Source:__
@@ -45,13 +45,11 @@ Before creating a new app, you should [create an app registration](https://appst
 
 Once the template package has been installed, search for `Industrial App Store` in Visual Studio's "Create a new project" window or choose `Industrial App Store` from the project types list:
 
-![Visual Studio 2022 template selection window](./img/template_selection.png)
+![Visual Studio template selection window](./img/template_selection.png)
 
 After selecting the template, you will be prompted to select a project location and then optionally enter some details about your app that will be applied to the template:
 
-![Visual Studio 2022 template parameters window](./img/template_parameters.png)
-
-> Note that, unlike Visual Studio 2022, Visual Studio 2019 does not give you the option to configure the template parameters. When creating an app in Visual Studio 2019, the app will be created using the default template values and will target .NET Core 3.1.
+![Visual Studio template parameters window](./img/template_parameters.png)
 
 The template will create a new ASP.NET Core MVC application that is pre-configured to use the Industrial App Store for authentication. The `README.md` file for the new project provides additional instructions for completing the setup.
 
