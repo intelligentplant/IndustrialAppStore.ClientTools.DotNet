@@ -42,9 +42,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8967B5AD
 		build\build-state.cake = build\build-state.cake
 		build\build-utilities.cake = build\build-utilities.cake
 		build\Dependencies.props = build\Dependencies.props
-		build\Get-Version.ps1 = build\Get-Version.ps1
-		build\Set-TeamCityParameters.ps1 = build\Set-TeamCityParameters.ps1
-		build\tools.ps1 = build\tools.ps1
 		build\version.json = build\version.json
 	EndProjectSection
 	ProjectSection(FolderGlobals) = preProject
