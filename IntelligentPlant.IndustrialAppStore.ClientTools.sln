@@ -28,7 +28,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{AD574C
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		build.cake = build.cake
 		build.ps1 = build.ps1
+		build.sh = build.sh
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
 		LICENSE = LICENSE
@@ -37,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{AD574C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8967B5AD-F86A-4109-8DA1-881E0070280D}"
 	ProjectSection(SolutionItems) = preProject
+		build\build-state.cake = build\build-state.cake
+		build\build-utilities.cake = build\build-utilities.cake
 		build\Dependencies.props = build\Dependencies.props
 		build\Get-Version.ps1 = build\Get-Version.ps1
 		build\Set-TeamCityParameters.ps1 = build\Set-TeamCityParameters.ps1
@@ -60,7 +64,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data-core-api-client", "dat
 		docs\data-core-api-client\Writing-Tag-Values.md = docs\data-core-api-client\Writing-Tag-Values.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomTokenStoreExample", "samples\CustomTokenStoreExample\CustomTokenStoreExample.csproj", "{A6FD636F-5B3B-4DEB-888F-E28AF37A3C46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomTokenStoreExample", "samples\CustomTokenStoreExample\CustomTokenStoreExample.csproj", "{A6FD636F-5B3B-4DEB-888F-E28AF37A3C46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
