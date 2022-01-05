@@ -39,8 +39,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{AD574C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8967B5AD-F86A-4109-8DA1-881E0070280D}"
 	ProjectSection(SolutionItems) = preProject
-		build\build-state.cake = build\build-state.cake
-		build\build-utilities.cake = build\build-utilities.cake
 		build\Dependencies.props = build\Dependencies.props
 		build\version.json = build\version.json
 	EndProjectSection
