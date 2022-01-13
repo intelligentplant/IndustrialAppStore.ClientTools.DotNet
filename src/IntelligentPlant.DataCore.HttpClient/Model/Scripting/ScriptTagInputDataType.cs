@@ -28,6 +28,18 @@
         AggregatedValues = 1,
 
         /// <summary>
+        /// Like <see cref="AggregatedValues"/>, the recalculation is performed using aggregated 
+        /// data. However, with <see cref="RollingAggregatedValues"/>, the aggregation is performed over 
+        /// a time period that is larger than the interval between samples. In this mode, the interval 
+        /// between samples is controlled using the block size configured on the script tag. For example,
+        /// if the sample interval is <c>4h</c>, and the block size is <c>15m</c>, and recalculation last 
+        /// happened 1 hour ago, aggregated data will be requested for each 15 minute block in the last 
+        /// hour, with each block in turn requesting data calculated for the 4 hours leading up to the 
+        /// block's timestamp.
+        /// </summary>
+        RollingAggregatedValues = 2,
+
+        /// <summary>
         /// The recalculation is performed using raw historical data. The script tag will track the UTC 
         /// sample time of its most-recently-calculated value, and will recalculate from that time 
         /// forwards until the trigger timestamp (either the current UTC time, or the UTC time 
@@ -39,7 +51,14 @@
         /// block size for the script tag should be no more than 100 seconds, to ensure that the script 
         /// tag is able to recalculate at every recorded sample time.
         /// </summary>
-        RawValues = 2
+        RawValues = 3,
+
+        /// <summary>
+        /// The script tag does not require any pre-fetched data to perform its calculation. The 
+        /// script tag can still request data from referenced tags on an ad hoc basis inside the 
+        /// script.
+        /// </summary>
+        None = 4
 
     }
 }
