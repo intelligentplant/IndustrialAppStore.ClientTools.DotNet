@@ -47,12 +47,6 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// </summary>
         protected string SessionId { get; private set; }
 
-        /// <summary>
-        /// The <see cref="Microsoft.AspNetCore.Authentication.AuthenticationProperties"/> for the 
-        /// token store.
-        /// </summary>
-        protected AuthenticationProperties AuthenticationProperties { get; private set; }
-
 
         /// <summary>
         /// Creates a new <see cref="TokenStore"/> object.
@@ -78,15 +72,38 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
 
         /// <inheritdoc/>
-        async ValueTask ITokenStore.InitAsync(string userId, string sessionId, AuthenticationProperties properties) {
+        async ValueTask ITokenStore.InitAsync(string userId, string sessionId) {
+            await InitCoreAsync(userId, sessionId).ConfigureAwait(false);
+        }
+
+
+        /// <summary>
+        /// Initialises the token store.
+        /// </summary>
+        /// <param name="userId">
+        ///   The user ID for the token store.
+        /// </param>
+        /// <param name="sessionId">
+        ///   The session ID for the token store.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="ValueTask"/> that will initialise the token store.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="userId"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="sessionId"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        ///   The token store has already been initialised.
+        /// </exception>
+        protected async ValueTask InitCoreAsync(string userId, string sessionId) {
             if (userId == null) {
                 throw new ArgumentNullException(nameof(userId));
             }
             if (sessionId == null) {
                 throw new ArgumentNullException(nameof(sessionId));
-            }
-            if (properties == null) {
-                throw new ArgumentNullException(nameof(properties));
             }
             if (Interlocked.CompareExchange(ref _initialised, 1, 0) != 0) {
                 throw new InvalidOperationException(Resources.Error_TokenStoreHasAlreadyBeenInitialised);
@@ -94,7 +111,6 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
             UserId = userId;
             SessionId = sessionId;
-            AuthenticationProperties = properties;
 
             await InitAsync();
         }

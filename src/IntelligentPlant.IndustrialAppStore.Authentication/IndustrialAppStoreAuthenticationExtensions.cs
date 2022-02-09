@@ -235,16 +235,62 @@ namespace Microsoft.Extensions.DependencyInjection {
                 }
 
                 cookieOptions.Events = new CookieAuthenticationEvents() {
+#if NET6_0_OR_GREATER
+                    OnCheckSlidingExpiration = async ctx => { 
+                        if (iasOptions.CookieAuthenticationEvents?.OnCheckSlidingExpiration != null) {
+                            await iasOptions.CookieAuthenticationEvents.OnCheckSlidingExpiration(ctx).ConfigureAwait(false);
+                        }
+                    },
+#endif
+                    OnRedirectToAccessDenied = async ctx => {
+                        if (iasOptions.CookieAuthenticationEvents?.OnRedirectToAccessDenied != null) {
+                            await iasOptions.CookieAuthenticationEvents.OnRedirectToAccessDenied(ctx).ConfigureAwait(false);
+                        }
+                    },
+                    OnRedirectToLogin = async ctx => {
+                        if (iasOptions.CookieAuthenticationEvents?.OnRedirectToLogin != null) {
+                            await iasOptions.CookieAuthenticationEvents.OnRedirectToLogin(ctx).ConfigureAwait(false);
+                        }
+                    },
+                    OnRedirectToLogout = async ctx => {
+                        if (iasOptions.CookieAuthenticationEvents?.OnRedirectToLogout != null) {
+                            await iasOptions.CookieAuthenticationEvents.OnRedirectToLogout(ctx).ConfigureAwait(false);
+                        }
+                    },
+                    OnRedirectToReturnUrl = async ctx => {
+                        if (iasOptions.CookieAuthenticationEvents?.OnRedirectToReturnUrl != null) {
+                            await iasOptions.CookieAuthenticationEvents.OnRedirectToReturnUrl(ctx).ConfigureAwait(false);
+                        }
+                    },
+                    OnSignedIn = async ctx => {
+                        if (iasOptions.CookieAuthenticationEvents?.OnSignedIn != null) {
+                            await iasOptions.CookieAuthenticationEvents.OnSignedIn(ctx).ConfigureAwait(false);
+                        }
+                    },
+                    OnSigningIn = async ctx => {
+                        if (iasOptions.CookieAuthenticationEvents?.OnSigningIn != null) {
+                            await iasOptions.CookieAuthenticationEvents.OnSigningIn(ctx).ConfigureAwait(false);
+                        }
+                    },
+                    OnSigningOut = async ctx => {
+                        if (iasOptions.CookieAuthenticationEvents?.OnSigningOut != null) {
+                            await iasOptions.CookieAuthenticationEvents.OnSigningOut(ctx).ConfigureAwait(false);
+                        }
+                    },
                     OnValidatePrincipal = async ctx => {
                         var tokenStore = ctx.HttpContext.RequestServices.GetRequiredService<ITokenStore>();
-                        await InitTokenStoreAsync(tokenStore, ctx.Principal, ctx.Properties);
+                        await InitTokenStoreAsync(tokenStore, ctx.Principal, ctx.Properties).ConfigureAwait(false);
 
-                        var accessToken = await tokenStore.GetTokensAsync();
+                        var accessToken = await tokenStore.GetTokensAsync().ConfigureAwait(false);
 
                         if (accessToken == null) {
                             // We do not have a valid access token for the calling user, so we 
                             // will consider the cookie to be invalid.
                             ctx.RejectPrincipal();
+                        }
+
+                        if (iasOptions.CookieAuthenticationEvents?.OnValidatePrincipal != null) {
+                            await iasOptions.CookieAuthenticationEvents.OnValidatePrincipal(ctx).ConfigureAwait(false);
                         }
                     }
                 };
@@ -312,13 +358,13 @@ namespace Microsoft.Extensions.DependencyInjection {
 
                     options.Events = new OAuthEvents() {
                         OnAccessDenied = async context => {
-                            if (opts.Events?.OnAccessDenied != null) {
-                                await opts.Events.OnAccessDenied(context);
+                            if (opts.OAuthEvents?.OnAccessDenied != null) {
+                                await opts.OAuthEvents.OnAccessDenied(context);
                             }
                         },
                         OnCreatingTicket = async context => {
-                            if (opts.Events?.OnCreatingTicket != null) {
-                                await opts.Events.OnCreatingTicket(context);
+                            if (opts.OAuthEvents?.OnCreatingTicket != null) {
+                                await opts.OAuthEvents.OnCreatingTicket(context);
                             }
 
                             var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
@@ -351,8 +397,8 @@ namespace Microsoft.Extensions.DependencyInjection {
                             context.HttpContext.Items["ias_tokens"] = tokens;
                         },
                         OnRedirectToAuthorizationEndpoint = async context => {
-                            if (opts.Events?.OnRedirectToAuthorizationEndpoint != null) {
-                                await opts.Events.OnRedirectToAuthorizationEndpoint(context);
+                            if (opts.OAuthEvents?.OnRedirectToAuthorizationEndpoint != null) {
+                                await opts.OAuthEvents.OnRedirectToAuthorizationEndpoint(context);
                             }
 
                             var queryParameters = new Dictionary<string, string>();
@@ -374,13 +420,13 @@ namespace Microsoft.Extensions.DependencyInjection {
                             context.Response.Redirect(context.RedirectUri);
                         },
                         OnRemoteFailure = async context => { 
-                            if (opts.Events?.OnRemoteFailure != null) {
-                                await opts.Events.OnRemoteFailure(context);
+                            if (opts.OAuthEvents?.OnRemoteFailure != null) {
+                                await opts.OAuthEvents.OnRemoteFailure(context);
                             }
                         },
                         OnTicketReceived = async context => {
-                            if (opts.Events?.OnTicketReceived != null) {
-                                await opts.Events.OnTicketReceived(context);
+                            if (opts.OAuthEvents?.OnTicketReceived != null) {
+                                await opts.OAuthEvents.OnTicketReceived(context);
                             }
 
                             if (!context.HttpContext.Items.TryGetValue("ias_tokens", out var o) || o == null) {
@@ -421,7 +467,12 @@ namespace Microsoft.Extensions.DependencyInjection {
         private static async ValueTask InitTokenStoreAsync(ITokenStore tokenStore, ClaimsPrincipal principal, AuthenticationProperties properties) {
             var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
             var sessionId = principal.FindFirstValue(IndustrialAppStoreAuthenticationDefaults.AppSessionIdClaimType);
-            await tokenStore.InitAsync(userId, sessionId, properties);
+            if (tokenStore is DefaultTokenStore defaultStore) {
+                await defaultStore.InitAsync(userId, sessionId, properties).ConfigureAwait(false);
+            }
+            else {
+                await tokenStore.InitAsync(userId, sessionId).ConfigureAwait(false);
+            }
         }
 
     }

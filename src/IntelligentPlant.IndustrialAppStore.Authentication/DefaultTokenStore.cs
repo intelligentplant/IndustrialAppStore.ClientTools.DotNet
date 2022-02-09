@@ -12,7 +12,13 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
     /// Default <see cref="ITokenStore"/> implementation that retrieves tokens from the 
     /// authentication session.
     /// </summary>
-    internal class DefaultTokenStore : TokenStore {
+    internal sealed class DefaultTokenStore : TokenStore {
+
+        /// <summary>
+        /// The authentication session to store tokens in.
+        /// </summary>
+        private AuthenticationProperties _authenticationProperties;
+
 
         /// <summary>
         /// Creates a new <see cref="DefaultTokenStore"/> object.
@@ -33,6 +39,15 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ) : base(options, httpClient, clock) { }
 
 
+        public async ValueTask InitAsync(string userId, string sessionId, AuthenticationProperties authenticationProperties) {
+            if (authenticationProperties == null) {
+                throw new ArgumentNullException(nameof(authenticationProperties));
+            }
+            await InitCoreAsync(userId, sessionId).ConfigureAwait(false);
+            _authenticationProperties = authenticationProperties;
+        }
+
+
         /// <inheritdoc/>
         protected override ValueTask InitAsync() {
             return default;
@@ -41,21 +56,25 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
         /// <inheritdoc/>
         protected override ValueTask<OAuthTokens?> GetTokensAsync() {
-            var accessToken = AuthenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.AccessTokenName);
+            if (_authenticationProperties == null) {
+                throw new InvalidOperationException(Resources.Error_TokenStoreHasNotBeenInitialised);
+            }
+
+            var accessToken = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.AccessTokenName);
             if (string.IsNullOrWhiteSpace(accessToken)) {
                 return new ValueTask<OAuthTokens?>();
             }
 
-            var tokenType = AuthenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.TokenTypeTokenName);
+            var tokenType = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.TokenTypeTokenName);
 
-            var expiresAt = AuthenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.ExpiresAtTokenName);
+            var expiresAt = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.ExpiresAtTokenName);
             DateTimeOffset? accessTokenExpiry = null;
 
             if (!string.IsNullOrWhiteSpace(expiresAt) && DateTimeOffset.TryParseExact(expiresAt, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var exp)) {
                 accessTokenExpiry = exp;
             }
 
-            var refreshToken = AuthenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.RefreshTokenName);
+            var refreshToken = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.RefreshTokenName);
 
             return new ValueTask<OAuthTokens?>(new OAuthTokens(tokenType, accessToken, refreshToken, accessTokenExpiry));
         }
@@ -63,7 +82,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
         /// <inheritdoc/>
         protected internal override ValueTask SaveTokensAsync(OAuthTokens tokens) {
-            if (AuthenticationProperties == null) {
+            if (_authenticationProperties == null) {
                 throw new InvalidOperationException(Resources.Error_TokenStoreHasNotBeenInitialised);
             }
  
@@ -97,7 +116,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 });
             }
 
-            AuthenticationProperties.StoreTokens(authTokens);
+            _authenticationProperties.StoreTokens(authTokens);
 
             return default;
         }

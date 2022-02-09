@@ -24,14 +24,11 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <param name="sessionId">
         ///   The login session ID for the authenticated user.
         /// </param>
-        /// <param name="properties">
-        ///   The <see cref="AuthenticationProperties"/> for the authenticated user.
-        /// </param>
         /// <returns>
         ///   A <see cref="ValueTask"/> that will perform any required implementation-specific 
         ///   initialisation.
         /// </returns>
-        ValueTask InitAsync(string userId, string sessionId, AuthenticationProperties properties);
+        ValueTask InitAsync(string userId, string sessionId);
 
         /// <summary>
         /// Gets the tokens associated with the authenticated user.
