@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using IntelligentPlant.IndustrialAppStore.Client;
 
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -101,9 +102,21 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         public Action<IHttpClientBuilder> ConfigureHttpClient { get; set; }
 
         /// <summary>
-        /// Additional event handlers for OAuth authentication events.
+        /// Additional event handlers for cookie authentication events raised by the application.
         /// </summary>
-        public OAuthEvents Events { get; set; }
+        /// <remarks>
+        ///   Ignored when <see cref="UseExternalAuthentication"/> is <see langword="true"/>.
+        /// </remarks>
+        public CookieAuthenticationEvents CookieAuthenticationEvents { get; set; }
+
+        /// <summary>
+        /// Additional event handlers for OAuth authentication events raised when signing a user 
+        /// into the application using the Industrial App Store.
+        /// </summary>
+        /// <remarks>
+        ///   Ignored when <see cref="UseExternalAuthentication"/> is <see langword="true"/>.
+        /// </remarks>
+        public OAuthEvents OAuthEvents { get; set; }
 
     }
 }
