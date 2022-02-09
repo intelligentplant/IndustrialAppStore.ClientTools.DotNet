@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace IntelligentPlant.DataCore.Client.Model.Scripting {
@@ -68,6 +69,16 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         [Required]
         [MaxLength(100)]
         public string ApplicationName { get; set; }
+
+        /// <summary>
+        /// The initial start time for the script tag calculation, used on the first evaluation of 
+        /// the script only.
+        /// </summary>
+        /// <remarks>
+        ///   If an initial start time is not specified, an appropriate start time will be 
+        ///   inferred when the script tag is first evaluated.
+        /// </remarks>
+        public DateTime? InitialSampleTime { get; set; }
 
     }
 }

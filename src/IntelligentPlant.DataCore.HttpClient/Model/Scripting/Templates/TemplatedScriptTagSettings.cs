@@ -104,5 +104,15 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting.Templates {
         [MaxLength(100)]
         public string ApplicationName { get; set; }
 
+        /// <summary>
+        /// The initial start time for the script tag calculation, used on the first evaluation of 
+        /// the script only.
+        /// </summary>
+        /// <remarks>
+        ///   If an initial start time is not specified, an appropriate start time will be 
+        ///   inferred when the script tag is first evaluated.
+        /// </remarks>
+        public DateTime? InitialSampleTime { get; set; }
+
     }
 }
