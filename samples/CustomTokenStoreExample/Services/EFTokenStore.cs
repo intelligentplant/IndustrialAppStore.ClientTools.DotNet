@@ -8,7 +8,7 @@ using IntelligentPlant.IndustrialAppStore.Authentication;
 
 using Microsoft.AspNetCore.Authentication;
 
-namespace ExampleMvcApplication {
+namespace ExampleMvcApplication.Services {
 
     /// <summary>
     /// <see cref="ITokenStore"/> implementation that stores user tokens in an EF Core database 

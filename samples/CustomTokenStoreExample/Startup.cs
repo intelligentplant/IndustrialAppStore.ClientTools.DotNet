@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Security.Claims;
+
+using ExampleMvcApplication.Services;
+
+using IntelligentPlant.IndustrialAppStore.Authentication;
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.Sqlite;
@@ -25,6 +31,10 @@ namespace ExampleMvcApplication {
         ///   The service collection.
         /// </param>
         public void ConfigureServices(IServiceCollection services) {
+            // Retrieves and logs group memberships in the background when a user logs into the
+            // app.
+            services.AddHostedService<BackgroundGroupFetcher>();
+
             // Configure in-memory SQLite connection (for example purposes only; use an on-disk
             // database connection in the real world!)
             services.AddDbContext<UserTokensDbContext>(options => {
@@ -44,6 +54,14 @@ namespace ExampleMvcApplication {
                 // The IndustrialAppStoreAuthenticationOptions.ConfigureHttpClient property can be
                 // used to customise the HttpClient that is used for Data Core API calls e.g. 
                 //options.ConfigureHttpClient = builder => builder.AddHttpMessageHandler<MyCustomHandler>();
+
+                options.CookieAuthenticationEvents = new Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents() { 
+                    OnSignedIn = async ctx => {
+                        var userId = ctx.Principal.GetUserId();
+                        var sessionId = ctx.Principal.GetSessionId();
+                        await BackgroundGroupFetcher.OnUserLogonAsync(new UserLogonEvent(userId, sessionId), ctx.HttpContext.RequestAborted);
+                    }
+                };
             });
 
             if (Configuration.GetValue<bool>("IAS:UseExternalAuthentication")) {
