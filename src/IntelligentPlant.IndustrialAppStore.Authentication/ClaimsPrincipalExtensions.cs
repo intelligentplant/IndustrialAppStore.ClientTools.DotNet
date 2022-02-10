@@ -8,6 +8,36 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
     public static class ClaimsPrincipalExtensions {
 
         /// <summary>
+        /// Gets the user ID for the <see cref="ClaimsPrincipal"/>.
+        /// </summary>
+        /// <param name="principal">
+        ///   The <see cref="ClaimsPrincipal"/>.
+        /// </param>
+        /// <returns>
+        ///   The value of the principal's <see cref="ClaimTypes.NameIdentifier"/> 
+        ///   claim, or <see langword="null"/> if the claim was not found.
+        /// </returns>
+        public static string GetUserId(this ClaimsPrincipal principal) {
+            return principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+
+
+        /// <summary>
+        /// Gets the user name for the <see cref="ClaimsPrincipal"/>.
+        /// </summary>
+        /// <param name="principal">
+        ///   The <see cref="ClaimsPrincipal"/>.
+        /// </param>
+        /// <returns>
+        ///   The value of the principal's <see cref="ClaimTypes.Name"/> 
+        ///   claim, or <see langword="null"/> if the claim was not found.
+        /// </returns>
+        public static string GetUserName(this ClaimsPrincipal principal) {
+            return principal?.FindFirst(ClaimTypes.Name)?.Value;
+        }
+
+
+        /// <summary>
         /// Gets the organisation name for the <see cref="ClaimsPrincipal"/>.
         /// </summary>
         /// <param name="principal">

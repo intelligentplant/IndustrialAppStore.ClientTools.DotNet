@@ -5,7 +5,6 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.IndustrialAppStore.Authentication;
 using IntelligentPlant.IndustrialAppStore.Client;
 
@@ -127,18 +126,23 @@ namespace Microsoft.Extensions.DependencyInjection {
             services.AddSession();
 
             // HTTP client used by IndustrialAppStoreHttpClient.
-            var httpBuilder = services.AddHttpClient<IndustrialAppStoreHttpClient>(options => {
+            var userIasHttpClientBuilder = services.AddHttpClient<IndustrialAppStoreHttpClient>(options => {
+                options.BaseAddress = new Uri(opts.DataCoreUrl);
+            });
+
+            // HTTP client used by BackchannelIndustrialAppStoreHttpClient.
+            var backchannelIasHttpClientBuilder = services.AddHttpClient<BackchannelIndustrialAppStoreHttpClient>(options => {
                 options.BaseAddress = new Uri(opts.DataCoreUrl);
             });
 
             if (opts.UseExternalAuthentication) {
-                ConfigureExternalAuthentication(services, httpBuilder);
+                ConfigureExternalAuthentication(services, userIasHttpClientBuilder, backchannelIasHttpClientBuilder);
             } 
             else {
-                ConfigureIndustrialAppStoreAuthentication(services, httpBuilder, opts, factory);
+                ConfigureIndustrialAppStoreAuthentication(services, userIasHttpClientBuilder, backchannelIasHttpClientBuilder, opts, factory);
             }
 
-            opts.ConfigureHttpClient?.Invoke(httpBuilder);
+            opts.ConfigureHttpClient?.Invoke(userIasHttpClientBuilder);
 
             return services;
         }
@@ -150,13 +154,24 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <param name="services">
         ///   The application service collection.
         /// </param>
-        /// <param name="httpBuilder">
+        /// <param name="userHttpClientBuilder">
         ///   The <see cref="IHttpClientBuilder"/> for the <see cref="IndustrialAppStoreHttpClient"/> 
         ///   type.
         /// </param>
-        private static void ConfigureExternalAuthentication(IServiceCollection services, IHttpClientBuilder httpBuilder) {
+        /// <param name="backchannelHttpClientBuilder">
+        ///   The <see cref="IHttpClientBuilder"/> for the <see cref="BackchannelIndustrialAppStoreHttpClient"/> 
+        ///   type.
+        /// </param>
+        private static void ConfigureExternalAuthentication(IServiceCollection services, IHttpClientBuilder userHttpClientBuilder, IHttpClientBuilder backchannelHttpClientBuilder) {
             services.AddAuthentication();
-            httpBuilder.ConfigurePrimaryHttpMessageHandler(() => {
+            userHttpClientBuilder.ConfigurePrimaryHttpMessageHandler(() => {
+                var result = new HttpHandlerType() {
+                    Credentials = System.Net.CredentialCache.DefaultNetworkCredentials
+                };
+
+                return result;
+            });
+            backchannelHttpClientBuilder.ConfigurePrimaryHttpMessageHandler(() => {
                 var result = new HttpHandlerType() {
                     Credentials = System.Net.CredentialCache.DefaultNetworkCredentials
                 };
@@ -175,8 +190,12 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <param name="services">
         ///   The application service collection.
         /// </param>
-        /// <param name="httpBuilder">
+        /// <param name="userHttpClientBuilder">
         ///   The <see cref="IHttpClientBuilder"/> for the <see cref="IndustrialAppStoreHttpClient"/> 
+        ///   type.
+        /// </param>
+        /// <param name="backchannelHttpClientBuilder">
+        ///   The <see cref="IHttpClientBuilder"/> for the <see cref="BackchannelIndustrialAppStoreHttpClient"/> 
         ///   type.
         /// </param>
         /// <param name="iasOptions">
@@ -187,22 +206,23 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// </param>
         private static void ConfigureIndustrialAppStoreAuthentication<TTokenStore>(
             IServiceCollection services, 
-            IHttpClientBuilder httpBuilder,
+            IHttpClientBuilder userHttpClientBuilder,
+            IHttpClientBuilder backchannelHttpClientBuilder,
             IndustrialAppStoreAuthenticationOptions iasOptions,
             Func<IServiceProvider, HttpClient, TTokenStore> factory
         ) where TTokenStore : class, ITokenStore {
-            // HTTP client for backchannel communication with IAS.
-            services.AddHttpClient("ias_backchannel");
+            // HTTP client for backchannel communications with the IAS OAuth token endpoint.
+            services.AddHttpClient("ias_oauth_backchannel");
 
             services.AddScoped<ITokenStore, TTokenStore>(sp => {
-                var http = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ias_backchannel");
+                var http = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ias_oauth_backchannel");
                 return factory == null
                     ? ActivatorUtilities.CreateInstance<TTokenStore>(sp, http)
                     : factory.Invoke(sp, http);
             });
 
-            httpBuilder.AddHttpMessageHandler(() => {
-                return DataCoreHttpClient.CreateAuthenticationMessageHandler<HttpContext>(
+            userHttpClientBuilder.AddHttpMessageHandler(() => {
+                return IndustrialAppStoreHttpClient.CreateAuthenticationMessageHandler(
                     async (req, ctx, ct) => {
                         if (ctx == null) {
                             return null;
@@ -210,7 +230,19 @@ namespace Microsoft.Extensions.DependencyInjection {
                         return await ctx
                             .RequestServices
                             .GetRequiredService<ITokenStore>()
-                            .GetAuthenticationHeaderAsync();
+                            .GetAuthenticationHeaderAsync()
+                            .ConfigureAwait(false);
+                    }
+                );
+            });
+
+            backchannelHttpClientBuilder.AddHttpMessageHandler(() => {
+                return BackchannelIndustrialAppStoreHttpClient.CreateAuthenticationMessageHandler(
+                    async (req, tokenStore, ct) => {
+                        if (tokenStore == null) {
+                            return null;
+                        }
+                        return await tokenStore.GetAuthenticationHeaderAsync().ConfigureAwait(false);
                     }
                 );
             });

@@ -37,6 +37,9 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// </summary>
         private int _initialised;
 
+        /// <inheritdoc/>
+        public bool Ready => _initialised == 1;
+
         /// <summary>
         /// The user ID for the token store.
         /// </summary>
@@ -118,7 +121,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
         /// <inheritdoc/>
         async ValueTask<OAuthTokens?> ITokenStore.GetTokensAsync() {
-            if (_initialised == 0) {
+            if (!Ready) {
                 throw new InvalidOperationException(Resources.Error_TokenStoreHasNotBeenInitialised);
             }
 
@@ -161,7 +164,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
         /// <inheritdoc/>
         async ValueTask ITokenStore.SaveTokensAsync(OAuthTokens tokens) {
-            if (_initialised == 0) {
+            if (!Ready) {
                 throw new InvalidOperationException(Resources.Error_TokenStoreHasNotBeenInitialised);
             }
             await SaveTokensAsync(tokens);

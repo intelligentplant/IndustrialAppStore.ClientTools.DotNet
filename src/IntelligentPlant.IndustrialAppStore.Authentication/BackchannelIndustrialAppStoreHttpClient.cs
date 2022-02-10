@@ -5,28 +5,28 @@ using System.Threading.Tasks;
 using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.IndustrialAppStore.Client;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
     /// <summary>
     /// HTTP client for performing Industrial App Store API requests on behalf of an authenticated 
-    /// user during an HTTP request to the application.
+    /// user outside of the context of an HTTP request, for example in an <see cref="IHostedService"/> 
+    /// or a background task.
     /// </summary>
-    public class IndustrialAppStoreHttpClient : IndustrialAppStoreHttpClient<HttpContext> {
+    public sealed class BackchannelIndustrialAppStoreHttpClient : IndustrialAppStoreHttpClient<ITokenStore> {
 
         /// <inheritdoc/>
         public override bool AllowIasApiOperations { get; }
 
         /// <summary>
-        /// Creates a new <see cref="IndustrialAppStoreHttpClient"/> object.
+        /// Creates a new instance of the <see cref="BackchannelIndustrialAppStoreHttpClient"/> class.
         /// </summary>
         /// <param name="httpClient">
         ///   The HTTP client to use. When querying the Industrial App Store, an <c>Authorization</c> 
         ///   header must be set on every outgoing request. Use the <see cref="CreateAuthenticationMessageHandler"/> 
         ///   method to create a message handler to add the the request pipeline when creating the 
-        ///   <paramref name="httpClient"/>, to allow the <see cref="IndustrialAppStoreHttpClient"/> 
+        ///   <paramref name="httpClient"/>, to allow the <see cref="BackchannelIndustrialAppStoreHttpClient"/> 
         ///   to invoke a callback on demand to retrieve the <c>Authorization</c> header to add to 
         ///   outgoing requests.
         /// </param>
@@ -55,15 +55,11 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   <see cref="IndustrialAppStoreHttpClientOptions.IndustrialAppStoreUrl"/> on 
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public IndustrialAppStoreHttpClient(
+        public BackchannelIndustrialAppStoreHttpClient(
             HttpClient httpClient, 
             IndustrialAppStoreHttpClientOptions options, 
             IndustrialAppStoreAuthenticationOptions authenticationOptions
         ) : base(httpClient, options) { 
-            if (authenticationOptions == null) {
-                throw new ArgumentNullException(nameof(authenticationOptions));
-            }
-
             AllowIasApiOperations = !authenticationOptions.UseExternalAuthentication;
         }
 
@@ -71,11 +67,11 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <summary>
         /// Creates a <see cref="DelegatingHandler"/> that can be added to an <see cref="HttpClient"/> 
         /// message pipeline, that will set the <c>Authorize</c> header on outgoing requests based 
-        /// on the <see cref="HttpContext"/> passed to an <see cref="IndustrialAppStoreHttpClient"/> 
+        /// on the <see cref="ITokenStore"/> passed to an <see cref="BackchannelIndustrialAppStoreHttpClient"/> 
         /// method.
         /// </summary>
         /// <param name="callback">
-        ///   The callback delegate that will receive the outgoing request and the <see cref="HttpContext"/> 
+        ///   The callback delegate that will receive the outgoing request and the <see cref="ITokenStore"/> 
         ///   specified in the invocation and return the <c>Authorize</c> header value to add to 
         ///   the outgoing request.
         /// </param>
@@ -85,27 +81,8 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="callback"/> is <see langword="null"/>.
         /// </exception>
-        public static new DelegatingHandler CreateAuthenticationMessageHandler(AuthenticationCallback<HttpContext> callback) {
+        public static new DelegatingHandler CreateAuthenticationMessageHandler(AuthenticationCallback<ITokenStore> callback) {
             return DataCoreHttpClient.CreateAuthenticationMessageHandler(callback);
-        }
-
-
-        /// <summary>
-        /// Tests if the specified HTTP context has a valid access token associated with it.
-        /// </summary>
-        /// <param name="context">
-        ///   The HTTP context.
-        /// </param>
-        /// <returns>
-        ///   A <see cref="Task{TResult}"/> that will return a flag indiciating if a valid access 
-        ///   token is available.
-        /// </returns>
-        public async Task<bool> HasValidAccessToken(HttpContext context) {
-            if (context == null) {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            return await HasValidAccessToken(context.RequestServices.GetRequiredService<ITokenStore>()).ConfigureAwait(false);
         }
 
 
@@ -120,15 +97,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   token is available.
         /// </returns>
         public static async Task<bool> HasValidAccessToken(ITokenStore tokenStore) {
-            if (tokenStore == null) {
-                throw new ArgumentNullException(nameof(tokenStore));
-            }
-
-            var token = await tokenStore
-                .GetTokensAsync()
-                .ConfigureAwait(false);
-
-            return !string.IsNullOrWhiteSpace(token?.AccessToken);
+            return await IndustrialAppStoreHttpClient.HasValidAccessToken(tokenStore ?? throw new ArgumentNullException(nameof(tokenStore))).ConfigureAwait(false);
         }
 
     }
