@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authentication;
 
@@ -16,6 +17,11 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
     public interface ITokenStore {
 
         /// <summary>
+        /// Specifies if the <see cref="ITokenStore"/> has been initialised.
+        /// </summary>
+        bool Ready { get; }
+
+        /// <summary>
         /// Initialises the <see cref="ITokenStore"/> using the specified settings.
         /// </summary>
         /// <param name="userId">
@@ -28,6 +34,15 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   A <see cref="ValueTask"/> that will perform any required implementation-specific 
         ///   initialisation.
         /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="userId"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="sessionId"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        ///   The <see cref="ITokenStore"/> has already been initialised.
+        /// </exception>
         ValueTask InitAsync(string userId, string sessionId);
 
         /// <summary>
@@ -38,6 +53,9 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   authenticated user, or <see langword="null"/> if the access token is unavailable or 
         ///   has expired.
         /// </returns>
+        /// <exception cref="InvalidOperationException">
+        ///   The <see cref="ITokenStore"/> has not been initialised.
+        /// </exception>
         ValueTask<OAuthTokens?> GetTokensAsync();
 
         /// <summary>
@@ -49,6 +67,9 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <returns>
         ///   A <see cref="ValueTask"/> that will save the tokens.
         /// </returns>
+        /// <exception cref="InvalidOperationException">
+        ///   The <see cref="ITokenStore"/> has not been initialised.
+        /// </exception>
         ValueTask SaveTokensAsync(OAuthTokens tokens);
 
     }
