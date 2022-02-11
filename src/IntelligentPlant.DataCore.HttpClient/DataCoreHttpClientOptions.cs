@@ -10,7 +10,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// The base URL for Data Core API calls.
         /// </summary>
-        public Uri DataCoreUrl { get; set; }
+        public Uri DataCoreUrl { get; set; } = default!;
 
     }
 }

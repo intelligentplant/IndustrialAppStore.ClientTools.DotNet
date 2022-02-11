@@ -7,7 +7,7 @@
         /// <summary>
         /// Gets or sets the event source name.
         /// </summary>
-        public string EventSourceName { get; set; }
+        public string EventSourceName { get; set; } = default!;
 
     }
 }

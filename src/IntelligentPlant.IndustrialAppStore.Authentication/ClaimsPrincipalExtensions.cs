@@ -17,7 +17,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   The value of the principal's <see cref="ClaimTypes.NameIdentifier"/> 
         ///   claim, or <see langword="null"/> if the claim was not found.
         /// </returns>
-        public static string GetUserId(this ClaimsPrincipal principal) {
+        public static string? GetUserId(this ClaimsPrincipal principal) {
             return principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
 
@@ -32,7 +32,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   The value of the principal's <see cref="ClaimTypes.Name"/> 
         ///   claim, or <see langword="null"/> if the claim was not found.
         /// </returns>
-        public static string GetUserName(this ClaimsPrincipal principal) {
+        public static string? GetUserName(this ClaimsPrincipal principal) {
             return principal?.FindFirst(ClaimTypes.Name)?.Value;
         }
 
@@ -47,7 +47,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   The value of the principal's <see cref="IndustrialAppStoreAuthenticationDefaults.OrgNameClaimType"/> 
         ///   claim, or <see langword="null"/> if the claim was not found.
         /// </returns>
-        public static string GetOrganisationName(this ClaimsPrincipal principal) {
+        public static string? GetOrganisationName(this ClaimsPrincipal principal) {
             return principal?.FindFirst(IndustrialAppStoreAuthenticationDefaults.OrgNameClaimType)?.Value;
         }
 
@@ -62,7 +62,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   The value of the principal's <see cref="IndustrialAppStoreAuthenticationDefaults.OrgIdentifierClaimType"/> 
         ///   claim, or <see langword="null"/> if the claim was not found.
         /// </returns>
-        public static string GetOrganisationId(this ClaimsPrincipal principal) {
+        public static string? GetOrganisationId(this ClaimsPrincipal principal) {
             return principal?.FindFirst(IndustrialAppStoreAuthenticationDefaults.OrgIdentifierClaimType)?.Value;
         }
 
@@ -77,7 +77,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   The value of the principal's <see cref="IndustrialAppStoreAuthenticationDefaults.PictureClaimType"/> 
         ///   claim, or <see langword="null"/> if the claim was not found.
         /// </returns>
-        public static string GetProfilePictureUrl(this ClaimsPrincipal principal) {
+        public static string? GetProfilePictureUrl(this ClaimsPrincipal principal) {
             return principal?.FindFirst(IndustrialAppStoreAuthenticationDefaults.PictureClaimType)?.Value;
         }
 
@@ -92,7 +92,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   The value of the principal's <see cref="IndustrialAppStoreAuthenticationDefaults.AppSessionIdClaimType"/> 
         ///   claim, or <see langword="null"/> if the claim was not found.
         /// </returns>
-        public static string GetSessionId(this ClaimsPrincipal principal) { 
+        public static string? GetSessionId(this ClaimsPrincipal principal) { 
             return principal?.FindFirst(IndustrialAppStoreAuthenticationDefaults.AppSessionIdClaimType)?.Value;
         }
 

@@ -14,7 +14,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         /// commonly-supported function names.
         /// </summary>
         [Required]
-        public string DataFunction { get; set; }
+        public string DataFunction { get; set; } = default!;
 
         /// <summary>
         /// The sample interval to use when processing the tag values.

@@ -26,9 +26,9 @@ namespace IntelligentPlant.DataCore.Client {
     ///   <c>Authorize</c> header in the outgoing request. If the return value is 
     ///   <see langword="null"/>, no <c>Authorize</c> header will be set.
     /// </returns>
-    public delegate Task<AuthenticationHeaderValue> AuthenticationCallback<TContext>(
+    public delegate Task<AuthenticationHeaderValue?> AuthenticationCallback<TContext>(
         HttpRequestMessage request, 
-        TContext context, 
+        TContext? context, 
         CancellationToken cancellationToken
     );
 

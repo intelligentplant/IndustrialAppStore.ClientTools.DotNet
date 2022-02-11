@@ -8,7 +8,7 @@
         /// <summary>
         /// The default unit of measure for the template.
         /// </summary>
-        public string UnitOfMeasure { get; set; }
+        public string? UnitOfMeasure { get; set; }
 
     }
 }

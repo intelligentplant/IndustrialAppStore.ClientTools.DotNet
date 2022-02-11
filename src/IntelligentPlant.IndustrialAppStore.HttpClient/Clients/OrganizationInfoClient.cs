@@ -66,7 +66,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// </exception>
         public async Task<IEnumerable<UserOrGroupPrincipal>> FindUsersAsync(
             UserOrGroupPrincipalSearchRequest request,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -118,7 +118,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// </exception>
         public async Task<IEnumerable<UserOrGroupPrincipal>> FindGroupsAsync(
            UserOrGroupPrincipalSearchRequest request,
-           TContext context = default,
+           TContext? context = default,
            CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -160,7 +160,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         ///   A task that will return the matching groups.
         /// </returns>
         public async Task<IEnumerable<UserOrGroupPrincipal>> GetGroupMembershipsAsync(
-           TContext context = default,
+           TContext? context = default,
            CancellationToken cancellationToken = default
         ) {
             var url = GetAbsoluteUrl("api/user-search/me/groups");

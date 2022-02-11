@@ -10,17 +10,17 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the display name for the reference.
         /// </summary>
-        public string DisplayName { get; set; }
+        public string DisplayName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the data source name.
         /// </summary>
-        public string DataSourceName { get; set; }
+        public string DataSourceName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the tag name.
         /// </summary>
-        public string TagName { get; set; }
+        public string TagName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets a flag stating if the tag reference could be resolved.
@@ -30,13 +30,13 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the reason that the expression is invalid, when <see cref="IsValid"/> is <see langword="false"/>.
         /// </summary>
-        public string ValidationError { get; set; }
+        public string? ValidationError { get; set; }
 
         /// <summary>
         /// Gets a key used in hash code generation and equality comparison.
         /// </summary>
         private string Key {
-            get { return String.Concat(DisplayName, ",", DataSourceName, ",", TagName).ToUpperInvariant(); }
+            get { return string.Concat(DisplayName, ",", DataSourceName, ",", TagName).ToUpperInvariant(); }
         }
 
 
@@ -58,7 +58,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <returns>
         /// <see langword="true"/> if the objects are equal, otherwise <see langword="false"/>.
         /// </returns>
-        public bool Equals(ExpressionTagReference obj) {
+        public bool Equals(ExpressionTagReference? obj) {
             if (obj == null) {
                 return false;
             }

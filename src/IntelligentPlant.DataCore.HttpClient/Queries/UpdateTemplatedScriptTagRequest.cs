@@ -6,9 +6,10 @@ namespace IntelligentPlant.DataCore.Client.Queries {
     public class UpdateTemplatedScriptTagRequest : DataSourceRequest {
 
         [Required]
-        public string ScriptTagId { get; set; }
+        public string ScriptTagId { get; set; } = default!;
 
-        public TemplatedScriptTagSettings Settings { get; set; }
+        [Required]
+        public TemplatedScriptTagSettings Settings { get; set; } = default!;
 
     }
 }

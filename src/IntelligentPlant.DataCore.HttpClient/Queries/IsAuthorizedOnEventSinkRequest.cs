@@ -5,7 +5,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
 
         [Required]
         [MinLength(1)]
-        public string[] RoleNames { get; set; }
+        public string[] RoleNames { get; set; } = default!;
 
     }
 }

@@ -11,7 +11,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         /// The template name filter to apply.
         /// </summary>
         [MaxLength(200)]
-        public string NameFilter { get; set; }
+        public string? NameFilter { get; set; }
 
     }
 }

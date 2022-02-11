@@ -18,12 +18,12 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the name of the Data Core component that received the item.
         /// </summary>
-        public string ComponentName { get; set; }
+        public string ComponentName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the host name for the server that received the item.
         /// </summary>
-        public string HostName { get; set; }
+        public string HostName { get; set; } = default!;
 
     }
 }

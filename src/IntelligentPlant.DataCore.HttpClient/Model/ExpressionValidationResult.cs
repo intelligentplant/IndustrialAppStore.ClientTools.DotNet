@@ -10,7 +10,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the expression.
         /// </summary>
-        public string Expression { get; set; }
+        public string Expression { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets a flay stating if the expression is valid or not.

@@ -19,17 +19,17 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// Gets or sets the person's name.
         /// </summary>
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the person's email address.
         /// </summary>
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         /// <summary>
         /// Gets or sets the person's URL.
         /// </summary>
-        public Uri Url { get; set; }
+        public Uri? Url { get; set; }
 
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// A flag that indicates if <paramref name="result"/> was successfully created. When <see langword="false"/>, 
         /// <paramref name="result"/> will be <see langword="null"/>.
         /// </returns>
-        public static bool TryCreateFromPersonString(string personString, out Person result) {
+        public static bool TryCreateFromPersonString(string personString, out Person? result) {
             if (String.IsNullOrWhiteSpace(personString)) {
                 result = null;
                 return false;

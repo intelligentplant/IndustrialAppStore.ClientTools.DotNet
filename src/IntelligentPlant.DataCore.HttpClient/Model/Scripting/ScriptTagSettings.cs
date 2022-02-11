@@ -14,13 +14,13 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// </summary>
         [Required]
         [MaxLength(200)]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the tag description.
         /// </summary>
         [MaxLength(200)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets a flag that indicates if the script tag is enabled or disabled. Disabled script 
@@ -34,19 +34,19 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// Gets or sets the tag units.
         /// </summary>
         [MaxLength(50)]
-        public string Units { get; set; }
+        public string? Units { get; set; }
 
         /// <summary>
         /// Gets or sets the labels associated with the script tag.
         /// </summary>
         [MaxLength(20)]
-        public string[] Labels { get; set; }
+        public string[]? Labels { get; set; }
 
         /// <summary>
         /// Gets or sets the archive settings for the tag. Archiving must be enabled if you want to 
         /// perform historical queries on the script tag.
         /// </summary>
-        public ScriptTagArchiveSettings ArchiveSettings { get; set; }
+        public ScriptTagArchiveSettings? ArchiveSettings { get; set; }
 
     }
 
@@ -61,14 +61,14 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// </summary>
         [Required]
         [MaxLength(50)]
-        public string ScriptEngineId { get; set; }
+        public string ScriptEngineId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the name of the application that is creating the tag.
         /// </summary>
         [Required]
         [MaxLength(100)]
-        public string ApplicationName { get; set; }
+        public string ApplicationName { get; set; } = default!;
 
         /// <summary>
         /// The initial start time for the script tag calculation, used on the first evaluation of 

@@ -18,19 +18,19 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// Gets or sets the namespace for the event. If not specified, the name of the script tag will be used.
         /// </summary>
         [MaxLength(200)]
-        public string Namespace { get; set; }
+        public string? Namespace { get; set; }
 
         /// <summary>
         /// Gets or sets the category for the event.
         /// </summary>
         [MaxLength(100)]
-        public string Category { get; set; }
+        public string? Category { get; set; }
 
         /// <summary>
         /// Gets or sets the description for the event.
         /// </summary>
         [MaxLength(500)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets a flag specifying if the event must reset before it can trigger again.
@@ -43,13 +43,13 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// Gets or sets a URL that can be visited to find out more information about an event.
         /// </summary>
         [MaxLength(500)]
-        public string MoreInfoUrl { get; set; }
+        public string? MoreInfoUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the caption to use for "more info" links.
         /// </summary>
         [MaxLength(50)]
-        public string MoreInfoCaption { get; set; }
+        public string? MoreInfoCaption { get; set; }
 
     }
 

@@ -8,17 +8,17 @@
         /// <summary>
         /// Gets or sets the data source name.
         /// </summary>
-        public string DataSourceName { get; set; }
+        public string DataSourceName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the subscription group name.
         /// </summary>
-        public string GroupName { get; set; }
+        public string GroupName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the tag name.
         /// </summary>
-        public string TagName { get; set; }
+        public string TagName { get; set; } = default!;
 
     }
 

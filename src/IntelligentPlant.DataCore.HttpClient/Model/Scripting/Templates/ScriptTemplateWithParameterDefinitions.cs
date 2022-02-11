@@ -11,7 +11,7 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting.Templates {
         /// <summary>
         /// Gets or sets the parameters that are used in the template.
         /// </summary>
-        public IEnumerable<ScriptTemplateParameterDefinition> Parameters { get; set; }
+        public IEnumerable<ScriptTemplateParameterDefinition>? Parameters { get; set; }
 
     }
 }

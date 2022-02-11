@@ -9,7 +9,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
 
         [Required]
         [MaxLength(100)]
-        public string ScriptEngineId { get; set; }
+        public string ScriptEngineId { get; set; } = default!;
 
     }
 }

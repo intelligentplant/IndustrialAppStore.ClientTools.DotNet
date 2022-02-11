@@ -23,7 +23,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <summary>
         /// The refresh token for the authenticated user. Can be <see langword="null"/>.
         /// </summary>
-        public string RefreshToken { get; }
+        public string? RefreshToken { get; }
 
         /// <summary>
         /// The UTC expiry time for the <see cref="AccessToken"/>. Can be <see langword="null"/> 
@@ -50,7 +50,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="accessToken"/> is <see langword="null"/>.
         /// </exception>
-        public OAuthTokens(string tokenType, string accessToken, string refreshToken, DateTimeOffset? utcExpiresAt) {
+        public OAuthTokens(string tokenType, string accessToken, string? refreshToken, DateTimeOffset? utcExpiresAt) {
             TokenType = tokenType;
             AccessToken = accessToken ?? throw new ArgumentNullException(nameof(accessToken));
             RefreshToken = refreshToken;

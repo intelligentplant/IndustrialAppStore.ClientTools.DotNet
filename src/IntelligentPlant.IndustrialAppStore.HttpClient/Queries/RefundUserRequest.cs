@@ -12,7 +12,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Queries {
         /// </summary>
         [Required]
         [MaxLength(200)]
-        public string TransactionRef { get; set; }
+        public string TransactionRef { get; set; } = default!;
 
     }
 

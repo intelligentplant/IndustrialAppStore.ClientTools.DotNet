@@ -11,7 +11,7 @@ namespace IntelligentPlant.DataCore.Client.Model.AssetModel {
         /// The parent ID of the element. Can be <see langword="null"/> if this is a top-level 
         /// element in the hierarchy.
         /// </summary>
-        public string ParentId { get; set; }
+        public string? ParentId { get; set; }
 
         /// <summary>
         /// A flag specifying if the element has children.
@@ -21,7 +21,7 @@ namespace IntelligentPlant.DataCore.Client.Model.AssetModel {
         /// <summary>
         /// The child elements for this element.
         /// </summary>
-        public IEnumerable<AssetModelElement> Children { get; set; }
+        public IEnumerable<AssetModelElement>? Children { get; set; }
 
         /// <summary>
         /// A flag specifying if the element has properties.
@@ -31,7 +31,7 @@ namespace IntelligentPlant.DataCore.Client.Model.AssetModel {
         /// <summary>
         /// The properties for the element.
         /// </summary>
-        public IEnumerable<AssetModelProperty> Properties { get; set; }
+        public IEnumerable<AssetModelProperty>? Properties { get; set; }
 
     }
 }

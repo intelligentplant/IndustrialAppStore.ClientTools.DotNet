@@ -103,7 +103,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         public static IServiceCollection AddIndustrialAppStoreAuthentication<TTokenStore>(
             this IServiceCollection services,
             Action<IndustrialAppStoreAuthenticationOptions> configure,
-            Func<IServiceProvider, HttpClient, TTokenStore> factory = null
+            Func<IServiceProvider, HttpClient, TTokenStore>? factory = null
         ) where TTokenStore : class, ITokenStore {
             if (services == null) {
                 throw new ArgumentNullException(nameof(services));
@@ -209,7 +209,7 @@ namespace Microsoft.Extensions.DependencyInjection {
             IHttpClientBuilder userHttpClientBuilder,
             IHttpClientBuilder backchannelHttpClientBuilder,
             IndustrialAppStoreAuthenticationOptions iasOptions,
-            Func<IServiceProvider, HttpClient, TTokenStore> factory
+            Func<IServiceProvider, HttpClient, TTokenStore>? factory
         ) where TTokenStore : class, ITokenStore {
             // HTTP client for backchannel communications with the IAS OAuth token endpoint.
             services.AddHttpClient("ias_oauth_backchannel");
@@ -311,7 +311,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                     },
                     OnValidatePrincipal = async ctx => {
                         var tokenStore = ctx.HttpContext.RequestServices.GetRequiredService<ITokenStore>();
-                        await InitTokenStoreAsync(tokenStore, ctx.Principal, ctx.Properties).ConfigureAwait(false);
+                        await InitTokenStoreAsync(tokenStore, ctx.Principal!, ctx.Properties).ConfigureAwait(false);
 
                         var accessToken = await tokenStore.GetTokensAsync().ConfigureAwait(false);
 
@@ -368,7 +368,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                     options.CallbackPath = opts.CallbackPath;
 
                     options.ClientId = opts.ClientId;
-                    options.ClientSecret = opts.ClientSecret;
+                    options.ClientSecret = opts.ClientSecret!;
 
                     options.UsePkce = true;
                     // Microsoft OAuth authentication middleware requires a client secret to be 
@@ -415,14 +415,17 @@ namespace Microsoft.Extensions.DependencyInjection {
                             // Add session ID claim to identity. This can be used by custom
                             // ITokenStore implementations to distinguish between different login
                             // sessions from the same account.
-                            var sessionId = Guid.NewGuid().ToString("N");
-                            context.Identity.AddClaim(new Claim(IndustrialAppStoreAuthenticationDefaults.AppSessionIdClaimType, sessionId));
+                            var sessionId = opts.SessionIdGenerator?.Invoke(context.Identity, context.HttpContext);
+                            if (string.IsNullOrWhiteSpace(sessionId)) {
+                                sessionId = Guid.NewGuid().ToString("N");
+                            }
+                            context.Identity!.AddClaim(new Claim(IndustrialAppStoreAuthenticationDefaults.AppSessionIdClaimType, sessionId));
 
                             var tokens = TokenStore.CreateOAuthTokens(
-                                context.TokenType, 
-                                context.AccessToken, 
+                                context.TokenType!, 
+                                context.AccessToken!, 
                                 context.ExpiresIn, 
-                                context.RefreshToken,
+                                context.RefreshToken!,
                                 context.HttpContext.RequestServices.GetRequiredService<ISystemClock>()
                             );
 
@@ -433,7 +436,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                                 await opts.OAuthEvents.OnRedirectToAuthorizationEndpoint(context);
                             }
 
-                            var queryParameters = new Dictionary<string, string>();
+                            var queryParameters = new Dictionary<string, string?>();
 
                             if (opts.ShowConsentPrompt) {
                                 queryParameters["prompt"] = "consent";
@@ -469,7 +472,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                             context.HttpContext.Items.Remove("ias_tokens");
 
                             var tokenStore = context.HttpContext.RequestServices.GetRequiredService<ITokenStore>();
-                            await InitTokenStoreAsync(tokenStore, context.Principal, context.Properties);
+                            await InitTokenStoreAsync(tokenStore, context.Principal!, context.Properties!);
 
                             await tokenStore.SaveTokensAsync(tokens);
                         }

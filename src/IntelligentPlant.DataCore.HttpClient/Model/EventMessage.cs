@@ -12,17 +12,17 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the ID for the event object.
         /// </summary>
-        public string ID { get; set; }
+        public string? ID { get; set; }
 
         /// <summary>
         /// Gets or sets the ID or name of the event source that generated the event.
         /// </summary>
-        public string SourceSystem { get; set; }
+        public string? SourceSystem { get; set; }
 
         /// <summary>
         /// Gets or sets the source identifier for the event.
         /// </summary>
-        public string Source { get; set; }
+        public string? Source { get; set; }
 
         /// <summary>
         /// Gets or sets the UTC event time.
@@ -32,12 +32,12 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the event category.
         /// </summary>
-        public string Category { get; set; }
+        public string? Category { get; set; }
 
         /// <summary>
         /// Gets or sets the event name.
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets a sequence number for the message.
@@ -51,12 +51,12 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the event message text.
         /// </summary>
-        public string Message { get; set; }
+        public string? Message { get; set; }
 
         /// <summary>
         /// The event properties.
         /// </summary>
-        private ICollection<EventProperty> _properties;
+        private ICollection<EventProperty> _properties = new List<EventProperty>();
 
         /// <summary>
         /// Gets or sets the event properties.
@@ -73,12 +73,12 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <remarks>
         /// For event sources such as control systems, this field should be populated with the message that was received from the source.
         /// </remarks>
-        public string RawMessage { get; set; }
+        public string? RawMessage { get; set; }
 
         /// <summary>
         /// The route that the event has taken to get to its current location.
         /// </summary>
-        private ICollection<EventRouteEntry> _route;
+        private ICollection<EventRouteEntry> _route = new List<EventRouteEntry>();
 
         /// <summary>
         /// Gets or sets the route that the event has taken to get to its current location.

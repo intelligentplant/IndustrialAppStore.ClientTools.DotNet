@@ -9,27 +9,27 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Model {
         /// <summary>
         /// The principal name or unique identifier.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// The principal's display name.
         /// </summary>
-        public string DisplayName { get; set; }
+        public string? DisplayName { get; set; }
 
         /// <summary>
         /// The principal's description.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// The principal's picture URL.
         /// </summary>
-        public string PicUrl { get; set; }
+        public string? PicUrl { get; set; }
 
         /// <summary>
         /// The name of the organisation that the principal belongs to.
         /// </summary>
-        public string Org { get; set; }
+        public string? Org { get; set; }
 
         /// <summary>
         /// A flag that is <see langword="true"/> if the principal is not from the 

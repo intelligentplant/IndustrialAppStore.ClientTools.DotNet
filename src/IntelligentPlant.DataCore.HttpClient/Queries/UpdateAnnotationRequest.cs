@@ -6,10 +6,10 @@ namespace IntelligentPlant.DataCore.Client.Queries {
     public class UpdateAnnotationRequest {
 
         [Required]
-        public string DataSourceName { get; set; }
+        public string DataSourceName { get; set; } = default!;
 
         [Required]
-        public AnnotationUpdate Annotation { get; set; }
+        public AnnotationUpdate Annotation { get; set; } = default!;
 
     }
 }

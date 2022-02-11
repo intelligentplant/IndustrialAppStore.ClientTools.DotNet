@@ -52,7 +52,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         ///   A task that will return the user information.
         /// </returns>
         public async Task<UserOrGroupPrincipal> GetUserInfoAsync(
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             var url = GetAbsoluteUrl("api/user-search/me");

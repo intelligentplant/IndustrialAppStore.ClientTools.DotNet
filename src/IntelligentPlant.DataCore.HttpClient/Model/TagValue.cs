@@ -35,7 +35,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <remarks>
         /// For digital tags, this field returns the name of the digital state.
         /// </remarks>
-        public string TextValue { get; private set; }
+        public string? TextValue { get; private set; }
 
         /// <summary>
         /// Gets the quality status for the value.
@@ -45,17 +45,17 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets the unit of measure for the tag value.
         /// </summary>
-        public string Unit { get; private set; }
+        public string? Unit { get; private set; }
 
         /// <summary>
         /// Gets notes associated with the value.
         /// </summary>
-        public string Notes { get; private set; }
+        public string? Notes { get; private set; }
 
         /// <summary>
         /// Gets the error message associated with the value.
         /// </summary>
-        public string Error { get; private set; }
+        public string? Error { get; private set; }
 
         /// <summary>
         /// Gets a flag indicating if the tag value contains a numeric value.
@@ -84,7 +84,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="notes">Additional notes about the value.</param>
         /// <param name="error">An error message associated with the value.</param>
         [JsonConstructor]
-        public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string textValue, TagValueStatus status, string unit, string notes, string error) {
+        public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string? textValue, TagValueStatus status, string? unit, string? notes, string? error) {
             TagName = tagName;
             UtcSampleTime = utcSampleTime;
             NumericValue = numericValue;
@@ -106,7 +106,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="status">The quality status for the value.</param>
         /// <param name="unit">The unit of measure for the tag value.</param>
         /// <param name="notes">Additional notes about the value.</param>
-        public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string textValue, TagValueStatus status, string unit, string notes) : this(tagName, utcSampleTime, numericValue, textValue, status, unit, notes, null) { }
+        public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string? textValue, TagValueStatus status, string? unit, string? notes) : this(tagName, utcSampleTime, numericValue, textValue, status, unit, notes, null) { }
 
 
 
@@ -119,7 +119,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="textValue">The text value.</param>
         /// <param name="status">The quality status for the value.</param>
         /// <param name="unit">The unit of measure for the tag value.</param>
-        public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string textValue, TagValueStatus status, string unit) : this(tagName, utcSampleTime, numericValue, textValue, status, unit, null) { }
+        public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string? textValue, TagValueStatus status, string? unit) : this(tagName, utcSampleTime, numericValue, textValue, status, unit, null) { }
 
 
         /// <summary>

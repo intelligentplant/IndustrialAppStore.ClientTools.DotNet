@@ -10,26 +10,26 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// Gets or sets the script engine ID.
         /// </summary>
         [Required]
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the display name for the script engine.
         /// </summary>
         [Required]
         [MaxLength(200)]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the description for the script engine.
         /// </summary>
         [MaxLength(500)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the scripting language used by the engine.
         /// </summary>
         [MaxLength(50)]
-        public string Language { get; set; }
+        public string? Language { get; set; }
 
         /// <summary>
         /// Gets or sets a flag specifying if the script engine supports templating.

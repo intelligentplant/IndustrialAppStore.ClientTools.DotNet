@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
@@ -22,7 +21,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   If the token store does not contain a valid access token, the return value will be 
         ///   <see langword="null"/>.
         /// </returns>
-        public static async Task<AuthenticationHeaderValue> GetAuthenticationHeaderAsync(this ITokenStore tokenStore) {
+        public static async Task<AuthenticationHeaderValue?> GetAuthenticationHeaderAsync(this ITokenStore tokenStore) {
             if (tokenStore == null) {
                 throw new ArgumentNullException(nameof(tokenStore));
             }

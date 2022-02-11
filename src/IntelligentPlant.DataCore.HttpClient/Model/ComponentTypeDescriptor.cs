@@ -8,17 +8,17 @@
         /// <summary>
         /// The type name.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// The display name or description.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// The type version.
         /// </summary>
-        public string Version { get; set; }
+        public string? Version { get; set; }
 
     }
 }

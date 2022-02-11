@@ -66,7 +66,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// </exception>
         public async Task<DebitUserResponse> DebitUserAsync(
             DebitUserRequest request,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -154,7 +154,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// </exception>
         public async Task<RefundUserResponse> RefundUserAsync(
             RefundUserRequest request,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {

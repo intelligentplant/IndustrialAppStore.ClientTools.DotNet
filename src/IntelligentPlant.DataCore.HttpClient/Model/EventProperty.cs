@@ -7,12 +7,12 @@
         /// <summary>
         /// Gets or sets the event name.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the event value.
         /// </summary>
-        public object Value { get; set; }
+        public object? Value { get; set; }
 
     }
 }

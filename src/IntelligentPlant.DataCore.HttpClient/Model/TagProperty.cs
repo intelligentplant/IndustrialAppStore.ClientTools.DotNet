@@ -7,17 +7,17 @@
         /// <summary>
         /// Gets or sets the name of the property.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the category for the property.
         /// </summary>
-        public string Category { get; set; }
+        public string? Category { get; set; }
 
         /// <summary>
         /// Gets or sets the property description.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the numerical order number for the property.
@@ -31,7 +31,7 @@
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public object Value { get; set; }
+        public object? Value { get; set; }
 
     }
 }
