@@ -87,7 +87,22 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
 
 # Calling Industrial App Store APIs
 
-The `IndustrialAppStoreHttpClient` service is automatically registered with the dependency injection container to allow you to call Industrial App Store (and Data Core) APIs. When calling API methods, you must pass the `HttpContext` for the calling user to allow the client to use the caller's IAS access token to authorize the call:
+Refer to the [API client documentation](/docs/data-core-api-client) for more details on available API calls.
+
+
+## Which Industrial App Store Client Should I Use?
+
+The `IntelligentPlant.IndustrialAppStore.Authentication` package registers two different Industrial App Store client types with your application's dependency injection container:
+
+- [IndustrialAppStoreHttpClient](./IndustrialAppStoreHttpClient.cs)
+- [BackchannelIndustrialAppStoreHttpClient](./BackchannelIndustrialAppStoreHttpClient.cs)
+
+The two clients function identically, but use different types for the context parameter on each operation. The guidance for choosing which client to use is as follows:
+
+
+**When making calls to the Industrial App Store from your app's HTTP request pipeline, use IndustrialAppStoreHttpClient**
+
+`IndustrialAppStoreHttpClient` expects you to pass an `HttpContext` object in each method call. The access token for the calling user is automatically retrieved from the `HttpContext` and appended to the HTTP headers for outgoing Industrial App Store requests:
 
 ```csharp
 [ApiController]
@@ -112,7 +127,41 @@ public class ExampleController : ControllerBase {
 }
 ```
 
-Refer to the [API client documentation](/docs/data-core-api-client) for more details on available API calls.
+**When making calls to the Industrial App Store from a background task or an IHostedService, use BackchannelIndustrialAppStoreHttpClient**
+
+`BackchannelIndustrialAppStoreHttpClient` expects an [ITokenStore](./ITokenStore.cs) to be passed when making calls to the Industrial App Store. The access token is retrieved from the `ITokenStore` and appended to the outgoing HTTP request headers. 
+
+This allows you to make calls to the Industrial App Store from outside the app's HTTP request pipeline, such as from a background task or an `IHostedService`. For example, your app might allow a user to configure a periodic task that will perform some anaylsis on an industrial process in the background, regardless of whether or not the user has the app open in their browser:
+
+```csharp
+public class MyAnalysis {
+
+    private readonly IServiceProvider _serviceProvider;
+
+    public MyAnalysis(IServiceProvider serviceProvider) {
+        _serviceProvider = serviceProvider;
+    }
+
+    public async Task RunAnalysisForUserAsync(string userId, string sessionId, CancellationToken cancellationToken) {
+        // ITokenStore is a scoped service, so we need to create a scope for this operation.
+        using (var scope = _serviceProvider.CreateScope()) {
+            var iasClient = scope.ServiceProvider.GetRequiredService<BackchannelIndustrialAppStoreHttpClient>();
+            var tokenStore = scope.ServiceProvider.GetRequiredService<ITokenStore>();
+
+            // We need to initialise ITokenStore ourselves when using it outside of the HTTP 
+            // pipeline.
+            await tokenStore.InitAsync(userId, sessionId);
+
+            var dataSources = await iasClient.DataSources.GetDataSourcesAsync(tokenStore, cancellationToken);
+
+            // TODO: Use iasClient to retrieve required data and perform analysis.
+        }
+    }
+
+}
+```
+
+Note that this scenario requires that you are using a custom `ITokenStore` implementation in your app, so that you can persist access tokens to a location other than the browser's session cookie. See below for details.
 
 
 # Using a Custom Token Store
