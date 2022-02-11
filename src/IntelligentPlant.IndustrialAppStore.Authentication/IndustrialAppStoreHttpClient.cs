@@ -100,7 +100,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   A <see cref="Task{TResult}"/> that will return a flag indiciating if a valid access 
         ///   token is available.
         /// </returns>
-        public async Task<bool> HasValidAccessToken(HttpContext context) {
+        public static async Task<bool> HasValidAccessToken(HttpContext context) {
             if (context == null) {
                 throw new ArgumentNullException(nameof(context));
             }
