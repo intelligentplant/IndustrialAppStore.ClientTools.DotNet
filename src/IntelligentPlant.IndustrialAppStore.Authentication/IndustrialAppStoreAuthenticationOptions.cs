@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 using IntelligentPlant.IndustrialAppStore.Client;
 
@@ -56,12 +57,12 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <summary>
         /// The Industrial App Store client ID.
         /// </summary>
-        public string ClientId { get; set; }
+        public string ClientId { get; set; } = default!;
 
         /// <summary>
         /// The Industrial App Store client secret.
         /// </summary>
-        public string ClientSecret { get; set; }
+        public string? ClientSecret { get; set; }
 
         /// <summary>
         /// The OAuth scopes to request.
@@ -99,7 +100,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// registration used by the <see cref="IndustrialAppStoreHttpClient"/> application 
         /// service.
         /// </summary>
-        public Action<IHttpClientBuilder> ConfigureHttpClient { get; set; }
+        public Action<IHttpClientBuilder>? ConfigureHttpClient { get; set; }
 
         /// <summary>
         /// Additional event handlers for cookie authentication events raised by the application.
@@ -107,7 +108,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <remarks>
         ///   Ignored when <see cref="UseExternalAuthentication"/> is <see langword="true"/>.
         /// </remarks>
-        public CookieAuthenticationEvents CookieAuthenticationEvents { get; set; }
+        public CookieAuthenticationEvents? CookieAuthenticationEvents { get; set; }
 
         /// <summary>
         /// Additional event handlers for OAuth authentication events raised when signing a user 
@@ -116,7 +117,28 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <remarks>
         ///   Ignored when <see cref="UseExternalAuthentication"/> is <see langword="true"/>.
         /// </remarks>
-        public OAuthEvents OAuthEvents { get; set; }
+        public OAuthEvents? OAuthEvents { get; set; }
+
+        /// <summary>
+        /// A callback that can be used to generate an ID for a new session from the provided 
+        /// <see cref="ClaimsIdentity"/> and <see cref="HttpContext"/>.
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// <para>
+        ///   Specify a value for <see cref="SessionIdGenerator"/> if your app nees to customise 
+        ///   how an identifier is generated for a session (for example, by computing a fingerprint 
+        ///   based on the user/device/browser combination).
+        /// </para>
+        /// 
+        /// <para>
+        ///   If <see cref="SessionIdGenerator"/> is <see langword="null"/> or returns a 
+        ///   <see langword="null"/> or white space value, a unique identifier will be generated 
+        ///   for the session.
+        /// </para>
+        /// 
+        /// </remarks>
+        public Func<ClaimsIdentity, HttpContext, string>? SessionIdGenerator { get; set; }
 
     }
 }
