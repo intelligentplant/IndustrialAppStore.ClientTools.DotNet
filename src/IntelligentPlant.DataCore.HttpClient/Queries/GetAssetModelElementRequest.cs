@@ -4,7 +4,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
     public class GetAssetModelElementRequest : DataSourceRequest {
 
         [Required]
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
 
         public bool LoadProperties { get; set; }
 

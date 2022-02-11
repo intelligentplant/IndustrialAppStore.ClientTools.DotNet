@@ -14,7 +14,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the sample value.
         /// </summary>
-        public object Value { get; set; }
+        public object Value { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the sample quality status.

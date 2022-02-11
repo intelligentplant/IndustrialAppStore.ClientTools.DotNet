@@ -16,7 +16,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Queries {
         /// The name filter.
         /// </summary>
         [MaxLength(100)]
-        public string Filter { get; set; }
+        public string Filter { get; set; } = default!;
 
         /// <summary>
         /// The page size.

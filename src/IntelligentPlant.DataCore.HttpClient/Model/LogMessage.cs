@@ -17,7 +17,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the message.
         /// </summary>
-        public string Message { get; private set; }
+        public string? Message { get; private set; }
 
 
         /// <summary>

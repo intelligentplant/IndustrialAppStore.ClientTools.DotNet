@@ -16,7 +16,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         /// </summary>
         [Required]
         [JsonProperty("dsn")]
-        public string DataSourceName { get; set; }
+        public string DataSourceName { get; set; } = default!;
 
         /// <summary>
         /// The tags to request annotations from.
@@ -24,7 +24,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         [Required]
         [MinLength(1)]
         [JsonProperty("tags")]
-        public string[] TagNames { get; set; }
+        public string[] TagNames { get; set; } = default!;
 
         /// <summary>
         /// The UTC start time for the query.

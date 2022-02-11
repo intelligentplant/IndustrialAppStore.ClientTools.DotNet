@@ -62,7 +62,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ///   A task that will return information about the running event sources.
         /// </returns>
         public async Task<IEnumerable<ComponentInfo>> GetEventSourcesAsync(
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             var url = GetAbsoluteUrl("api/data/eventsources");
@@ -101,7 +101,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ComponentInfo> GetEventSourceAsync(
             string eventSourceName, 
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (string.IsNullOrWhiteSpace(eventSourceName)) {
@@ -144,7 +144,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ComponentRoles> IsAuthorizedAsync(
             IsAuthorizedOnEventSourceRequest request, 
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -208,8 +208,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         public async Task<T> RunCustomFunctionAsync<T>(
             string eventSourceName, 
             string functionName, 
-            IDictionary<string, string> parameters = null, 
-            TContext context = default, 
+            IDictionary<string, string>? parameters = null, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (string.IsNullOrWhiteSpace(eventSourceName)) {
@@ -225,7 +225,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             return await CustomFunctionsClient<TContext, TOptions>.RunCustomFunctionAsync<T>(
                 HttpClient,
-                GetAbsoluteUrl("api/rpc"),
+                GetAbsoluteUrl("api/rpc")!,
                 request,
                 context,
                 cancellationToken

@@ -43,12 +43,12 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <summary>
         /// The user ID for the token store.
         /// </summary>
-        protected string UserId { get; private set; }
+        protected string? UserId { get; private set; }
 
         /// <summary>
         /// The session ID for the token store.
         /// </summary>
-        protected string SessionId { get; private set; }
+        protected string? SessionId { get; private set; }
 
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
             var tokens = await UseRefreshTokenAsync(
                 oauthTokens.Value.RefreshToken, 
                 _options.ClientId, 
-                _options.ClientSecret, 
+                _options.ClientSecret!, 
                 _options.GetTokenEndpoint(), 
                 _backchannelHttpClient, 
                 _clock
@@ -244,7 +244,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 tokenRequestParameters["client_secret"] = clientSecret;
             }
 
-            var refreshRequestContent = new FormUrlEncodedContent(tokenRequestParameters);
+            var refreshRequestContent = new FormUrlEncodedContent(tokenRequestParameters!);
             var refreshRequest = new HttpRequestMessage(HttpMethod.Post, tokenEndpoint) {
                 Content = refreshRequestContent
             };
@@ -261,7 +261,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 expiresIn = TimeSpan.FromSeconds(value);
             }
 
-            var tokens = CreateOAuthTokens(tokensResponse.TokenType, tokensResponse.AccessToken, expiresIn, tokensResponse.RefreshToken, clock);
+            var tokens = CreateOAuthTokens(tokensResponse.TokenType!, tokensResponse.AccessToken!, expiresIn, tokensResponse.RefreshToken, clock);
             return tokens;
         }
 
@@ -287,7 +287,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <returns>
         ///   A new <see cref="OAuthTokens"/> instance.
         /// </returns>
-        internal static OAuthTokens CreateOAuthTokens(string tokenType, string accessToken, TimeSpan? expiresIn, string refreshToken, ISystemClock clock) {
+        internal static OAuthTokens CreateOAuthTokens(string tokenType, string accessToken, TimeSpan? expiresIn, string? refreshToken, ISystemClock clock) {
             DateTimeOffset? utcExpiresAt = null;
 
             if (expiresIn != null) {

@@ -9,7 +9,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
 
         [Required]
         [MinLength(1)]
-        public TagValue[] Values { get; set; }
+        public TagValue[] Values { get; set; } = default!;
 
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {

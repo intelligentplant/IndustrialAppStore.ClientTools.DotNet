@@ -13,7 +13,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         /// </summary>
         [Required]
         [MinLength(1)]
-        public DateTime[] UtcSampleTimes { get; set; }
+        public DateTime[] UtcSampleTimes { get; set; } = default!;
 
     }
 }

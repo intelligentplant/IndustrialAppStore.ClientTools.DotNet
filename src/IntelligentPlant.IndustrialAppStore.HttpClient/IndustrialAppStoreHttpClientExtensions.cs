@@ -60,7 +60,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
             int page = 1,
             int pageSize = 10,
             bool includeExternalResults = false,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (client == null) {
@@ -123,7 +123,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
             int page = 1,
             int pageSize = 10,
             bool includeExternalResults = false,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (client == null) {
@@ -175,7 +175,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         public static async Task<DebitUserResponse> DebitUserAsync<TContext>(
             this AccountTransactionsClient<TContext> client,
             double amount,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (client == null) {
@@ -224,7 +224,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         public static async Task<RefundUserResponse> RefundUserAsync<TContext>(
             this AccountTransactionsClient<TContext> client,
             string transactionId,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (client == null) {

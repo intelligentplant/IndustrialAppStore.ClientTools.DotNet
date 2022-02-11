@@ -6,7 +6,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
     public class CreateScriptTagRequest : DataSourceRequest {
 
         [Required]
-        public CreateScriptTagSettings Settings { get; set; }
+        public CreateScriptTagSettings Settings { get; set; } = default!;
 
     }
 }

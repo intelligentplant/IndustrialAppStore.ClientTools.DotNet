@@ -11,7 +11,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         /// The template ID.
         /// </summary>
         [Required]
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
 
     }
 

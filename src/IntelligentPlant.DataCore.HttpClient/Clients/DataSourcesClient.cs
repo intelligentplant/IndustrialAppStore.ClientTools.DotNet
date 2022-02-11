@@ -65,7 +65,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ///   A task that will return information about the running data sources.
         /// </returns>
         public async Task<IEnumerable<DataSourceInfo>> GetDataSourcesAsync(
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             var url = GetAbsoluteUrl("api/data/datasources");
@@ -104,7 +104,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<DataSourceInfo> GetDataSourceAsync(
             string dataSourceName,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (string.IsNullOrWhiteSpace(dataSourceName)) {
@@ -147,7 +147,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ComponentRoles> IsAuthorizedAsync(
             IsAuthorizedOnDataSourceRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -201,7 +201,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<TagSearchResult>> FindTagsAsync(
             FindTagsRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -250,7 +250,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IDictionary<string, SnapshotTagValueDictionary>> ReadSnapshotTagValuesAsync(
             ReadSnapshotTagValuesRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -299,7 +299,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadRawTagValuesAsync(
             ReadRawTagValuesRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -346,7 +346,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadPlotTagValuesAsync(
             ReadPlotTagValuesRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -392,7 +392,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadProcessedTagValuesAsync(
             ReadProcessedTagValuesRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -438,7 +438,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadTagValuesAtTimesAsync(
             ReadTagValuesAtTimesRequest request, 
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -488,7 +488,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<TagValueUpdateResponse>> WriteSnapshotTagValuesAsync(
             WriteTagValuesRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -537,7 +537,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<TagValueUpdateResponse>> WriteHistoricalTagValuesAsync(
             WriteTagValuesRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -586,7 +586,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<AnnotationCollection>> ReadAnnotationsAsync(
             ReadAnnotationsRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -634,7 +634,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<Annotation> CreateAnnotationAsync(
             CreateAnnotationRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -679,7 +679,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task UpdateAnnotationAsync(
             UpdateAnnotationRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -724,7 +724,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task DeleteAnnotationAsync(
             DeleteAnnotationRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -770,7 +770,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<ScriptEngine>> GetScriptEnginesAsync(
             GetDataSourceScriptEnginesRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -814,7 +814,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<ScriptTemplate>> FindScriptTagTemplatesAsync(
             FindScriptTagTemplatesRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -858,7 +858,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTemplateWithParameterDefinitions> GetScriptTagTemplateAsync(
             GetScriptTagTemplateRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -902,7 +902,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<ScriptTagDefinition>> FindScriptTagsAsync(
             FindTagsRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -948,7 +948,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<ScriptTagDefinition>> GetScriptTagsAsync(
             GetTagsRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -994,7 +994,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTagDefinition> GetScriptTagAsync(
             GetTagRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1038,7 +1038,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTagDefinition> CreateScriptTagAsync(
             CreateScriptTagRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1084,7 +1084,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTagDefinition> CreateScriptTagFromTemplateAsync(
             CreateTemplatedScriptTagRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1130,7 +1130,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTagDefinition> UpdateScriptTagAsync(
             UpdateScriptTagRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1176,7 +1176,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTagDefinition> UpdateScriptTagFromTemplateAsync(
             UpdateTemplatedScriptTagRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1222,7 +1222,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<bool> DeleteScriptTagAsync(
             DeleteScriptTagRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1279,8 +1279,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         public async Task<T> RunCustomFunctionAsync<T>(
             string dataSourceName, 
             string functionName, 
-            IDictionary<string, string> parameters = null,
-            TContext context = default, 
+            IDictionary<string, string>? parameters = null,
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (string.IsNullOrWhiteSpace(dataSourceName)) {
@@ -1296,7 +1296,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             return await CustomFunctionsClient<TContext, TOptions>.RunCustomFunctionAsync<T>(
                 HttpClient,
-                GetAbsoluteUrl("api/rpc"),
+                GetAbsoluteUrl("api/rpc")!,
                 request, 
                 context, 
                 cancellationToken

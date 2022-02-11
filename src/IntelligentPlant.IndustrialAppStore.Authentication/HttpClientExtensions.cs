@@ -27,7 +27,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
             tokenRequestParameters["client_secret"] = options.ClientSecret;
 #endif
 
-            var refreshRequestContent = new FormUrlEncodedContent(tokenRequestParameters);
+            var refreshRequestContent = new FormUrlEncodedContent(tokenRequestParameters!);
             var refreshRequest = new HttpRequestMessage(HttpMethod.Post, options.GetTokenEndpoint()) {
                 Content = refreshRequestContent
             };

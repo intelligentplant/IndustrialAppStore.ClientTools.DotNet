@@ -12,7 +12,7 @@ namespace IntelligentPlant.DataCore.Client.Model
         /// <summary>
         /// Gets or sets the tag name that the <see cref="Values"/> are for.
         /// </summary>
-        public string TagName { get; set; }
+        public string TagName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the display type to use when visualizing the <see cref="Values"/>.

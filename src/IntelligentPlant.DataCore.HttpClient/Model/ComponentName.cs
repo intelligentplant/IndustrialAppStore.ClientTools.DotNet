@@ -12,30 +12,30 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// </summary>
         [Required]
         [MaxLength(200)]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// Gets the component namespace.
         /// </summary>
         [MaxLength(200)]
-        public string Namespace { get; set; }
+        public string? Namespace { get; set; }
 
         /// <summary>
         /// Gets the qualified component name.
         /// </summary>
-        public string QualifiedName { get { return GetQualifiedName(Name, Namespace); } }
+        public string? QualifiedName { get { return GetQualifiedName(Name, Namespace); } }
 
         /// <summary>
         /// The display name for the component.
         /// </summary>
-        private string _displayName;
+        private string? _displayName;
 
         /// <summary>
         /// Gets the display name for the component.
         /// </summary>
         [MaxLength(200)]
         public string DisplayName {
-            get { return String.IsNullOrWhiteSpace(_displayName) ? QualifiedName : _displayName; }
+            get { return string.IsNullOrWhiteSpace(_displayName) ? QualifiedName! : _displayName!; }
             set { _displayName = value; }
         }
 
@@ -46,17 +46,17 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="name">The component name.</param>
         /// <param name="namespace">The component namespace.</param>
         /// <param name="displayName">The display name.</param>
-        public ComponentName(string name, string @namespace, string displayName) {
+        public ComponentName(string name, string? @namespace, string? displayName) {
             Name = name;
             Namespace = @namespace;
-            DisplayName = displayName;
+            _displayName = displayName;
         }
 
 
         /// <summary>
         /// Creates a new <see cref="ComponentName"/> object.
         /// </summary>
-        public ComponentName() : this(null, null, null) { }
+        public ComponentName() : this(null!, null, null) { }
 
         /// <summary>
         /// Creates a new <see cref="ComponentName"/> object from a single name string. Examine the name string syntax to determine if it is namespace qualified.
@@ -87,14 +87,14 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <returns>
         /// The qualified name, or <see langword="null"/> if <paramref name="name"/> is <see langword="null"/>.
         /// </returns>
-        public static string GetQualifiedName(string name, string @namespace) {
-            if (String.IsNullOrWhiteSpace(name)) {
-                return null;
+        public static string GetQualifiedName(string name, string? @namespace) {
+            if (string.IsNullOrWhiteSpace(name)) {
+                return null!;
             }
 
-            return String.IsNullOrWhiteSpace(@namespace)
+            return string.IsNullOrWhiteSpace(@namespace)
                        ? name
-                       : String.Concat(@namespace, ".", name);
+                       : string.Concat(@namespace, ".", name);
         }
 
 

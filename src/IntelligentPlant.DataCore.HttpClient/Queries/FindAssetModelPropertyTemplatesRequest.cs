@@ -11,7 +11,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         /// The ID of the element template to retrieve the properties for.
         /// </summary>
         [Required]
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
 
     }
 }

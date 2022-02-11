@@ -51,7 +51,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ///   The version of Data Core running at the remote endpoint.
         /// </returns>
         public async Task<string> GetDataCoreVersionAsync(
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             var url = GetAbsoluteUrl("api/info");

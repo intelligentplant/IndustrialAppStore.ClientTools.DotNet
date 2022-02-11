@@ -11,7 +11,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// Gets or sets the tag name.
         /// </summary>
         [Required]
-        public string TagName { get; set; }
+        public string TagName { get; set; } = default!;
 
         /// <summary>
         /// The sample values.

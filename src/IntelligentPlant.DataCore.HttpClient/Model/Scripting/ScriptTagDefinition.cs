@@ -11,12 +11,12 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// Gets or sets the ID of the script tag.
         /// </summary>
         [Required]
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the script tag metadata.
         /// </summary>
-        public ScriptTagMetadata Metadata { get; set; }
+        public ScriptTagMetadata? Metadata { get; set; }
 
     }
 }

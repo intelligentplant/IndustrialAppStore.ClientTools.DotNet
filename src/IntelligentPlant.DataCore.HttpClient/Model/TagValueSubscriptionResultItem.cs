@@ -10,7 +10,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the tag name.
         /// </summary>
-        public string TagName { get; set; }
+        public string TagName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the registration status.
@@ -25,12 +25,12 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the registration messages for the tag.
         /// </summary>
-        public IList<string> Messages { get; set; }
+        public IList<string>? Messages { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the tag when the subscription was created.
         /// </summary>
-        public TagValue Value { get; set; }
+        public TagValue? Value { get; set; }
 
 
         /// <summary>

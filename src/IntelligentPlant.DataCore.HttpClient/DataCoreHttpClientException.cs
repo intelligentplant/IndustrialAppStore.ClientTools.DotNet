@@ -42,7 +42,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets the response content that was returned.
         /// </summary>
-        public string Content { get; }
+        public string? Content { get; }
 
         /// <summary>
         /// If a <c>Retry-After</c> header was included in the response, this property specifies 
@@ -55,7 +55,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// be <see langword="null"/> unless the content type of the response was 
         /// <see cref="ProblemDetails.Constants.MediaType"/>.
         /// </summary>
-        public ProblemDetails.ProblemDetails ProblemDetails { get; }
+        public ProblemDetails.ProblemDetails? ProblemDetails { get; }
 
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="inner">
         ///   The inner exception.
         /// </param>
-        public DataCoreHttpClientException(string message, string verb, string url, HttpStatusCode statusCode, IDictionary<string, string[]> requestHeaders, IDictionary<string, string[]> responseHeaders, string responseContent, ProblemDetails.ProblemDetails problemDetails, DateTime? utcRetryAfter, Exception inner) 
+        public DataCoreHttpClientException(string message, string verb, string url, HttpStatusCode statusCode, IDictionary<string, string[]> requestHeaders, IDictionary<string, string[]> responseHeaders, string? responseContent, ProblemDetails.ProblemDetails? problemDetails, DateTime? utcRetryAfter, Exception? inner) 
             : base(message, inner) {
             Verb = verb;
             Url = url;
@@ -180,7 +180,7 @@ namespace IntelligentPlant.DataCore.Client {
         ///   If the response contains an RFC 7807 problem details object, the <see cref="ProblemDetails"/> 
         ///   property of the exception will be set.
         /// </remarks>
-        internal static async Task<DataCoreHttpClientException> FromHttpResponseMessage(string errorMessage, HttpResponseMessage response, Exception inner) {
+        internal static async Task<DataCoreHttpClientException> FromHttpResponseMessage(string errorMessage, HttpResponseMessage response, Exception? inner) {
             if (response == null) {
                 throw new ArgumentNullException(nameof(response));
             }
@@ -198,7 +198,7 @@ namespace IntelligentPlant.DataCore.Client {
                 : false;
 
             var content = includeContent
-                ? await response.Content.ReadAsStringAsync().ConfigureAwait(false)
+                ? await response.Content!.ReadAsStringAsync().ConfigureAwait(false)
                 : null;
 
             var problemDetails = includeContent && contentTypes.Any(IsProblemDetailsResponse)

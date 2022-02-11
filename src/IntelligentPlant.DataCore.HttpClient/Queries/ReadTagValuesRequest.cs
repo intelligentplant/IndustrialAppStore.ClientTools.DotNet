@@ -14,12 +14,12 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         /// The tags to query, indexed by data source name.
         /// </summary>
         [Required]
-        public IDictionary<string, string[]> Tags { get; set; }
+        public IDictionary<string, string[]> Tags { get; set; } = default!;
 
         /// <summary>
         /// Additional custom query properties.
         /// </summary>
-        public IDictionary<string, string> QueryProperties { get; set; }
+        public IDictionary<string, string>? QueryProperties { get; set; }
 
         /// <summary>
         /// Validates the object.

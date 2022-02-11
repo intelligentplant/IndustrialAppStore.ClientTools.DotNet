@@ -23,24 +23,24 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// Gets or sets the tag name filter to use.
         /// </summary>
         [MaxLength(200)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the tag description filter to use.
         /// </summary>
         [MaxLength(200)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the tag unit filter to use.
         /// </summary>
         [MaxLength(200)]
-        public string Unit { get; set; }
+        public string? Unit { get; set; }
 
         /// <summary>
         /// Gets or sets the additional tag property filters to use.
         /// </summary>
-        public IDictionary<string, string> Other { get; set; }
+        public IDictionary<string, string>? Other { get; set; }
 
         /// <summary>
         /// Gets or sets the page size for the results.
@@ -54,7 +54,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <remarks>
         /// Setting <see cref="Page"/> to be less than 1 will automatically set the value to 1 instead.
         /// </remarks>
-        [Range(1, Int32.MaxValue)]
+        [Range(1, int.MaxValue)]
         public int Page { get; set; } = 1;
 
         /// <summary>
@@ -71,14 +71,14 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// </para>
         /// 
         /// </remarks>
-        public IEnumerable<string> Properties { get; set; }
+        public IEnumerable<string>? Properties { get; set; }
 
 
         /// <summary>
         /// Creates a new <see cref="TagSearchFilter"/> object using the specified name filter.
         /// </summary>
         /// <param name="name">The tag name filter.</param>
-        public TagSearchFilter(string name) : this(name, null, null) { }
+        public TagSearchFilter(string? name) : this(name, null, null) { }
 
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// </summary>
         /// <param name="name">The tag name filter.</param>
         /// <param name="description">The description filter.</param>
-        public TagSearchFilter(string name, string description) : this(name, description, null) { }
+        public TagSearchFilter(string? name, string? description) : this(name, description, null) { }
 
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="name">The tag name filter.</param>
         /// <param name="description">The description filter.</param>
         /// <param name="unit">The tag unit filter.</param>
-        public TagSearchFilter(string name, string description, string unit) {
+        public TagSearchFilter(string? name, string? description, string? unit) {
             Name = name;
             Description = description;
             Unit = unit;

@@ -17,7 +17,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <summary>
         /// The authentication session to store tokens in.
         /// </summary>
-        private AuthenticationProperties _authenticationProperties;
+        private AuthenticationProperties? _authenticationProperties;
 
 
         /// <summary>
@@ -39,6 +39,33 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ) : base(options, httpClient, clock) { }
 
 
+        /// <summary>
+        /// Initialises the <see cref="DefaultTokenStore"/>.
+        /// </summary>
+        /// <param name="userId">
+        ///   The user ID.
+        /// </param>
+        /// <param name="sessionId">
+        ///   The session ID.
+        /// </param>
+        /// <param name="authenticationProperties">
+        ///   The authentication properties for the session.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="ValueTask"/> that will initialise the <see cref="DefaultTokenStore"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="userId"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="sessionId"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="authenticationProperties"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        ///   The token store has already been initialised.
+        /// </exception>
         public async ValueTask InitAsync(string userId, string sessionId, AuthenticationProperties authenticationProperties) {
             if (authenticationProperties == null) {
                 throw new ArgumentNullException(nameof(authenticationProperties));
@@ -76,7 +103,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
             var refreshToken = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.RefreshTokenName);
 
-            return new ValueTask<OAuthTokens?>(new OAuthTokens(tokenType, accessToken, refreshToken, accessTokenExpiry));
+            return new ValueTask<OAuthTokens?>(new OAuthTokens(tokenType!, accessToken, refreshToken!, accessTokenExpiry));
         }
 
 

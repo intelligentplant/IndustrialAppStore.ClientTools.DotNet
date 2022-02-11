@@ -15,7 +15,7 @@ namespace IntelligentPlant.DataCore.Client.Model.AssetModel {
         /// <summary>
         /// The property templates associated with the element template.
         /// </summary>
-        public IEnumerable<AssetModelPropertyTemplate> Properties { get; set; }
+        public IEnumerable<AssetModelPropertyTemplate>? Properties { get; set; }
 
     }
 }

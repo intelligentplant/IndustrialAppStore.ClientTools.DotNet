@@ -4,7 +4,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
     public class GetTagRequest : DataSourceRequest {
 
         [Required]
-        public string TagNameOrId { get; set; }
+        public string TagNameOrId { get; set; } = default!;
 
     }
 }

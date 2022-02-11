@@ -9,7 +9,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the tag name.
         /// </summary>
-        public string TagName { get; set; }
+        public string TagName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets a flag indicating if the write was successful.
@@ -19,7 +19,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets a collection of messages associated with the write.
         /// </summary>
-        public ICollection<string> Messages { get; set; }
+        public ICollection<string>? Messages { get; set; }
 
     }
 }

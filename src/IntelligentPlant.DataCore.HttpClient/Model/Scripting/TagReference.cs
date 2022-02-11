@@ -15,7 +15,7 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         [Required]
         [JsonProperty("dsn")]
         [MaxLength(200)]
-        public string DataSourceName { get; set; }
+        public string DataSourceName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the tag name for the reference.
@@ -23,7 +23,7 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         [Required]
         [JsonProperty("tag")]
         [MaxLength(200)]
-        public string TagName { get; set; }
+        public string TagName { get; set; } = default!;
 
         /// <summary>
         /// Controls which property of incoming <see cref="TagValue"/> objects for the referenced 

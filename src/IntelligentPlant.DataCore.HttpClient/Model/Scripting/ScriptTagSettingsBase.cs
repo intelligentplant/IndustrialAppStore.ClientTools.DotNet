@@ -16,14 +16,14 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// references can be specified. Each key can be up to <see cref="MaximumTagReferenceNameLength"/> 
         /// in length and must match <see cref="TagReferenceNameRegex"/>.
         /// </summary>
-        public IDictionary<string, TagReference> TagReferences { get; set; }
+        public IDictionary<string, TagReference>? TagReferences { get; set; }
 
         /// <summary>
         /// Gets or sets the digital states for the script tag. Up to <see cref="MaximumDigitalStateCount"/> 
         /// states can be specified. Each key can be up to <see cref="MaximumDigitalStateNameLength"/> 
         /// in length.
         /// </summary>
-        public IDictionary<string, int> DigitalStates { get; set; }
+        public IDictionary<string, int>? DigitalStates { get; set; }
 
         /// <summary>
         /// Gets or sets a flag the indicates if the tag is allowed to trigger or reset events.
@@ -35,18 +35,18 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// to <see cref="MaximumEventDefinitionCount"/> event definitions can be defined. Each key can 
         /// be up to <see cref="MaximumEventDefinitionNameLength"/> in length.
         /// </summary>
-        public IDictionary<string, ScriptTagEventDefinition> EventDefinitions { get; set; }
+        public IDictionary<string, ScriptTagEventDefinition>? EventDefinitions { get; set; }
 
         /// <summary>
         /// Gets or sets additional properties for the tag.
         /// </summary>
-        public IDictionary<string, string> Properties { get; set; }
+        public IDictionary<string, string>? Properties { get; set; }
 
         /// <summary>
         /// Gets or sets the settings for the tag's value script.
         /// </summary>
         [Required]
-        public ScriptTagValueScriptSettings ValueScript { get; set; }
+        public ScriptTagValueScriptSettings ValueScript { get; set; } = default!;
 
         #region [ Fields/properties to assist with validation ]
 

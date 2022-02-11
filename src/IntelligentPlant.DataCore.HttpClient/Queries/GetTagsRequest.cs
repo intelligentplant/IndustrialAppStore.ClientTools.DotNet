@@ -8,7 +8,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
         [Required]
         [MinLength(1)]
         [MaxLength(100)]
-        public string[] TagNamesOrIds { get; set; }
+        public string[] TagNamesOrIds { get; set; } = default!;
 
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {

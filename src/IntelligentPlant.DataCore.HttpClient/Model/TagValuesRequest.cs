@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
+#nullable disable
+
 namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     /// Describes a tag values request to be sent to Data Core.

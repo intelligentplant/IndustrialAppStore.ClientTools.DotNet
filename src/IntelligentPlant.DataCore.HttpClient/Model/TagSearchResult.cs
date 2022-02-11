@@ -12,23 +12,23 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the tag ID.
         /// </summary>
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the tag name.
         /// </summary>
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the tag description.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the tag's unit of measure.
         /// </summary>
-        public string UnitOfMeasure { get; set; }
+        public string? UnitOfMeasure { get; set; }
 
         /// <summary>
         /// Tag properties
@@ -68,7 +68,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// Creates a new <see cref="TagSearchResult"/> object that is a copy of an existing object.
         /// </summary>
         /// <param name="other">The existing tag definition to copy.</param>
-        public TagSearchResult(TagSearchResult other) {
+        public TagSearchResult(TagSearchResult? other) {
             if (other == null) {
                 return;
             }
@@ -90,7 +90,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <returns>
         /// The property value, or <paramref name="defaultValue"/> if the property is undefined, or if it cannot be cast to <typeparamref name="T"/>.
         /// </returns>
-        public T GetTagPropertyValue<T>(string name, T defaultValue) {
+        public T? GetTagPropertyValue<T>(string name, T defaultValue) {
             if (name == null) {
                 return defaultValue;
             }
@@ -101,7 +101,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
             }
 
             try {
-                return (T) prop.Value;
+                return (T?) prop.Value;
             }
             catch (InvalidCastException) {
                 return defaultValue;
@@ -117,7 +117,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <returns>
         /// The property value, or the default value of <typeparamref name="T"/> if the property is undefined or cannot be cast to <typeparamref name="T"/>.
         /// </returns>
-        public T GetTagPropertyValue<T>(string name) {
+        public T? GetTagPropertyValue<T>(string name) {
             return GetTagPropertyValue(name, default(T));
         }
 

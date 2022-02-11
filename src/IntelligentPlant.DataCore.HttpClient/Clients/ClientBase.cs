@@ -63,7 +63,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="relativeUrl"/> is <see langword="null"/>.
         /// </exception>
-        protected Uri GetAbsoluteUrl(string relativeUrl) {
+        protected Uri? GetAbsoluteUrl(string relativeUrl) {
             return GetAbsoluteUrl(BaseUrl, relativeUrl);
         }
 
@@ -106,7 +106,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="relativeUrl"/> is <see langword="null"/>.
         /// </exception>
-        internal static Uri GetAbsoluteUrl(Uri baseUrl, string relativeUrl) {
+        internal static Uri? GetAbsoluteUrl(Uri baseUrl, string relativeUrl) {
             if (baseUrl == null) {
                 throw new ArgumentNullException(nameof(baseUrl));
             }

@@ -13,7 +13,7 @@
         /// <summary>
         /// The message associated with the refund response.
         /// </summary>
-        public string Message { get; set; }
+        public string? Message { get; set; }
 
     }
 
