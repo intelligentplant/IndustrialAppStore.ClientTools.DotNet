@@ -43,6 +43,8 @@ namespace ExampleMvcApplication {
             }
 
             services.AddControllersWithViews().AddNewtonsoftJson();
+
+            services.AddCustomHeaders();
         }
 
         
@@ -56,6 +58,8 @@ namespace ExampleMvcApplication {
         ///   The web host environment.
         /// </param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+            app.UseCustomHeaders();
+
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
