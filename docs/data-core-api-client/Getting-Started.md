@@ -42,3 +42,8 @@ All Data Core API routes return an [RFC 7807 problem details](https://tools.ietf
 You can view the definition for the `ProblemDetails` type [here](https://github.com/intelligentplant/ProblemDetails.WebApi/blob/master/ProblemDetails.Core/ProblemDetails.cs).
 
 > Note that the `Detail` property on a problem details object is not guaranteed to be non-null. You should use `string.IsNullOrWhiteSpace(string?)` to determine if there is a value that you can display to an end user. 
+
+
+## Handling Retries
+
+We recommend using a library such as [Polly](https://github.com/App-vNext/Polly) to create HTTP clients capable of handling scenarios such as transient network interruptions and [API rate limits](https://github.com/App-vNext/Polly/issues/414). Note that, in the event of a `429/Too Many Requests` response being received from the server, the resulting `DataCoreHttpClientException` will have its `UtcRetryAfter` property set to the UTC time that the request can be attempted again at.
