@@ -1,6 +1,6 @@
 ﻿# IntelligentPlant.IndustrialAppStore.Authentication
 
-This project defines extension methods for adding authentication to an ASP.NET Core 3.x application using the Intelligent Plant [Industrial App Store](https://appstore.intelligentplant.com).
+This project defines extension methods for adding authentication to an ASP.NET Core application using the Intelligent Plant [Industrial App Store](https://appstore.intelligentplant.com).
 
 
 # Installation
@@ -29,59 +29,42 @@ In your application's `appsettings.json` file, add the following items, replacin
 > **NOTE:**
 > Do not store client secrets in the `appsettings.json` file in a production environment! Services such as [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) can be used to securely store client secrets and retrieve them at runtime.
 
-In your `Startup` class, add the following namespace import:
+Next, configure your application to use the Industrial App Store for authentication:
 
 ```csharp
-using IntelligentPlant.IndustrialAppStore.Authentication;
+// Program.cs
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddIndustrialAppStoreAuthentication(options => {
+    // Bind the settings from the app configuration to the Industrial App Store 
+    // authentication options.
+    builder.Configuration.GetSection("IAS").Bind(options);
+});
+
+// Configure additional services etc. here.
+
+var app = builder.Build();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Configure HTTP pipeline here.
 ```
 
-In the `ConfigureServices` method in your `Startup` class, configure your application to use the Industrial App Store for authentication. Note that this example assumes that you have made your configuration settings accessible to the `Startup` class [as described here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration#access-configuration-in-startup).
+If your app has a login page that requires the user to accept a privacy policy or explicitly enable persistent cookies, you can specify this as follows:
 
 ```csharp
-public void ConfigureServices(IServiceCollection services) {
-    services.AddIndustrialAppStoreAuthentication(options => {
-        // Bind the settings from the app configuration to the Industrial App Store 
-        // authentication options.
-        Configuration.GetSection("IAS").Bind(options);
-    });
+builder.Services.AddIndustrialAppStoreAuthentication(options => {
+    // Bind the settings from the app configuration to the Industrial App Store 
+    // authentication options.
+    builder.Configuration.GetSection("IAS").Bind(options);
 
-    // Other configuration
-}
-```
-
-If your app has a login page that requires the user to e.g. accept a privacy policy or explicitly enable persistent cookies, you can specify this as follows:
-
-```csharp
-public void ConfigureServices(IServiceCollection services) {
-    services.AddIndustrialAppStoreAuthentication(options => {
-        // Bind the settings from the app configuration to the Industrial App Store 
-        // authentication options.
-        Configuration.GetSection("IAS").Bind(options);
-        // Set the login path to be our login page.
-        options.LoginPath = new PathString("/Account/Login");
-    });
-
-    // Other configuration
-}
-```
-
-Finally, in the `Configure` method in your `Startup` class, add authentication and authorization into your request pipeline:
-
-```csharp
-public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-    // Other configuration
-
-    app.UseRouting();
-
-    app.UseAuthentication();
-    app.UseAuthorization();
-
-    app.UseEndpoints(endpoints => {
-        // Map endpoint routes here.
-    });
-
-    // Other configuration
-}
+    // Set the login path to be our login page.
+    options.LoginPath = new PathString("/Account/Login");
+});
 ```
 
 

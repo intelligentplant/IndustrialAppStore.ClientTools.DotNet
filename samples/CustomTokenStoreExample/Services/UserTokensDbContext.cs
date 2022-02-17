@@ -1,10 +1,10 @@
-﻿using System;
-
-using ExampleMvcApplication.Models;
+﻿using ExampleMvcApplication.Models;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace ExampleMvcApplication {
+#nullable disable
+
+namespace ExampleMvcApplication.Services {
 
     /// <summary>
     /// Example Entity Framework Core context for storing user access tokens.

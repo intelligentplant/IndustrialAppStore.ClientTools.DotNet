@@ -36,10 +36,6 @@
       "type": "computed",
       "value": "(Framework == \"net6.0\")"
     },
-    "IsNet50": {
-      "type": "computed",
-      "value": "(Framework == \"net5.0\")"
-    },
     "IsNetCore31": {
       "type": "computed",
       "value": "(Framework == \"netcoreapp3.1\")"
@@ -102,6 +98,26 @@
     }
   ],
   "defaultName": "IasWebApplication",
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "condition": "(!IsNetCore31)",
+          "exclude": [
+            "Program_netcoreapp31.cs",
+            "Startup.cs"
+          ]
+        },
+        {
+          "condition": "(IsNetCore31)",
+          "exclude": "Program.cs",
+          "rename": {
+            "Program_netcoreapp31.cs": "Program.cs"
+          }
+        }
+      ]
+    }
+  ],
   "postActions": [
     {
       "condition": "(!SkipRestore)",
