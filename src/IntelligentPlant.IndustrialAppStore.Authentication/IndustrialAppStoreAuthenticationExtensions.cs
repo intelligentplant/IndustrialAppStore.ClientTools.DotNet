@@ -266,47 +266,49 @@ namespace Microsoft.Extensions.DependencyInjection {
                     cookieOptions.LoginPath = iasOptions.LoginPath;
                 }
 
+                var cookieEvents = iasOptions.CookieAuthenticationEvents ?? new CookieAuthenticationEvents();
+
                 cookieOptions.Events = new CookieAuthenticationEvents() {
 #if NET6_0_OR_GREATER
                     OnCheckSlidingExpiration = async ctx => { 
-                        if (iasOptions.CookieAuthenticationEvents?.OnCheckSlidingExpiration != null) {
-                            await iasOptions.CookieAuthenticationEvents.OnCheckSlidingExpiration(ctx).ConfigureAwait(false);
+                        if (cookieEvents.OnCheckSlidingExpiration != null) {
+                            await cookieEvents.OnCheckSlidingExpiration(ctx).ConfigureAwait(false);
                         }
                     },
 #endif
                     OnRedirectToAccessDenied = async ctx => {
-                        if (iasOptions.CookieAuthenticationEvents?.OnRedirectToAccessDenied != null) {
-                            await iasOptions.CookieAuthenticationEvents.OnRedirectToAccessDenied(ctx).ConfigureAwait(false);
+                        if (cookieEvents.OnRedirectToAccessDenied != null) {
+                            await cookieEvents.OnRedirectToAccessDenied(ctx).ConfigureAwait(false);
                         }
                     },
                     OnRedirectToLogin = async ctx => {
-                        if (iasOptions.CookieAuthenticationEvents?.OnRedirectToLogin != null) {
-                            await iasOptions.CookieAuthenticationEvents.OnRedirectToLogin(ctx).ConfigureAwait(false);
+                        if (cookieEvents.OnRedirectToLogin != null) {
+                            await cookieEvents.OnRedirectToLogin(ctx).ConfigureAwait(false);
                         }
                     },
                     OnRedirectToLogout = async ctx => {
-                        if (iasOptions.CookieAuthenticationEvents?.OnRedirectToLogout != null) {
-                            await iasOptions.CookieAuthenticationEvents.OnRedirectToLogout(ctx).ConfigureAwait(false);
+                        if (cookieEvents.OnRedirectToLogout != null) {
+                            await cookieEvents.OnRedirectToLogout(ctx).ConfigureAwait(false);
                         }
                     },
                     OnRedirectToReturnUrl = async ctx => {
-                        if (iasOptions.CookieAuthenticationEvents?.OnRedirectToReturnUrl != null) {
-                            await iasOptions.CookieAuthenticationEvents.OnRedirectToReturnUrl(ctx).ConfigureAwait(false);
+                        if (cookieEvents.OnRedirectToReturnUrl != null) {
+                            await cookieEvents.OnRedirectToReturnUrl(ctx).ConfigureAwait(false);
                         }
                     },
                     OnSignedIn = async ctx => {
-                        if (iasOptions.CookieAuthenticationEvents?.OnSignedIn != null) {
-                            await iasOptions.CookieAuthenticationEvents.OnSignedIn(ctx).ConfigureAwait(false);
+                        if (cookieEvents.OnSignedIn != null) {
+                            await cookieEvents.OnSignedIn(ctx).ConfigureAwait(false);
                         }
                     },
                     OnSigningIn = async ctx => {
-                        if (iasOptions.CookieAuthenticationEvents?.OnSigningIn != null) {
-                            await iasOptions.CookieAuthenticationEvents.OnSigningIn(ctx).ConfigureAwait(false);
+                        if (cookieEvents.OnSigningIn != null) {
+                            await cookieEvents.OnSigningIn(ctx).ConfigureAwait(false);
                         }
                     },
                     OnSigningOut = async ctx => {
-                        if (iasOptions.CookieAuthenticationEvents?.OnSigningOut != null) {
-                            await iasOptions.CookieAuthenticationEvents.OnSigningOut(ctx).ConfigureAwait(false);
+                        if (cookieEvents.OnSigningOut != null) {
+                            await cookieEvents.OnSigningOut(ctx).ConfigureAwait(false);
                         }
                     },
                     OnValidatePrincipal = async ctx => {
@@ -321,8 +323,8 @@ namespace Microsoft.Extensions.DependencyInjection {
                             ctx.RejectPrincipal();
                         }
 
-                        if (iasOptions.CookieAuthenticationEvents?.OnValidatePrincipal != null) {
-                            await iasOptions.CookieAuthenticationEvents.OnValidatePrincipal(ctx).ConfigureAwait(false);
+                        if (cookieEvents.OnValidatePrincipal != null) {
+                            await cookieEvents.OnValidatePrincipal(ctx).ConfigureAwait(false);
                         }
                     }
                 };
@@ -415,7 +417,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                             // Add session ID claim to identity. This can be used by custom
                             // ITokenStore implementations to distinguish between different login
                             // sessions from the same account.
-                            var sessionId = opts.SessionIdGenerator?.Invoke(context.Identity, context.HttpContext);
+                            var sessionId = opts.SessionIdGenerator?.Invoke(context.Identity!, context.HttpContext);
                             if (string.IsNullOrWhiteSpace(sessionId)) {
                                 sessionId = Guid.NewGuid().ToString("N");
                             }
