@@ -10,22 +10,22 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the data source name.
         /// </summary>
-        public string DataSourceName { get; set; }
+        public string DataSourceName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the data source's push notification group that the tags have been assigned to.
         /// </summary>
-        public string GroupName { get; set; }
+        public string GroupName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the registration results, indexed by tag name.
         /// </summary>
-        public IDictionary<string, TagValueSubscriptionResultItem> Result { get; set; }
+        public IDictionary<string, TagValueSubscriptionResultItem> Result { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets messages associated with the registration.
         /// </summary>
-        public IList<TagValueSubscriptionResultMessage> Messages { get; set; }
+        public IList<TagValueSubscriptionResultMessage> Messages { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the time taken to perform the registration.

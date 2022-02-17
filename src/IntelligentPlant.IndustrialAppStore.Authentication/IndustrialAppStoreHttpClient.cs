@@ -12,7 +12,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
     /// <summary>
     /// HTTP client for performing Industrial App Store API requests on behalf of an authenticated 
-    /// user.
+    /// user during an HTTP request to the application.
     /// </summary>
     public class IndustrialAppStoreHttpClient : IndustrialAppStoreHttpClient<HttpContext> {
 
@@ -24,7 +24,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// </summary>
         /// <param name="httpClient">
         ///   The HTTP client to use. When querying the Industrial App Store, an <c>Authorization</c> 
-        ///   header must be set on every outgoing request. Use the <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/> 
+        ///   header must be set on every outgoing request. Use the <see cref="CreateAuthenticationMessageHandler"/> 
         ///   method to create a message handler to add the the request pipeline when creating the 
         ///   <paramref name="httpClient"/>, to allow the <see cref="IndustrialAppStoreHttpClient"/> 
         ///   to invoke a callback on demand to retrieve the <c>Authorization</c> header to add to 
@@ -75,8 +75,9 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// method.
         /// </summary>
         /// <param name="callback">
-        ///   The callback delegate that will receive the HTTP request and the <see cref="HttpContext"/> 
-        ///   and return the <c>Authorize</c> header value to add to the request.
+        ///   The callback delegate that will receive the outgoing request and the <see cref="HttpContext"/> 
+        ///   specified in the invocation and return the <c>Authorize</c> header value to add to 
+        ///   the outgoing request.
         /// </param>
         /// <returns>
         ///   A new <see cref="DelegatingHandler"/> object.
@@ -99,18 +100,35 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   A <see cref="Task{TResult}"/> that will return a flag indiciating if a valid access 
         ///   token is available.
         /// </returns>
-        public async Task<bool> HasValidAccessToken(HttpContext context) {
+        public static async Task<bool> HasValidAccessToken(HttpContext context) {
             if (context == null) {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var token = await context
-                .RequestServices
-                .GetRequiredService<ITokenStore>()
-                .GetAccessTokenAsync()
+            return await HasValidAccessToken(context.RequestServices.GetRequiredService<ITokenStore>()).ConfigureAwait(false);
+        }
+
+
+        /// <summary>
+        /// Tests if the specified <see cref="ITokenStore"/> has a valid access token associated with it.
+        /// </summary>
+        /// <param name="tokenStore">
+        ///   The token store.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="Task{TResult}"/> that will return a flag indiciating if a valid access 
+        ///   token is available.
+        /// </returns>
+        public static async Task<bool> HasValidAccessToken(ITokenStore tokenStore) {
+            if (tokenStore == null) {
+                throw new ArgumentNullException(nameof(tokenStore));
+            }
+
+            var token = await tokenStore
+                .GetTokensAsync()
                 .ConfigureAwait(false);
 
-            return !string.IsNullOrWhiteSpace(token);
+            return !string.IsNullOrWhiteSpace(token?.AccessToken);
         }
 
     }

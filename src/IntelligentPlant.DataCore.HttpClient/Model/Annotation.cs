@@ -16,7 +16,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// Gets or sets the application name for the annotation.
         /// </summary>
         [MaxLength(MaximumApplicationNameLength)]
-        public string ApplicationName { get; set; }
+        public string? ApplicationName { get; set; }
 
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the name of the user who created the annotation.
         /// </summary>
-        public string Creator { get; set; }
+        public string? Creator { get; set; }
 
         /// <summary>
         /// Gets or sets the UTC last modified time for the annotation.
@@ -45,7 +45,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// Analysis) to provide links where e.g. the workflow associated with the annotation can be 
         /// inspected.
         /// </summary>
-        public Uri MoreInfo { get; set; }
+        public Uri? MoreInfo { get; set; }
 
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <returns>
         /// <see langword="true"/> if the two instances are equivalent, otherwise <see langword="false"/>.
         /// </returns>
-        public bool Equals(Annotation other) {
+        public bool Equals(Annotation? other) {
             if (other == null) {
                 return false;
             }

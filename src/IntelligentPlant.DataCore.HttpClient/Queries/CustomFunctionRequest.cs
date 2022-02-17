@@ -13,19 +13,19 @@ namespace IntelligentPlant.DataCore.Client.Model.Queries {
         /// Gets or sets the component name to send the custom function to. Leave blank for 
         /// general-purpose custom function messages.
         /// </summary>
-        public string ComponentName { get; set; }
+        public string? ComponentName { get; set; }
 
         /// <summary>
         /// The name of the custom function to call.
         /// </summary>
         [Required]
         [MaxLength(200)]
-        public string MethodName { get; set; }
+        public string MethodName { get; set; } = default!;
 
         /// <summary>
         /// The function parameters.
         /// </summary>
-        public IDictionary<string, string> Parameters { get; set; }
+        public IDictionary<string, string>? Parameters { get; set; }
 
     }
 }

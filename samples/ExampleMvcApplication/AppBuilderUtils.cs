@@ -1,32 +1,26 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿namespace Microsoft.Extensions.DependencyInjection {
 
-namespace ExampleMvcApplication {
-    public class Startup {
-
-        public IConfiguration Configuration { get; }
-
-
-        public Startup(IConfiguration configuration) {
-            Configuration = configuration;
-        }
-
+    /// <summary>
+    /// Utility methods for configuring the application.
+    /// </summary>
+    internal static class AppBuilderUtils {
 
         /// <summary>
-        /// Adds services to the container.
+        /// Adds services to the service collection.
         /// </summary>
-        /// <param name="services">
-        ///   The service collection.
+        /// <param name="configuration">
+        ///   The <see cref="IConfiguration"/>.
         /// </param>
-        public void ConfigureServices(IServiceCollection services) {
+        /// <param name="services">
+        ///   The <see cref="IServiceCollection"/>.
+        /// </param>
+        internal static void ConfigureServices(IConfiguration configuration, IServiceCollection services) {
+            services.AddCustomHeaders();
+
             services.AddIndustrialAppStoreAuthentication(options => {
                 // Bind the settings from the app configuration to the Industrial App Store 
                 // authentication options.
-                Configuration.GetSection("IAS").Bind(options);
+                configuration.GetSection("IAS").Bind(options);
 
                 // Specify the path to be our login page.
                 options.LoginPath = new PathString("/Account/Login");
@@ -36,7 +30,7 @@ namespace ExampleMvcApplication {
                 //options.ConfigureHttpClient = builder => builder.AddHttpMessageHandler<MyCustomHandler>();
             });
 
-            if (Configuration.GetValue<bool>("IAS:UseExternalAuthentication")) {
+            if (configuration.GetValue<bool>("IAS:UseExternalAuthentication")) {
                 // App is configured to use an authentication provider other than the Industrial
                 // App Store, so we will use IIS to handle Windows authentication for us.
                 services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
@@ -45,17 +39,19 @@ namespace ExampleMvcApplication {
             services.AddControllersWithViews().AddNewtonsoftJson();
         }
 
-        
+
         /// <summary>
-        /// Configures the HTTP request pipeline.
+        /// Configures the middleware pipeline.
         /// </summary>
         /// <param name="app">
-        ///   The application builder.
+        ///   The <see cref="IApplicationBuilder"/>.
         /// </param>
         /// <param name="env">
-        ///   The web host environment.
+        ///   The <see cref="IWebHostEnvironment"/>.
         /// </param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+        internal static void ConfigureApp(IApplicationBuilder app, IWebHostEnvironment env) {
+            app.UseCustomHeaders();
+
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
@@ -73,10 +69,9 @@ namespace ExampleMvcApplication {
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
             });
         }
+
     }
 }

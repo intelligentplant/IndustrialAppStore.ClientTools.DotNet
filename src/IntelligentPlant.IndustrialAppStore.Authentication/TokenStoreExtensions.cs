@@ -21,17 +21,17 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   If the token store does not contain a valid access token, the return value will be 
         ///   <see langword="null"/>.
         /// </returns>
-        public static async Task<AuthenticationHeaderValue> GetAuthenticationHeaderAsync(this ITokenStore tokenStore) {
+        public static async Task<AuthenticationHeaderValue?> GetAuthenticationHeaderAsync(this ITokenStore tokenStore) {
             if (tokenStore == null) {
                 throw new ArgumentNullException(nameof(tokenStore));
             }
-            
-            var accessToken = await tokenStore.GetAccessTokenAsync();
-            if (string.IsNullOrWhiteSpace(accessToken)) {
+
+            var accessToken = await tokenStore.GetTokensAsync();
+            if (string.IsNullOrWhiteSpace(accessToken?.AccessToken)) {
                 return null;
             }
 
-            return new AuthenticationHeaderValue("Bearer", accessToken);
+            return new AuthenticationHeaderValue("Bearer", accessToken.Value.AccessToken);
         }
 
     }

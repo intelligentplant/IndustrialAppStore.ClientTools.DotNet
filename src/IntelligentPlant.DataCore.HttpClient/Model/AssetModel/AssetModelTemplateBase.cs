@@ -11,18 +11,18 @@ namespace IntelligentPlant.DataCore.Client.Model.AssetModel {
         /// The unique identifier for the template.
         /// </summary>
         [Required]
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
 
         /// <summary>
         /// The template name.
         /// </summary>
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// The template description.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
     }
 }

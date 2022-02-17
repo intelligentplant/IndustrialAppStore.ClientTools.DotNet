@@ -16,7 +16,7 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// </summary>
         [Required]
         [MaxLength(2000)]
-        public string Script { get; set; }
+        public string Script { get; set; } = default!;
 
         /// <summary>
         /// The trigger type used to trigger recalculation.
@@ -28,7 +28,7 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// this is the CRON schedule to recalculate the script tag's value at. 
         /// </summary>
         [MaxLength(100)]
-        public string Schedule { get; set; }
+        public string? Schedule { get; set; }
 
         /// <summary>
         /// Describes the type of input data that will be retrieved for tag references when 
@@ -42,13 +42,13 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// the script tag. <see cref="DataFunctions.CurrentValue"/>, <see cref="DataFunctions.Raw"/> 
         /// and <see cref="DataFunctions.Plot"/> cannot be specified here.
         /// </summary>
-        public string[] InputDataFunctions { get; set; }
+        public string[]? InputDataFunctions { get; set; }
 
         /// <summary>
         /// When <see cref="InputDataType"/> is <see cref="ScriptTagInputDataType.AggregatedValues"/>, 
         /// this is the sample interval used when requesting aggregated input data for the script tag.
         /// </summary>
-        public string InputDataSampleInterval { get; set; }
+        public string? InputDataSampleInterval { get; set; }
 
         /// <summary>
         /// This is the batch size to use when requesting input data for the script tag. For example, 
@@ -64,7 +64,7 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// referenced tags that represent the window leading up to the evaluation sample time, 
         /// instead of just the referenced tag values at the evaluation sample time.
         /// </summary>
-        public string InputDataWindowSize { get; set; }
+        public string? InputDataWindowSize { get; set; }
 
         /// <summary>
         /// Gets or sets a flag specifying if snapshot recalculations for the script tag should be 

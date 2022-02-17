@@ -2,6 +2,8 @@
 
 This ASP.NET Core application uses a [starter template](https://github.com/intelligentplant/IndustrialAppStore.ClientTools.DotNet) from the [Industrial App Store](https://appstore.intelligentplant.com).
 
+Please refer to [the documentation](https://github.com/intelligentplant/IndustrialAppStore.ClientTools.DotNet/blob/main/src/IntelligentPlant.IndustrialAppStore.Authentication/README.md) for more information about configuring authentication and calling Industrial App Store APIs.
+
 The application uses the following libraries for client-side functionality:
 
 - [Bootstrap](https://getbootstrap.com/)
@@ -66,7 +68,7 @@ __DO NOT STORE CLIENT SECRETS IN THE `appsettings.json` FILE OR IN ANY OTHER FIL
 
 # Calling Data Core and Industrial App Store APIs
 
-To call Data Core and Industrial App Store APIs, inject the `IndustrialAppStoreHttpClient` into your controllers, for example:
+To call Data Core and Industrial App Store APIs from inside the HTTP request pipeline, inject the `IndustrialAppStoreHttpClient` into your controllers, for example:
 
 ```csharp
 [Authorize]
@@ -101,7 +103,7 @@ public async Task<IActionResult> Index(
 
 The `IndustrialAppStoreHttpClient` uses a service called `ITokenStore` to automatically retrieve an Industrial App Store access token from the calling user's `HttpContext` and add it to outgoing requests made on behalf of the calling user.
 
-> The `ITokenStore` service is not used to authenticate outgoing requests if your app is running in on-premises mode rather than Industrial App Store mode. See below for more details.
+> The `ITokenStore` service referenced in this section is not used to authenticate outgoing requests if your app is running in on-premises mode rather than Industrial App Store mode. See notes on creating an on-premises app below for more details.
 
 
 # Debugging Your App

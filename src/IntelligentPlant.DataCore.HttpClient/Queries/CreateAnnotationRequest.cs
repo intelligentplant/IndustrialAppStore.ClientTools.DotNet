@@ -5,10 +5,10 @@ namespace IntelligentPlant.DataCore.Client.Queries {
     public class CreateAnnotationRequest {
 
         [Required]
-        public string DataSourceName { get; set; }
+        public string DataSourceName { get; set; } = default!;
 
         [Required]
-        public Annotation Annotation { get; set; }
+        public Annotation Annotation { get; set; } = default!;
 
     }
 }

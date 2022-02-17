@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+This file is used to transform the web.config file for your app during a publish operation when 
+you want to deploy an on-premises app rather than an Industrial App Store app.
+-->
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <location>
+    <system.webServer>
+      <security xdt:Transform="InsertIfMissing">
+        <authentication xdt:Transform="InsertIfMissing">
+          <anonymousAuthentication enabled="false" xdt:Transform="InsertIfMissing" />
+          <windowsAuthentication enabled="true" xdt:Transform="InsertIfMissing" />
+        </authentication>
+      </security>
+      <aspNetCore>
+        <environmentVariables xdt:Transform="InsertIfMissing">
+          <environmentVariable name="IAS__USEEXTERNALAUTHENTICATION" value="true" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
+          <!-- 
+          Update the following two items to specify the URL of your on-premises Data Core API 
+          instance. You *must* include a trailing / at the end of the URL!
+          -->
+          <environmentVariable name="IAS__DATACOREURL" value="http://localhost:8080/" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
+          <environmentVariable name="IAS__INDUSTRIALAPPSTOREURL" value="http://localhost:8080/" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
+        </environmentVariables>
+      </aspNetCore>
+    </system.webServer>
+  </location>
+</configuration>

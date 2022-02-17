@@ -70,7 +70,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             HttpClient httpClient, 
             Uri url,
             CustomFunctionRequest request,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {

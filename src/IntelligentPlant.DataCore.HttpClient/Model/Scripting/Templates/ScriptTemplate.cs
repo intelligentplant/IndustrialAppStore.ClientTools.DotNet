@@ -13,44 +13,44 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting.Templates {
         /// </summary>
         [Required]
         [MaxLength(20)]
-        public string Language { get; set; }
+        public string Language { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the template category.
         /// </summary>
         [Required]
         [MaxLength(100)]
-        public string Category { get; set; }
+        public string Category { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the template name.
         /// </summary>
         [Required]
         [MaxLength(200)]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the template description.
         /// </summary>
         [Required]
         [MaxLength(500)]
-        public string Description { get; set; }
+        public string Description { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the template version.
         /// </summary>
         [Required]
-        public string Version { get; set; }
+        public string Version { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the template author.
         /// </summary>
-        public Person Author { get; set; }
+        public Person? Author { get; set; }
 
         /// <summary>
         /// Gets or sets the template contributors.
         /// </summary>
-        public IEnumerable<Person> Contributors { get; set; }
+        public IEnumerable<Person>? Contributors { get; set; }
 
     }
 }

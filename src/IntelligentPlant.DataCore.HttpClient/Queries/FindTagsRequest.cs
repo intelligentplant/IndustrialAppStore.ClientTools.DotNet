@@ -6,7 +6,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
     public class FindTagsRequest : DataSourceRequest {
 
         [Required]
-        public TagSearchFilter Filter { get; set; }
+        public TagSearchFilter Filter { get; set; } = default!;
 
     }
 }

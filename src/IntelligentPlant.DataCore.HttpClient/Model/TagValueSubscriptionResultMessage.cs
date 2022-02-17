@@ -7,12 +7,12 @@
         /// <summary>
         /// Gets or sets the message category.
         /// </summary>
-        public string Category { get; set; }
+        public string? Category { get; set; }
 
         /// <summary>
         /// Gets or sets the message.
         /// </summary>
-        public object Message { get; set; }
+        public object? Message { get; set; }
 
     }
 }

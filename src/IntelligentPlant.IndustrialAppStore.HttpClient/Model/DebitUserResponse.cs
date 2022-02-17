@@ -9,7 +9,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Model {
         /// <summary>
         /// The transaction ID for the debit request.
         /// </summary>
-        public string TransactionId { get; set; }
+        public string? TransactionId { get; set; }
 
         /// <summary>
         /// A flag indicating if the transaction was successfully processed.
@@ -19,7 +19,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Model {
         /// <summary>
         /// The message associated with the transaction.
         /// </summary>
-        public string Message { get; set; }
+        public string? Message { get; set; }
 
     }
 }

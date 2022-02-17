@@ -18,14 +18,14 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// Specifies the destination data source to write values to when <see cref="IsArchivingEnabled"/> 
         /// is <see langword="true"/>.
         /// </summary>
-        public string ArchivingDataSourceName { get; set; }
+        public string? ArchivingDataSourceName { get; set; }
 
         /// <summary>
         /// Specifies the destination tag name to write values to when <see cref="IsArchivingEnabled"/> is 
         /// <see langword="true"/>. A <see langword="null"/> or white space value means that a destination 
         /// tag name will be inferred.
         /// </summary>
-        public string ArchivingTagName { get; set; }
+        public string? ArchivingTagName { get; set; }
 
 
         /// <summary>

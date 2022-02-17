@@ -39,7 +39,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="utcTime">
         ///   The parsed UTC <see cref="DateTime"/>.
         /// </param>
-        private static void ParseTimeStamp(string absoluteOrRelativeTime, CultureInfo cultureInfo, TimeZoneInfo timeZone, string parameterName, out DateTime utcTime) {
+        private static void ParseTimeStamp(string absoluteOrRelativeTime, CultureInfo? cultureInfo, TimeZoneInfo? timeZone, string parameterName, out DateTime utcTime) {
             if (!IntelligentPlant.Relativity.RelativityParser.TryGetParser(cultureInfo, out var parser)) {
                 parser = IntelligentPlant.Relativity.RelativityParser.Default;
             }
@@ -63,7 +63,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="ts">
         ///   The parsed <see cref="TimeSpan"/>.
         /// </param>
-        private static void ParseSampleInterval(string sampleInterval, CultureInfo cultureInfo, out TimeSpan ts) {
+        private static void ParseSampleInterval(string sampleInterval, CultureInfo? cultureInfo, out TimeSpan ts) {
             if (!IntelligentPlant.Relativity.RelativityParser.TryGetParser(cultureInfo, out var parser)) {
                 parser = IntelligentPlant.Relativity.RelativityParser.Default;
             }
@@ -123,12 +123,12 @@ namespace IntelligentPlant.DataCore.Client {
         public static Task<IEnumerable<TagSearchResult>> FindTagsAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client, 
             string dataSourceName, 
-            string nameFilter = "*", 
-            string descriptionFilter = null, 
-            string unitsFilter = null,
+            string? nameFilter = "*", 
+            string? descriptionFilter = null, 
+            string? unitsFilter = null,
             int page = 1,
             int pageSize = 20,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -196,12 +196,12 @@ namespace IntelligentPlant.DataCore.Client {
         public static Task<IEnumerable<ScriptTagDefinition>> FindScriptTagsAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
-            string nameFilter = "*",
-            string descriptionFilter = null,
-            string unitsFilter = null,
+            string? nameFilter = "*",
+            string? descriptionFilter = null,
+            string? unitsFilter = null,
             int page = 1,
             int pageSize = 20,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -258,10 +258,9 @@ namespace IntelligentPlant.DataCore.Client {
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> namesOrIds,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
-
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -269,7 +268,7 @@ namespace IntelligentPlant.DataCore.Client {
             return client.GetScriptTagsAsync(
                 new GetTagsRequest() { 
                     DataSourceName = dataSourceName,
-                    TagNamesOrIds = namesOrIds?.ToArray()
+                    TagNamesOrIds = namesOrIds?.ToArray()!
                 },
                 context,
                 cancellationToken
@@ -312,7 +311,7 @@ namespace IntelligentPlant.DataCore.Client {
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             string nameOrId,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -368,8 +367,8 @@ namespace IntelligentPlant.DataCore.Client {
         public static Task<IDictionary<string, SnapshotTagValueDictionary>> ReadSnapshotTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             IDictionary<string, string[]> tagMap,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -379,7 +378,7 @@ namespace IntelligentPlant.DataCore.Client {
             return client.ReadSnapshotTagValuesAsync(
                 new ReadSnapshotTagValuesRequest() {
                     Tags = tagMap,
-                    QueryProperties = properties
+                    QueryProperties = properties!
                 },
                 context,
                 cancellationToken
@@ -421,12 +420,12 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   The snapshot tag values, indexed by tag name.
         /// </returns>
-        public static async Task<SnapshotTagValueDictionary> ReadSnapshotTagValuesAsync<TContext, TOptions>(
+        public static async Task<SnapshotTagValueDictionary?> ReadSnapshotTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> tagNames,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -440,7 +439,7 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await client.ReadSnapshotTagValuesAsync(
                 new ReadSnapshotTagValuesRequest() {
                     Tags = new Dictionary<string, string[]>() {
-                        { dataSourceName, tagNames?.Distinct()?.ToArray() }
+                        { dataSourceName, tagNames?.Distinct()?.ToArray()! }
                     },
                     QueryProperties = properties
                 },
@@ -502,8 +501,8 @@ namespace IntelligentPlant.DataCore.Client {
             DateTime utcStartTime,
             DateTime utcEndTime,
             int pointCount,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -579,10 +578,10 @@ namespace IntelligentPlant.DataCore.Client {
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
             int pointCount,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
-            TimeZoneInfo timeZone = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
+            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -646,15 +645,15 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static async Task<HistoricalTagValuesDictionary> ReadRawTagValuesAsync<TContext, TOptions>(
+        public static async Task<HistoricalTagValuesDictionary?> ReadRawTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             DateTime utcStartTime,
             DateTime utcEndTime,
             int pointCount,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -665,7 +664,7 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await ReadRawTagValuesAsync(
                 client,
                 new Dictionary<string, string[]>() {
-                        { dataSourceName, tagNames?.Distinct()?.ToArray() }
+                        { dataSourceName, tagNames?.Distinct()?.ToArray()! }
                     },
                 utcStartTime,
                 utcEndTime,
@@ -730,17 +729,17 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<HistoricalTagValuesDictionary> ReadRawTagValuesAsync<TContext, TOptions>(
+        public static Task<HistoricalTagValuesDictionary?> ReadRawTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
             int pointCount,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
-            TimeZoneInfo timeZone = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
+            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -816,8 +815,8 @@ namespace IntelligentPlant.DataCore.Client {
             DateTime utcStartTime,
             DateTime utcEndTime,
             int intervals,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -898,10 +897,10 @@ namespace IntelligentPlant.DataCore.Client {
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
             int intervals,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
-            TimeZoneInfo timeZone = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
+            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -970,15 +969,15 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static async Task<HistoricalTagValuesDictionary> ReadPlotTagValuesAsync<TContext, TOptions>(
+        public static async Task<HistoricalTagValuesDictionary?> ReadPlotTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             DateTime utcStartTime,
             DateTime utcEndTime,
             int intervals,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -989,7 +988,7 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await ReadPlotTagValuesAsync(
                 client,
                 new Dictionary<string, string[]>() {
-                        { dataSourceName, tagNames?.Distinct()?.ToArray() }
+                        { dataSourceName, tagNames?.Distinct()?.ToArray()! }
                     },
                 utcStartTime,
                 utcEndTime,
@@ -1059,17 +1058,17 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<HistoricalTagValuesDictionary> ReadPlotTagValuesAsync<TContext, TOptions>(
+        public static Task<HistoricalTagValuesDictionary?> ReadPlotTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
             int intervals,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
-            TimeZoneInfo timeZone = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
+            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1145,8 +1144,8 @@ namespace IntelligentPlant.DataCore.Client {
             DateTime utcEndTime,
             string dataFunction,
             TimeSpan sampleInterval,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1223,9 +1222,9 @@ namespace IntelligentPlant.DataCore.Client {
             DateTime utcEndTime,
             string dataFunction,
             string sampleInterval,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1304,10 +1303,10 @@ namespace IntelligentPlant.DataCore.Client {
             string absoluteOrRelativeEndTime,
             string dataFunction,
             TimeSpan sampleInterval,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
-            TimeZoneInfo timeZone = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
+            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1386,10 +1385,10 @@ namespace IntelligentPlant.DataCore.Client {
             string absoluteOrRelativeEndTime,
             string dataFunction,
             string sampleInterval,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
-            TimeZoneInfo timeZone = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
+            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1459,7 +1458,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static async Task<HistoricalTagValuesDictionary> ReadProcessedTagValuesAsync<TContext, TOptions>(
+        public static async Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> tagNames,
@@ -1467,8 +1466,8 @@ namespace IntelligentPlant.DataCore.Client {
             DateTime utcEndTime,
             string dataFunction,
             TimeSpan sampleInterval,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1479,7 +1478,7 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await ReadProcessedTagValuesAsync(
                 client,
                 new Dictionary<string, string[]>() {
-                    { dataSourceName, tagNames?.Distinct()?.ToArray() }
+                    { dataSourceName, tagNames?.Distinct()?.ToArray()! }
                 },
                 utcStartTime,
                 utcEndTime,
@@ -1544,7 +1543,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<HistoricalTagValuesDictionary> ReadProcessedTagValuesAsync<TContext, TOptions>(
+        public static Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> tagNames,
@@ -1552,9 +1551,9 @@ namespace IntelligentPlant.DataCore.Client {
             DateTime utcEndTime,
             string dataFunction,
             string sampleInterval,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1630,7 +1629,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<HistoricalTagValuesDictionary> ReadProcessedTagValuesAsync<TContext, TOptions>(
+        public static Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> tagNames,
@@ -1638,10 +1637,10 @@ namespace IntelligentPlant.DataCore.Client {
             string absoluteOrRelativeEndTime,
             string dataFunction,
             TimeSpan sampleInterval,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
-            TimeZoneInfo timeZone = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
+            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1718,7 +1717,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<HistoricalTagValuesDictionary> ReadProcessedTagValuesAsync<TContext, TOptions>(
+        public static Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> tagNames,
@@ -1726,10 +1725,10 @@ namespace IntelligentPlant.DataCore.Client {
             string absoluteOrRelativeEndTime,
             string dataFunction,
             string sampleInterval,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
-            TimeZoneInfo timeZone = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
+            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1793,8 +1792,8 @@ namespace IntelligentPlant.DataCore.Client {
             this DataSourcesClient<TContext, TOptions> client, 
             IDictionary<string, string[]> tagMap, 
             IEnumerable<DateTime> utcSampleTimes, 
-            IDictionary<string, string> properties = null,
-            TContext context = default,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1805,7 +1804,7 @@ namespace IntelligentPlant.DataCore.Client {
             return client.ReadTagValuesAtTimesAsync(
                 new ReadTagValuesAtTimesRequest() {
                     Tags = tagMap,
-                    UtcSampleTimes = utcSampleTimes?.Distinct()?.ToArray(),
+                    UtcSampleTimes = utcSampleTimes?.Distinct()?.ToArray()!,
                     QueryProperties = properties
                 },
                 context,
@@ -1859,10 +1858,10 @@ namespace IntelligentPlant.DataCore.Client {
             this DataSourcesClient<TContext, TOptions> client,
             IDictionary<string, string[]> tagMap,
             IEnumerable<string> absoluteOrRelativeSampleTimes,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
-            TimeZoneInfo timeZone = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
+            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1927,13 +1926,13 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static async Task<HistoricalTagValuesDictionary> ReadTagValuesAtTimesAsync<TContext, TOptions>(
+        public static async Task<HistoricalTagValuesDictionary?> ReadTagValuesAtTimesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             IEnumerable<DateTime> utcSampleTimes,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1944,7 +1943,7 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await ReadTagValuesAtTimesAsync(
                 client,
                 new Dictionary<string, string[]>() {
-                    { dataSourceName, tagNames?.Distinct()?.ToArray() }
+                    { dataSourceName, tagNames?.Distinct()?.ToArray()! }
                 },
                 utcSampleTimes,
                 properties,
@@ -2000,15 +1999,15 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static async Task<HistoricalTagValuesDictionary> ReadTagValuesAtTimesAsync<TContext, TOptions>(
+        public static async Task<HistoricalTagValuesDictionary?> ReadTagValuesAtTimesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             IEnumerable<string> absoluteOrRelativeSampleTimes,
-            IDictionary<string, string> properties = null,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
-            TimeZoneInfo timeZone = null,
+            IDictionary<string, string>? properties = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
+            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -2027,7 +2026,7 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await ReadTagValuesAtTimesAsync(
                 client,
                 new Dictionary<string, string[]>() {
-                    { dataSourceName, tagNames?.Distinct()?.ToArray() }
+                    { dataSourceName, tagNames?.Distinct()?.ToArray()! }
                 },
                 sampleTimes.Distinct().ToArray(),
                 properties,
@@ -2078,7 +2077,7 @@ namespace IntelligentPlant.DataCore.Client {
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<TagValue> values,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -2091,7 +2090,7 @@ namespace IntelligentPlant.DataCore.Client {
 
             return client.WriteSnapshotTagValuesAsync(new WriteTagValuesRequest() { 
                 DataSourceName = dataSourceName,
-                Values = values?.Where(x => x != null).ToArray()
+                Values = values?.Where(x => x != null).ToArray()!
             }, context, cancellationToken);
         }
 
@@ -2133,13 +2132,13 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for the tag.
         /// </returns>
-        public static async Task<TagValueUpdateResponse> WriteSnapshotTagValuesAsync<TContext, TOptions>(
+        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             string tagName,
             IDictionary<DateTime, double> values,
             TagValueStatus status = TagValueStatus.Good,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -2157,7 +2156,7 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteSnapshotTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, x.Value, null, status, null)),
+                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, x.Value, null, status, null))!,
                 context,
                 cancellationToken
             ).ConfigureAwait(false);
@@ -2203,13 +2202,13 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for the tag.
         /// </returns>
-        public static async Task<TagValueUpdateResponse> WriteSnapshotTagValuesAsync<TContext, TOptions>(
+        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             string tagName,
             IDictionary<DateTime, string> values,
             TagValueStatus status = TagValueStatus.Good,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -2227,7 +2226,7 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteSnapshotTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null)),
+                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null))!,
                 context,
                 cancellationToken
             ).ConfigureAwait(false);
@@ -2276,14 +2275,14 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for the tag.
         /// </returns>
-        public static async Task<TagValueUpdateResponse> WriteSnapshotTagValueAsync<TContext, TOptions>(
+        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValueAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             string tagName,
             DateTime utcSampleTime,
             double value,
             TagValueStatus status = TagValueStatus.Good,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -2359,14 +2358,14 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for the tag.
         /// </returns>
-        public static async Task<TagValueUpdateResponse> WriteSnapshotTagValueAsync<TContext, TOptions>(
+        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValueAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             string tagName,
             DateTime utcSampleTime,
             string value,
             TagValueStatus status = TagValueStatus.Good,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -2438,7 +2437,7 @@ namespace IntelligentPlant.DataCore.Client {
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             IEnumerable<TagValue> values,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -2451,7 +2450,7 @@ namespace IntelligentPlant.DataCore.Client {
 
             return client.WriteHistoricalTagValuesAsync(new WriteTagValuesRequest() {
                 DataSourceName = dataSourceName,
-                Values = values?.Where(x => x != null).ToArray()
+                Values = values?.Where(x => x != null).ToArray()!
             }, context, cancellationToken);
         }
 
@@ -2494,13 +2493,13 @@ namespace IntelligentPlant.DataCore.Client {
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for each tag 
         ///   that was written to.
         /// </returns>
-        public static async Task<TagValueUpdateResponse> WriteHistoricalTagValuesAsync<TContext, TOptions>(
+        public static async Task<TagValueUpdateResponse?> WriteHistoricalTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             string tagName,
             IDictionary<DateTime, double> values,
             TagValueStatus status = TagValueStatus.Good,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -2518,7 +2517,7 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteHistoricalTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, x.Value, null, status, null)),
+                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, x.Value, null, status, null))!,
                 context,
                 cancellationToken
             ).ConfigureAwait(false);
@@ -2565,13 +2564,13 @@ namespace IntelligentPlant.DataCore.Client {
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for each tag 
         ///   that was written to.
         /// </returns>
-        public static async Task<TagValueUpdateResponse> WriteHistoricalTagValuesAsync<TContext, TOptions>(
+        public static async Task<TagValueUpdateResponse?> WriteHistoricalTagValuesAsync<TContext, TOptions>(
             this DataSourcesClient<TContext, TOptions> client,
             string dataSourceName,
             string tagName,
             IDictionary<DateTime, string> values,
             TagValueStatus status = TagValueStatus.Good,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -2589,7 +2588,7 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteHistoricalTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null)),
+                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null))!,
                 context,
                 cancellationToken
             ).ConfigureAwait(false);
@@ -2645,7 +2644,7 @@ namespace IntelligentPlant.DataCore.Client {
             IEnumerable<string> tagNames,
             DateTime utcStartTime,
             DateTime utcEndTime,
-            TContext context = default,
+            TContext? context = default,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -2658,7 +2657,7 @@ namespace IntelligentPlant.DataCore.Client {
 
             var result = await client.ReadAnnotationsAsync(new ReadAnnotationsRequest() { 
                 DataSourceName = dataSourceName,
-                TagNames = tagNames?.ToArray(),
+                TagNames = tagNames?.ToArray()!,
                 StartTime = utcStartTime,
                 EndTime = utcEndTime
             }, context, cancellationToken).ConfigureAwait(false);
@@ -2718,9 +2717,9 @@ namespace IntelligentPlant.DataCore.Client {
             IEnumerable<string> tagNames,
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
-            TContext context = default,
-            CultureInfo cultureInfo = null,
-            TimeZoneInfo timeZone = null,
+            TContext? context = default,
+            CultureInfo? cultureInfo = null,
+            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {

@@ -6,10 +6,10 @@ namespace IntelligentPlant.DataCore.Client.Queries {
     public class DeleteAnnotationRequest {
 
         [Required]
-        public string DataSourceName { get; set; }
+        public string DataSourceName { get; set; } = default!;
 
         [Required]
-        public AnnotationIdentifier Annotation { get; set; }
+        public AnnotationIdentifier Annotation { get; set; } = default!;
 
     }
 }

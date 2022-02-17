@@ -9,10 +9,6 @@
       "longName": "client-id",
       "shortName": ""
     },
-    "HttpsPort": {
-      "longName": "port",
-      "shortName": ""
-    },
     "SkipRestore": {
       "longName": "no-restore",
       "shortName": ""

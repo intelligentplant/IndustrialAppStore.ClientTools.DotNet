@@ -10,13 +10,13 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets a qualifying identifier for the annotation, to distinguish it from other annotations with the same tag name and time stamp.
         /// </summary>
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the tag that the annotation applies to.
         /// </summary>
         [Required]
-        public string TagName { get; set; }
+        public string TagName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the UTC timestamp for the annotation.
@@ -43,13 +43,13 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <returns>
         /// <see langword="true"/> if the two instances are equivalent, otherwise <see langword="false"/>.
         /// </returns>
-        public bool Equals(AnnotationIdentifier other) {
+        public bool Equals(AnnotationIdentifier? other) {
             if (other == null) {
                 return false;
             }
 
-            return String.Equals(Id, other.Id, StringComparison.OrdinalIgnoreCase) &&
-                   String.Equals(TagName, other.TagName, StringComparison.OrdinalIgnoreCase) &&
+            return string.Equals(Id, other.Id, StringComparison.OrdinalIgnoreCase) &&
+                   string.Equals(TagName, other.TagName, StringComparison.OrdinalIgnoreCase) &&
                    UtcAnnotationTime.Equals(other.UtcAnnotationTime);
         }
 

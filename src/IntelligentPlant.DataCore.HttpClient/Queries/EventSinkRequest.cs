@@ -4,7 +4,7 @@ namespace IntelligentPlant.DataCore.Client.Queries {
     public class EventSinkRequest {
 
         [Required]
-        public string EventSinkName { get; set; }
+        public string EventSinkName { get; set; } = default!;
 
     }
 }

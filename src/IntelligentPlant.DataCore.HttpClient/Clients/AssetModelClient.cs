@@ -56,7 +56,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ///   A task that will return the asset model data sources.
         /// </returns>
         public async Task<IEnumerable<DataSourceInfo>> GetAssetModelDataSources(
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             var url = GetAbsoluteUrl("api/assetmodel/datasources");
@@ -95,7 +95,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<AssetModelElementTemplate>> FindAssetModelElementTemplatesAsync(
             FindAssetModelElementTemplatesRequest request, 
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -139,7 +139,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<AssetModelElementTemplate>> GetAssetModelElementTemplateAsync(
             GetAssetModelElementTemplateRequest request, 
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -183,7 +183,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<AssetModelPropertyTemplate>> FindAssetModelPropertyTemplatesAsync(
             FindAssetModelPropertyTemplatesRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -227,7 +227,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<AssetModelElement>> FindAssetModelElementsAsync(
             FindAssetModelElementsRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -275,7 +275,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<AssetModelElement> GetAssetModelElementAsync(
             GetAssetModelElementRequest request,
-            TContext context = default, 
+            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {

@@ -1,0 +1,61 @@
+﻿@model TagListViewModel
+
+@if (!Model.Tags.Any())
+{
+  if (Model.Request == null || Model.Request.Page == 1)
+  {
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="text-muted">
+          No tags to display
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+}
+else
+{
+  foreach (var tag in Model.Tags)
+  {
+    <div class="col-sm-12 col-md-6 col-lg-3 mb-3">
+      <div class="card bg-light small tag">
+        <div class="card-header" title="@tag.Name">
+          <i class="fas fa-tag"></i>
+            @tag.Name
+        </div>
+        <div class="card-body p-3">
+          <p class="card-text text-muted">
+            @if (string.IsNullOrWhiteSpace(tag.Description))
+            {
+              <em>No description provided</em>
+            }
+            else
+            {
+              <span title="@tag.Description">@tag.Description</span>
+            }
+          </p>
+          <button type="button" class="btn btn-success btn-sm" onclick="loadChart('@System.Web.HttpUtility.JavaScriptStringEncode(Model.Request.DataSourceName)', '@System.Web.HttpUtility.JavaScriptStringEncode(tag.Name)')" title="View chart data for this tag for the last 24 hours">
+            <i class="fas fa-chart-line"></i>
+            Last 24H
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  if (Model.CanPageNext)
+  {
+    <div id="load-next-page" class="col-sm-12">
+      <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#load-next-page" onclick="loadPage(@(Model.Request.Page + 1))" title="Load more tags that match your search filter">
+            <i class="fas fa-plus"></i>
+            Load More Tags
+          </a>
+        </li>
+      </ul>
+    </div>
+  }
+}

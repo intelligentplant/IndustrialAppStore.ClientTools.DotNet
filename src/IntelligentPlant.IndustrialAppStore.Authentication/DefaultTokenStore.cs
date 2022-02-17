@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
@@ -10,27 +12,12 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
     /// Default <see cref="ITokenStore"/> implementation that retrieves tokens from the 
     /// authentication session.
     /// </summary>
-    internal class DefaultTokenStore : ITokenStore {
+    internal sealed class DefaultTokenStore : TokenStore {
 
         /// <summary>
-        /// The authentication options.
+        /// The authentication session to store tokens in.
         /// </summary>
-        private readonly IndustrialAppStoreAuthenticationOptions _options;
-
-        /// <summary>
-        /// The backchannel HTTP client to use.
-        /// </summary>
-        private readonly HttpClient _backchannelHttpClient;
-
-        /// <summary>
-        /// The HTTP context for the current request.
-        /// </summary>
-        private readonly HttpContext _httpContext;
-
-        /// <summary>
-        /// The system clock.
-        /// </summary>
-        private readonly ISystemClock _clock;
+        private AuthenticationProperties? _authenticationProperties;
 
 
         /// <summary>
@@ -42,40 +29,123 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <param name="httpClient">
         ///   The backchannel HTTP client to use.
         /// </param>
-        /// <param name="httpContextAccessor">
-        ///   The <see cref="IHttpContextAccessor"/> for accessing the <see cref="HttpContext"/> 
-        ///   for the current request.
-        /// </param>
         /// <param name="clock">
         ///   The system clock.
         /// </param>
         public DefaultTokenStore(
             IndustrialAppStoreAuthenticationOptions options, 
-            HttpClient httpClient, 
-            IHttpContextAccessor httpContextAccessor,
+            HttpClient httpClient,
             ISystemClock clock
-        ) {
-            _options = options ?? throw new ArgumentNullException(nameof(options));
-            _backchannelHttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            _httpContext = httpContextAccessor?.HttpContext;
-            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
+        ) : base(options, httpClient, clock) { }
+
+
+        /// <summary>
+        /// Initialises the <see cref="DefaultTokenStore"/>.
+        /// </summary>
+        /// <param name="userId">
+        ///   The user ID.
+        /// </param>
+        /// <param name="sessionId">
+        ///   The session ID.
+        /// </param>
+        /// <param name="authenticationProperties">
+        ///   The authentication properties for the session.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="ValueTask"/> that will initialise the <see cref="DefaultTokenStore"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="userId"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="sessionId"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="authenticationProperties"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        ///   The token store has already been initialised.
+        /// </exception>
+        public async ValueTask InitAsync(string userId, string sessionId, AuthenticationProperties authenticationProperties) {
+            if (authenticationProperties == null) {
+                throw new ArgumentNullException(nameof(authenticationProperties));
+            }
+            await InitCoreAsync(userId, sessionId).ConfigureAwait(false);
+            _authenticationProperties = authenticationProperties;
         }
 
 
         /// <inheritdoc/>
-        public async Task<string> GetAccessTokenAsync() {
-            if (_httpContext == null) {
-                return null;
+        protected override ValueTask InitAsync() {
+            return default;
+        }
+
+
+        /// <inheritdoc/>
+        protected override ValueTask<OAuthTokens?> GetTokensAsync() {
+            if (_authenticationProperties == null) {
+                throw new InvalidOperationException(Resources.Error_TokenStoreHasNotBeenInitialised);
             }
 
-            var authInfo = await _httpContext.AuthenticateAsync();
+            var accessToken = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.AccessTokenName);
+            if (string.IsNullOrWhiteSpace(accessToken)) {
+                return new ValueTask<OAuthTokens?>();
+            }
 
-            return await authInfo.Properties.GetAccessTokenAsync(
-                _options, 
-                _backchannelHttpClient, 
-                _clock, 
-                _httpContext.RequestAborted
-            );
+            var tokenType = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.TokenTypeTokenName);
+
+            var expiresAt = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.ExpiresAtTokenName);
+            DateTimeOffset? accessTokenExpiry = null;
+
+            if (!string.IsNullOrWhiteSpace(expiresAt) && DateTimeOffset.TryParseExact(expiresAt, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var exp)) {
+                accessTokenExpiry = exp;
+            }
+
+            var refreshToken = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.RefreshTokenName);
+
+            return new ValueTask<OAuthTokens?>(new OAuthTokens(tokenType!, accessToken, refreshToken!, accessTokenExpiry));
+        }
+
+
+        /// <inheritdoc/>
+        protected internal override ValueTask SaveTokensAsync(OAuthTokens tokens) {
+            if (_authenticationProperties == null) {
+                throw new InvalidOperationException(Resources.Error_TokenStoreHasNotBeenInitialised);
+            }
+ 
+            var authTokens = new List<AuthenticationToken>();
+
+            authTokens.Add(new AuthenticationToken {
+                Name = IndustrialAppStoreAuthenticationDefaults.AccessTokenName,
+                Value = tokens.AccessToken
+            });
+
+            if (!string.IsNullOrEmpty(tokens.RefreshToken)) {
+                authTokens.Add(new AuthenticationToken {
+                    Name = IndustrialAppStoreAuthenticationDefaults.RefreshTokenName,
+                    Value = tokens.RefreshToken
+                });
+            }
+
+            if (!string.IsNullOrEmpty(tokens.TokenType)) {
+                authTokens.Add(new AuthenticationToken {
+                    Name = IndustrialAppStoreAuthenticationDefaults.TokenTypeTokenName,
+                    Value = tokens.TokenType
+                });
+            }
+
+            if (tokens.UtcExpiresAt != null) {
+                // https://www.w3.org/TR/xmlschema-2/#dateTime
+                // https://msdn.microsoft.com/en-us/library/az4se3k1(v=vs.110).aspx
+                authTokens.Add(new AuthenticationToken {
+                    Name = IndustrialAppStoreAuthenticationDefaults.ExpiresAtTokenName,
+                    Value = tokens.UtcExpiresAt.Value.ToString("o", CultureInfo.InvariantCulture)
+                });
+            }
+
+            _authenticationProperties.StoreTokens(authTokens);
+
+            return default;
         }
 
     }

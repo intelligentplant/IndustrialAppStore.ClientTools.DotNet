@@ -65,7 +65,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the health status of the component.
         /// </summary>
-        public ComponentHealth HealthStatus { get; private set; }
+        public ComponentHealth? HealthStatus { get; private set; }
 
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="properties">A collection of component-specific properties.</param>
         /// <param name="healthStatus">The component's health status.</param>
         [JsonConstructor]
-        public ComponentStatus(ComponentRuntimeState runningStatus, bool isDebugMode, DateTime utcStartupTime, IEnumerable<LogMessage> messages, IEnumerable<NamedValue<string>> properties, ComponentHealth healthStatus) {
+        public ComponentStatus(ComponentRuntimeState runningStatus, bool isDebugMode, DateTime utcStartupTime, IEnumerable<LogMessage>? messages, IEnumerable<NamedValue<string>>? properties, ComponentHealth? healthStatus) {
             RunningStatus = runningStatus;
             UtcStartupTime = utcStartupTime.ToUniversalTime();
             DebugMode = isDebugMode;

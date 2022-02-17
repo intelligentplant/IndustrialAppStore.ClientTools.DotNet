@@ -4,8 +4,8 @@
 
   <!-- Dev/Test/Benchmark Packages -->
   <PropertyGroup>
-    <MicrosoftCodeAnalysisNetAnalyzersVersion>5.0.3</MicrosoftCodeAnalysisNetAnalyzersVersion>
-    <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
+    <MicrosoftCodeAnalysisNetAnalyzersVersion>6.0.0</MicrosoftCodeAnalysisNetAnalyzersVersion>
+    <MicrosoftSourceLinkGitHubVersion>1.1.0</MicrosoftSourceLinkGitHubVersion>
   </PropertyGroup>
   
 </Project>

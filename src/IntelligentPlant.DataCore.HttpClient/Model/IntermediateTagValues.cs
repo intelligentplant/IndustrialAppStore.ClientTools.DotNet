@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
+#nullable disable
+
 namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     /// Describes a data query result for a single tag, before it has been transformed.

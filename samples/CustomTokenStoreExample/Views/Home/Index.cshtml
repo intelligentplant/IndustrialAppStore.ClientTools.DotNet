@@ -1,0 +1,265 @@
+﻿@model IndexViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div>
+    <h4>Welcome to this example Industrial App Store app!</h4>
+    <p>Select a data source to start searching for tags.</p>
+</div>
+
+<div>
+  
+  <div class="input-group mb-3">
+    <span class="input-group-text">
+      <i class="fas fa-fw fa-database"></i>
+    </span>
+    <select asp-for="DataSourceName" asp-items="Model.DataSources" class="form-select"></select>
+  </div>
+
+  <div class="input-group mb-3">
+    <span class="input-group-text">
+      <i class="fas fa-fw fa-search"></i>
+    </span>
+    <input type="text" id="tag-name-filter" class="form-control" placeholder="Tag name filter" disabled="@true" />
+  </div>
+
+
+  <div id="tags-container" class="row">
+    <partial name="_FindTagsPartial" model="new TagListViewModel()" />
+  </div>
+
+</div>
+
+<div id="chart-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-chart-line"></i>
+          Chart: Last 24 Hours
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="chart-container">
+          <canvas id="chart"></canvas>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Styles {
+<style type="text/css">
+  #chart-modal .modal-dialog {
+    max-width: 90vw;
+  }
+</style>
+}
+
+@section Scripts {
+<script src="~/lib/rxjs/rxjs.umd.min.js"></script>
+<script src="~/lib/Chart.js/chart.min.js"></script>
+<script src="~/lib/luxon/luxon.min.js"></script>
+<script src="~/lib/chartjs-adapter-luxon/chartjs-adapter-luxon.min.js"></script>
+<script type="text/javascript">
+
+  $(function () {
+    let currentDataSource = '';
+    let currentTagNameFilter = '';
+    let currentPage = 1;
+
+    const dataSourceSubject = new rxjs.Subject();
+    const dataSource$ = dataSourceSubject
+      .pipe(
+        rxjs.operators.distinctUntilChanged(),
+        rxjs.operators.map(function (dsn) {
+          currentDataSource = dsn;
+          currentPage = 1;
+          return {
+            dataSourceName: currentDataSource,
+            tagNameFilter: currentTagNameFilter,
+            page: currentPage
+          };
+        })
+      )
+
+    const tagNameFilterSubject = new rxjs.Subject();
+    const tagNameFilter$ = tagNameFilterSubject
+      .pipe(
+        rxjs.operators.debounceTime(300),
+        rxjs.operators.distinctUntilChanged(),
+        rxjs.operators.map(function (filter) {
+          currentTagNameFilter = filter;
+          currentPage = 1;
+          return {
+            dataSourceName: currentDataSource,
+            tagNameFilter: currentTagNameFilter,
+            page: currentPage
+          }
+        })
+      );
+
+    const pageSubject = new rxjs.Subject();
+    const page$ = pageSubject
+      .pipe(
+        rxjs.operators.distinctUntilChanged(),
+        rxjs.operators.map(function (page) {
+          currentPage = page;
+          return {
+            dataSourceName: currentDataSource,
+            tagNameFilter: currentTagNameFilter,
+            page: currentPage
+          }
+        })
+      );
+
+    const tagSearchSubscription = rxjs.merge(dataSource$, tagNameFilter$, page$)
+      .pipe(
+        rxjs.operators.distinctUntilChanged(function (x, y) {
+          return x.dataSourceName === y.dataSourceName && x.tagNameFilter === y.tagNameFilter && x.page === y.page;
+        }),
+        rxjs.operators.startWith({
+          dataSourceName: currentDataSource,
+          tagNameFilter: currentTagNameFilter,
+          page: currentPage
+        }),
+        rxjs.operators.filter(function (f) {
+          return f.dataSourceName ? true : false;
+        }),
+        rxjs.operators.switchMap(fetchTags),
+        rxjs.operators.share()
+      )
+      .subscribe(function (next) {
+        if (currentPage === 1) {
+          $('#tags-container').html(next.response);
+        } else {
+          $('#load-next-page').replaceWith(next.response);
+        }
+      });
+
+    const chartDataSubject = new rxjs.Subject();
+    const chartDataSubscription = chartDataSubject
+      .pipe(
+        rxjs.operators.filter(function (v) {
+          return v.dataSourceName && v.tagName ? true : false;
+        }),
+        rxjs.operators.switchMap(fetchChartData),
+        rxjs.operators.share()
+      )
+      .subscribe(function (next) {
+        createChart(next.tagName, next.next.response);
+      });
+
+    function fetchTags(filter) {
+      return rxjs.ajax.ajax({
+        method: 'post',
+        url: '@Url.Action("FindTags")',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: {
+          DataSourceName: filter.dataSourceName,
+          TagNameFilter: filter.tagNameFilter,
+          Page: filter.page
+        },
+        responseType: 'text'
+      });
+    }
+
+    function fetchChartData(query) {
+      return rxjs.ajax.ajax({
+        method: 'post',
+        url: '@Url.Action("ChartData")',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: {
+          DataSourceName: query.dataSourceName,
+          TagName: query.tagName,
+        }
+      }).pipe(
+        rxjs.operators.map(function (next) {
+          return { next: next, dataSourceName: query.dataSourceName, tagName: query.tagName };
+        })
+      );
+    }
+
+    function createChart(tagName, tagValues) {
+      const ctx = $('#chart');
+      let chart = ctx.data('chart');
+      if (chart) {
+        chart.destroy();
+      }
+
+      const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+      const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+      ctx.attr('width', 0.8 * vw);
+      ctx.attr('height', 0.6 * vh);
+
+      const data = tagValues.map(function (v) {
+        return {
+          x: new Date(v.utcSampleTime).valueOf(),
+          y: v.numericValue
+        };
+      });
+
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: [{
+            label: tagName,
+            data: data,
+            backgroundColor: 'rgba(255, 152, 51, 0.2)',
+            borderColor: 'rgba(255, 152, 51, 1)',
+            pointBackgroundColor: 'rgba(255, 152, 51, 1)',
+            pointBorderColor: 'rgba(255, 102, 0, 1)',
+            pointHoverBackgroundColor: 'rgba(255, 102, 0, 0.8)',
+            pointHoverBorderColor: 'rgba(255, 152, 51, 1)'
+          }]
+        },
+        options: {
+          animation: false,
+          scales: {
+            x: {
+              type: 'time',
+              unit: 'hour'
+            }
+          }
+        }
+      });
+
+      ctx.data('chart', chart);
+      const modal = new bootstrap.Modal($('#chart-modal')[0]);
+      modal.show();
+    }
+
+
+    $('#DataSourceName').on('change', function () {
+      $('#tag-name-filter').prop('disabled', false);
+      dataSourceSubject.next($(this).val());
+    });
+
+    $('#tag-name-filter').on('keyup', function () {
+      tagNameFilterSubject.next($(this).val());
+    });
+
+    window.loadPage = function (page) {
+      pageSubject.next(page);
+    }
+
+    window.loadChart = function (dataSourceName, tagName) {
+      chartDataSubject.next({
+        dataSourceName: dataSourceName,
+        tagName: tagName
+      });
+    }
+
+  });
+</script>
+}

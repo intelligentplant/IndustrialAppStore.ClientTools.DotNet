@@ -19,7 +19,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -66,6 +66,24 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         internal static string AuthDefaults_DisplayName {
             get {
                 return ResourceManager.GetString("AuthDefaults_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The token store has already been initialised..
+        /// </summary>
+        internal static string Error_TokenStoreHasAlreadyBeenInitialised {
+            get {
+                return ResourceManager.GetString("Error_TokenStoreHasAlreadyBeenInitialised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The token store has not been initialiased..
+        /// </summary>
+        internal static string Error_TokenStoreHasNotBeenInitialised {
+            get {
+                return ResourceManager.GetString("Error_TokenStoreHasNotBeenInitialised", resourceCulture);
             }
         }
         

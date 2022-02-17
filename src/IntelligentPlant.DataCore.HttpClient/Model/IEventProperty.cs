@@ -6,14 +6,14 @@
     public interface IEventProperty {
 
         /// <summary>
-        /// Gets the event name.
+        /// Gets the event property name.
         /// </summary>
         string Name { get; }
 
         /// <summary>
         /// Gets the event value.
         /// </summary>
-        object Value { get; }
+        object? Value { get; }
 
     }
 

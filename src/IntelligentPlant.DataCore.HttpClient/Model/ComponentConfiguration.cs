@@ -10,7 +10,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// The configuration settings for the component.
         /// </summary>
-        public IEnumerable<ComponentConfigurationSetting> Settings { get; set; }
+        public IEnumerable<ComponentConfigurationSetting>? Settings { get; set; }
 
     }
 

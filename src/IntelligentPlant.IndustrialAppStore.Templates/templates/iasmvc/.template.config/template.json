@@ -1,9 +1,10 @@
 {
   "$schema": "http://json.schemastore.org/template",
   "author": "Intelligent Plant",
-  "classifications": [ "Industrial App Store", "Web", "MVC" ],
+  "classifications": [ "Industrial App Store", "Web", "MVC", "IoT" ],
   "identity": "IntelligentPlant.IndustrialAppStore.StarterMvcTemplate",
-  "name": "Industrial App Store App (MVC)",
+  "name": "Industrial App Store App",
+  "description": "A project template for creating an ASP.NET Core application that integrates with Intelligent Plant's Industrial App Store.",
   "shortName": "iasmvc",
   "tags": {
     "language": "C#",
@@ -15,25 +16,47 @@
     "be127432-88b9-4a34-ad20-426d9083091a"
   ],
   "symbols": {
+    "Framework": {
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "net6.0",
+          "description": ".NET 6.0"
+        },
+        {
+          "choice": "netcoreapp3.1",
+          "description": ".NET Core 3.1"
+        }
+      ],
+      "defaultValue": "net6.0",
+      "replaces": "net6.0"
+    },
+    "IsNet60": {
+      "type": "computed",
+      "value": "(Framework == \"net6.0\")"
+    },
+    "IsNetCore31": {
+      "type": "computed",
+      "value": "(Framework == \"netcoreapp3.1\")"
+    },
     "AppName": {
       "type": "parameter",
+      "displayName": "App Name",
       "description": "The display name for your app.",
       "defaultValue": "Example IAS Application",
       "replaces": "Example IAS Application"
     },
     "ClientId": {
       "type": "parameter",
-      "description": "Specifies the Industrial App Store client ID for your app.",
+      "displayName": "Client ID",
+      "description": "The Industrial App Store client ID for your app.",
       "defaultValue": "<YOUR CLIENT ID>",
       "replaces": "<YOUR CLIENT ID>"
     },
-    "HttpsPort": {
-      "type": "parameter",
-      "datatype": "integer",
-      "description": "Port number to use for the HTTPS endpoint in launchSettings.json. If not specified, a port number will be generated automatically."
-    },
     "SkipRestore": {
       "type": "parameter",
+      "displayName": "Skip Restore",
       "datatype": "bool",
       "description": "If specified, skips the automatic restore of the project on create.",
       "defaultValue": "false"
@@ -63,7 +86,7 @@
       "type": "generated",
       "generator": "coalesce",
       "parameters": {
-        "sourceVariableName": "HttpsPort",
+        "sourceVariableName": "HttpsPortGenerated",
         "fallbackVariableName": "HttpsPortGenerated"
       },
       "replaces": "44300"
@@ -75,6 +98,26 @@
     }
   ],
   "defaultName": "IasWebApplication",
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "condition": "(!IsNetCore31)",
+          "exclude": [
+            "Program_netcoreapp31.cs",
+            "Startup.cs"
+          ]
+        },
+        {
+          "condition": "(IsNetCore31)",
+          "exclude": "Program.cs",
+          "rename": {
+            "Program_netcoreapp31.cs": "Program.cs"
+          }
+        }
+      ]
+    }
+  ],
   "postActions": [
     {
       "condition": "(!SkipRestore)",

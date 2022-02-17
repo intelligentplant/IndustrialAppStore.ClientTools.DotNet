@@ -18,25 +18,25 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting.Templates {
         /// </summary>
         [Required]
         [MaxLength(MaximumNameLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the friendly (display) name for the parameter.
         /// </summary>
         [MaxLength(200)]
-        public string FriendlyName { get; set; }
+        public string? FriendlyName { get; set; }
 
         /// <summary>
         /// Gets or sets the description for the parameter.
         /// </summary>
         [MaxLength(500)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the help link for the parameter.
         /// </summary>
         [MaxLength(200)]
-        public Uri HelpLink { get; set; }
+        public Uri? HelpLink { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the parameter. This can be used to infer the type of editor that 
@@ -47,12 +47,12 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting.Templates {
         /// <summary>
         /// Gets or sets the default value for the parameter.
         /// </summary>
-        public object DefaultValue { get; set; }
+        public object? DefaultValue { get; set; }
 
         /// <summary>
         /// Gets or sets the validators for the parameter.
         /// </summary>
-        public IEnumerable<IDictionary<string, object>> Validators { get; set; }
+        public IEnumerable<IDictionary<string, object>>? Validators { get; set; }
 
     }
 }

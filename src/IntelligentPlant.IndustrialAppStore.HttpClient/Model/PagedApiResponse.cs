@@ -22,7 +22,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Model {
         /// <summary>
         /// The items.
         /// </summary>
-        public IEnumerable<T> Items { get; set; }
+        public IEnumerable<T> Items { get; set; } = default!;
 
     }
 }

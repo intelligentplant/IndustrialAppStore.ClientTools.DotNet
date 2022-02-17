@@ -10,7 +10,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the data source for the tags.
         /// </summary>
-        public ComponentName DataSourceName { get; set; }
+        public ComponentName DataSourceName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the tags.
@@ -20,12 +20,12 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets an error message to accompany the results if the tag search failed.
         /// </summary>
-        public string Error { get; set; }
+        public string? Error { get; set; }
 
         /// <summary>
         /// Flags if <see cref="Error"/> contains an error message.
         /// </summary>
-        public bool HasError { get { return !String.IsNullOrWhiteSpace(Error); } }
+        public bool HasError { get { return !string.IsNullOrWhiteSpace(Error); } }
 
 
         /// <summary>

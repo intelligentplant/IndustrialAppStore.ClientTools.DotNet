@@ -11,25 +11,25 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// Gets or sets the data source name.
         /// </summary>
         [JsonProperty("dsn")]
-        public string Dsn { get; set; }
+        public string Dsn { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the tags.
         /// </summary>
         [JsonProperty("tags")]
-        public IEnumerable<string> Tags { get; set; }
+        public IEnumerable<string> Tags { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the query start time.
         /// </summary>
         [JsonProperty("start")]
-        public string Start { get; set; }
+        public string Start { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the query start time.
         /// </summary>
         [JsonProperty("end")]
-        public string End { get; set; }
+        public string End { get; set; } = default!;
 
     }
 }
