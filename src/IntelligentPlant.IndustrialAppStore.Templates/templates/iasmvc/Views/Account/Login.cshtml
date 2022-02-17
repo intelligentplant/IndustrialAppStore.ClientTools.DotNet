@@ -5,22 +5,26 @@
 
 <div class="card text-center">
   <div class="card-body">
-    <h5 class="card-title">Sign In</h5>
+    <h2 class="card-title mb-3">Sign In</h2>
 
-    <p>Welcome to Example IAS Application!</p>
+    <div class="mb-3">
+        Welcome to this example <a href="https://appstore.intelligentplant.com" target="_blank">Industrial App Store</a> app!
+    </div>
 
-    <p>Example IAS Application is an app on the <a href="https://appstore.intelligentplant.com" target="_blank">Industrial App Store</a>. You can register as an Industrial App Store developer <a href="https://appstore.intelligentplant.com/Developer/RegisterDeveloper" target="_blank">here</a>.</p>
+    <div class="mb-3">
+        You can register as an Industrial App Store developer <a href="https://appstore.intelligentplant.com/Developer/RegisterDeveloper" target="_blank">here</a>.
+    </div>
 
     <form asp-controller="Account" asp-action="Login" method="post">
-      <div class="form-group">
+      <div class="mb-3">
         <button type="submit" class="btn btn-success btn-lg">
           <i class="fas fa-sign-in-alt"></i>
           Sign in with your Industrial App Store account
         </button>
       </div>
-      <div class="form-group">
-        <div class="form-check">
-          <input asp-for="IsPersistent"/>
+      <div class="mb-3">
+        <div class="form-check" title="Check this box to remain signed in after you close your browser">
+          <input class"form-check-input" asp-for="IsPersistent" alt="Check this box to remain signed in after you close your browser"/>
           <label class="form-check-label" for="IsPersistent">Remember me</label>
         </div>
       </div>

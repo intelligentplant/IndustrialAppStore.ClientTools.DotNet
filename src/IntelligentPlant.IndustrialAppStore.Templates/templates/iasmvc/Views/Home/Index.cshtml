@@ -10,27 +10,20 @@
 
 <div>
   
-  <div class="form-group">
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <span class="input-group-text">
-          <i class="fas fa-database"></i>
-        </span>
-      </div>
-      <select asp-for="DataSourceName" asp-items="Model.DataSources" class="form-control"></select>
-    </div>
+  <div class="input-group mb-3">
+    <span class="input-group-text">
+      <i class="fas fa-fw fa-database"></i>
+    </span>
+    <select asp-for="DataSourceName" asp-items="Model.DataSources" class="form-select"></select>
   </div>
 
-  <div class="form-group">
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <span class="input-group-text">
-          <i class="fas fa-search"></i>
-        </span>
-      </div>
-      <input type="text" id="tag-name-filter" class="form-control" placeholder="Tag name filter" disabled="@true" />
-    </div>
+  <div class="input-group mb-3">
+    <span class="input-group-text">
+      <i class="fas fa-fw fa-search"></i>
+    </span>
+    <input type="text" id="tag-name-filter" class="form-control" placeholder="Tag name filter" disabled="@true" />
   </div>
+
 
   <div id="tags-container" class="row">
     <partial name="_FindTagsPartial" model="new TagListViewModel()" />
@@ -46,9 +39,7 @@
           <i class="fas fa-chart-line"></i>
           Chart: Last 24 Hours
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="chart-container">
@@ -56,7 +47,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -72,7 +63,9 @@
 
 @section Scripts {
 <script src="~/lib/rxjs/rxjs.umd.min.js"></script>
-<script src="~/lib/Chart.js/Chart.bundle.min.js"></script>
+<script src="~/lib/Chart.js/chart.min.js"></script>
+<script src="~/lib/luxon/luxon.min.js"></script>
+<script src="~/lib/chartjs-adapter-luxon/chartjs-adapter-luxon.min.js"></script>
 <script type="text/javascript">
 
   $(function () {
@@ -80,33 +73,26 @@
     let currentTagNameFilter = '';
     let currentPage = 1;
 
-    // Whenever the selected data source changes, the change will be emitted by this RxJS subject.
     const dataSourceSubject = new rxjs.Subject();
     const dataSource$ = dataSourceSubject
       .pipe(
-        // Wait until a new data source is selected.
         rxjs.operators.distinctUntilChanged(),
-        // Emit a filter that will search the new data source with the current tag name filter.
         rxjs.operators.map(function (dsn) {
-            currentDataSource = dsn;
-            currentPage = 1;
-            return {
-                dataSourceName: currentDataSource,
-                tagNameFilter: currentTagNameFilter,
-                page: currentPage
-            };
+          currentDataSource = dsn;
+          currentPage = 1;
+          return {
+            dataSourceName: currentDataSource,
+            tagNameFilter: currentTagNameFilter,
+            page: currentPage
+          };
         })
-      );
+      )
 
-    // Whenever the tag name filter changes, the change will be emitted by this RxJS subject.
     const tagNameFilterSubject = new rxjs.Subject();
     const tagNameFilter$ = tagNameFilterSubject
       .pipe(
-        // After a new tag name filter is set, wait 300ms in case the user is still typing.
         rxjs.operators.debounceTime(300),
-        // Don't emit anything unless the value has changed.
         rxjs.operators.distinctUntilChanged(),
-        // Emit a filter that will search the current data source with the new tag name filter.
         rxjs.operators.map(function (filter) {
           currentTagNameFilter = filter;
           currentPage = 1;
@@ -118,15 +104,10 @@
         })
       );
 
-    // Whenever the results page for the tag search changes, the change will be emitted by this RxJS 
-    // subject.
     const pageSubject = new rxjs.Subject();
     const page$ = pageSubject
       .pipe(
-        // Wait until the user pages forwards or backwards.
         rxjs.operators.distinctUntilChanged(),
-        // Emit a filter that will search the current data source with the current tag name filter, 
-        // but with a different page number.
         rxjs.operators.map(function (page) {
           currentPage = page;
           return {
@@ -137,63 +118,44 @@
         })
       );
 
-    // Merge the data source, tag name, and page number streams together.
     const tagSearchSubscription = rxjs.merge(dataSource$, tagNameFilter$, page$)
       .pipe(
-        // Wait until the composite search filter has changed.
         rxjs.operators.distinctUntilChanged(function (x, y) {
           return x.dataSourceName === y.dataSourceName && x.tagNameFilter === y.tagNameFilter && x.page === y.page;
         }),
-        // Initial value for this observable.
         rxjs.operators.startWith({
           dataSourceName: currentDataSource,
           tagNameFilter: currentTagNameFilter,
           page: currentPage
         }),
-        // Ignore items that don't have a data source name set.
         rxjs.operators.filter(function (f) {
           return f.dataSourceName ? true : false;
         }),
-        // Call fetchTags for each composite search filter emitted by the observable and emit the 
-        // result instead.
         rxjs.operators.switchMap(fetchTags),
-        // Make the observable "hot".
         rxjs.operators.share()
       )
       .subscribe(function (next) {
         if (currentPage === 1) {
-          // This is a new tag name filter or data source name; replace the entire tag-container 
-          // element content.
           $('#tags-container').html(next.response);
         } else {
-          // This is a new page of results for the current data source name and tag name filter; 
-          // replace the load-next-page element with the results.
           $('#load-next-page').replaceWith(next.response);
         }
       });
 
-    // Whenever chart data must be loaded for a data source and tag, this information will be 
-    // emitted by this RxJS subject.
     const chartDataSubject = new rxjs.Subject();
     const chartDataSubscription = chartDataSubject
       .pipe(
-        // Ignore items that don't define a data source name and a tag name.
         rxjs.operators.filter(function (v) {
           return v.dataSourceName && v.tagName ? true : false;
         }),
-        // Call fetchChartData whenever an item is emitted by the stream and emit the result of 
-        // that function instead.
         rxjs.operators.switchMap(fetchChartData),
-        // Make the observable "hot".
         rxjs.operators.share()
       )
       .subscribe(function (next) {
-        // Create and display a chart every time chart data is emitted by the observable.
         createChart(next.tagName, next.next.response);
       });
 
     function fetchTags(filter) {
-      // Perform a tag search and emit the results using an RxJS observable.
       return rxjs.ajax.ajax({
         method: 'post',
         url: '@Url.Action("FindTags")',
@@ -210,7 +172,6 @@
     }
 
     function fetchChartData(query) {
-      // Perform a data query and emit the results using an RxJS observable.
       return rxjs.ajax.ajax({
         method: 'post',
         url: '@Url.Action("ChartData")',
@@ -222,8 +183,6 @@
           TagName: query.tagName,
         }
       }).pipe(
-        // When we receive chart data from the server, emit an object that describes the data 
-        // source name, tag name, and the HTTP response.
         rxjs.operators.map(function (next) {
           return { next: next, dataSourceName: query.dataSourceName, tagName: query.tagName };
         })
@@ -231,7 +190,6 @@
     }
 
     function createChart(tagName, tagValues) {
-      // Create a ChartJS chart using the provided tag values.
       const ctx = $('#chart');
       let chart = ctx.data('chart');
       if (chart) {
@@ -246,7 +204,7 @@
 
       const data = tagValues.map(function (v) {
         return {
-          x: new Date(v.utcSampleTime),
+          x: new Date(v.utcSampleTime).valueOf(),
           y: v.numericValue
         };
       });
@@ -266,20 +224,21 @@
           }]
         },
         options: {
+          animation: false,
           scales: {
-            xAxes: [{
+            x: {
               type: 'time',
               unit: 'hour'
-            }]
+            }
           }
         }
       });
 
       ctx.data('chart', chart);
-      $('#chart-modal').modal();
+      const modal = new bootstrap.Modal($('#chart-modal')[0]);
+      modal.show();
     }
 
-    // Wire up data source name and tag name control event handlers.
 
     $('#DataSourceName').on('change', function () {
       $('#tag-name-filter').prop('disabled', false);
@@ -290,12 +249,10 @@
       tagNameFilterSubject.next($(this).val());
     });
 
-    // Loads the specified page number for the current data source name and tag name filter.
     window.loadPage = function (page) {
       pageSubject.next(page);
     }
 
-    // Loads and displays chart data for the specified data source name and tag name.
     window.loadChart = function (dataSourceName, tagName) {
       chartDataSubject.next({
         dataSourceName: dataSourceName,
