@@ -119,7 +119,7 @@ The CSP configuration is mapped to the [ContentSecurityPolicyOptions](./ContentS
 An individual policy definition can define the following properties:
 
 - `Match` - An array of URL paths that the policy matches. Entries can use `*` as a wildcard. If not specified, the definition will match all paths.
-- `Priority` - An `int` priority for the definition. Definitions with higher priorities will be applied first. If not specified, a priority of zero will be used.
+- `Priority` - An integer priority for the definition. Definitions with higher priorities will be applied first. If not specified, a priority of zero will be used.
 - `Policy` - the CSP directives and values for the policy. See [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) for information about the available directives and values.
 
 Multiple policies can be applied to a given path. Policies are applied from highest priority to lowest priority, and are additive by default (i.e. if both of the policies in the example above were applied to a request, the generated CSP would be the composite of both policies).
