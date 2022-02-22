@@ -36,7 +36,7 @@ else
               <span title="@tag.Description">@tag.Description</span>
             }
           </p>
-          <button type="button" class="btn btn-success btn-sm" onclick="loadChart('@System.Web.HttpUtility.JavaScriptStringEncode(Model.Request.DataSourceName)', '@System.Web.HttpUtility.JavaScriptStringEncode(tag.Name)')" title="View chart data for this tag for the last 24 hours">
+          <button type="button" class="btn btn-success btn-sm show-chart" data-ias-dsn="@System.Web.HttpUtility.JavaScriptStringEncode(Model.Request.DataSourceName)" data-ias-tag="@System.Web.HttpUtility.JavaScriptStringEncode(tag.Name)" title="View chart data for this tag for the last 24 hours">
             <i class="fas fa-chart-line"></i>
             Last 24H
           </button>
@@ -50,7 +50,7 @@ else
     <div id="load-next-page" class="col-sm-12">
       <ul class="nav">
         <li class="nav-item">
-          <a class="nav-link" href="#load-next-page" onclick="loadPage(@(Model.Request.Page + 1))" title="Load more tags that match your search filter">
+          <a class="nav-link" href="#load-next-page" data-ias-next-page="@(Model.Request.Page + 1)" title="Load more tags that match your search filter">
             <i class="fas fa-plus"></i>
             Load More Tags
           </a>

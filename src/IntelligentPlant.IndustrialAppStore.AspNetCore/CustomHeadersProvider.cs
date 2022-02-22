@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 
-namespace IntelligentPlant.IndustrialAppStore.Authentication {
+namespace IntelligentPlant.IndustrialAppStore.AspNetCore {
 
     /// <summary>
     /// Service that provides custom headers to add to HTTP responses.

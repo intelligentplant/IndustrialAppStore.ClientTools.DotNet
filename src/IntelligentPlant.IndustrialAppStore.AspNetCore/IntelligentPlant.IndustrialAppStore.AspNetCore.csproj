@@ -2,16 +2,14 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;netcoreapp3.1</TargetFrameworks>
-    <Description>ASP.NET Core authentication handler for Intelligent Plant's Industrial App Store.</Description>
+    <Description>ASP.NET Core services and middleware for Industrial App Store apps.</Description>
+    <LangVersion>10.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\IntelligentPlant.IndustrialAppStore.HttpClient\IntelligentPlant.IndustrialAppStore.HttpClient.csproj" />
-    <ProjectReference Include="..\IntelligentPlant.IndustrialAppStore.AspNetCore\IntelligentPlant.IndustrialAppStore.AspNetCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

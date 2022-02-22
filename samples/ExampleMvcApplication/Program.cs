@@ -1,4 +1,7 @@
 ﻿var builder = WebApplication.CreateBuilder(args);
+// Content security policy is defined in csp.json
+builder.Configuration.AddJsonFile("csp.json", optional: true, reloadOnChange: true);
+builder.Configuration.AddJsonFile($"csp.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
 AppBuilderUtils.ConfigureServices(builder.Configuration, builder.Services);
 var app = builder.Build();
