@@ -1,0 +1,11 @@
+{
+  "ContentSecurityPolicy": {
+    "Policies": {
+      "_": {
+        "Policy": {
+          "default-src": [ "'self'", "wss://localhost:52132", "ws://localhost:52133" ]
+        }
+      }
+    }
+  }
+}

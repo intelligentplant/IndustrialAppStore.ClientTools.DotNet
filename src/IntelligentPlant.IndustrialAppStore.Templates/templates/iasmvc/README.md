@@ -66,6 +66,20 @@ If you generated a secret key for your app, use the [ASP.NET Core Secret Manager
 __DO NOT STORE CLIENT SECRETS IN THE `appsettings.json` FILE OR IN ANY OTHER FILE THAT IS CHECKED INTO SOURCE CONTROL!__
 
 
+# Default HTTP Response Headers
+
+Your app is configured to append a set of default headers onto every HTTP response to protect against cross-site scripting attacks. The headers are defined in [appsettings.json](./appsettings.json).
+
+Documentation about how to configure the custom headers can be found [here](https://github.com/intelligentplant/IndustrialAppStore.ClientTools.DotNet/blob/main/src/IntelligentPlant.IndustrialAppStore.AspNetCore/README.md).
+
+
+# Content Security Policy
+
+Your app uses a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) to protect against cross-site scripting attacks. The CSP is enabled by default and defined in [csp.json](./csp.json).
+
+Documentation about how to configure the CSP can be found [here](https://github.com/intelligentplant/IndustrialAppStore.ClientTools.DotNet/blob/main/src/IntelligentPlant.IndustrialAppStore.AspNetCore/README.md).
+
+
 # Calling Data Core and Industrial App Store APIs
 
 To call Data Core and Industrial App Store APIs from inside the HTTP request pipeline, inject the `IndustrialAppStoreHttpClient` into your controllers, for example:

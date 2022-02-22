@@ -18,6 +18,9 @@ namespace ExampleMvcApplication
                     {
                         builder.AddUserSecrets<Program>();
                     }
+
+                    // Content security policy is defined in csp.json.
+                    builder.AddJsonFile("csp.json", optional: true, reloadOnChange: true);
                 })
                 .ConfigureWebHostDefaults(webBuilder => {
                     webBuilder.UseStartup<Startup>();

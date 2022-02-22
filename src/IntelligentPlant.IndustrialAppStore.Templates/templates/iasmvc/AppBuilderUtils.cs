@@ -27,6 +27,9 @@ namespace Microsoft.Extensions.DependencyInjection {
             // Adds services required for the custom headers middleware. Custom headers are
             // configured in appsettings.json.
             services.AddCustomHeaders();
+            // Adds services required for the Content Security Policy middleware. The CSP is
+            // configured in csp.json.
+            services.AddContentSecurityPolicy();
 
             services.AddIndustrialAppStoreAuthentication(options => {
                 // Bind the settings from the app configuration to the Industrial App Store 
@@ -61,8 +64,6 @@ namespace Microsoft.Extensions.DependencyInjection {
         ///   The <see cref="IWebHostEnvironment"/>.
         /// </param>
         internal static void ConfigureApp(IApplicationBuilder app, IWebHostEnvironment env) {
-            app.UseCustomHeaders();
-
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
@@ -75,6 +76,9 @@ namespace Microsoft.Extensions.DependencyInjection {
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCustomHeaders();
+            app.UseContentSecurityPolicy();
 
             app.UseAuthentication();
             app.UseAuthorization();

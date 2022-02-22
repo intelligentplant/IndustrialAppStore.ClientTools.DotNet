@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 
-using Microsoft.AspNetCore.Http;
-
-namespace IntelligentPlant.IndustrialAppStore.Authentication {
+namespace IntelligentPlant.IndustrialAppStore.AspNetCore {
 
     /// <summary>
     /// Middleware that adds headers from the <see cref="CustomHeadersProvider"/> service to every 

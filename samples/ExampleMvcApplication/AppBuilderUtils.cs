@@ -16,6 +16,7 @@
         /// </param>
         internal static void ConfigureServices(IConfiguration configuration, IServiceCollection services) {
             services.AddCustomHeaders();
+            services.AddContentSecurityPolicy();
 
             services.AddIndustrialAppStoreAuthentication(options => {
                 // Bind the settings from the app configuration to the Industrial App Store 
@@ -50,8 +51,6 @@
         ///   The <see cref="IWebHostEnvironment"/>.
         /// </param>
         internal static void ConfigureApp(IApplicationBuilder app, IWebHostEnvironment env) {
-            app.UseCustomHeaders();
-
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
@@ -64,6 +63,9 @@
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCustomHeaders();
+            app.UseContentSecurityPolicy();
 
             app.UseAuthentication();
             app.UseAuthorization();
