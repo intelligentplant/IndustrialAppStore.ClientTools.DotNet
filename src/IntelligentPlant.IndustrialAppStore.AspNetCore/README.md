@@ -20,6 +20,7 @@ builder.Services.AddCustomHeaders();
 // ...
 
 var app = builder.Build();
+
 app.UseCustomHeaders();
 
 // ...
@@ -27,7 +28,7 @@ app.UseCustomHeaders();
 app.Run();
 ```
 
-You can define the custom response headers via the `CustomHeaders` section of your application's `IConfiguration`. For example:
+You can define the custom response headers via the `CustomHeaders` section of your application's `appsettings.json` file. For example:
 
 ```json
 {
@@ -57,6 +58,7 @@ builder.Services.AddContentSecurityPolicy();
 // ...
 
 var app = builder.Build();
+
 app.UseContentSecurityPolicy();
 
 // ...
@@ -64,7 +66,7 @@ app.UseContentSecurityPolicy();
 app.Run();
 ```
 
-Next, define your CSP via the `ContentSecurityPolicy` section of your application's `IConfiguration`. For example:
+Next, define your CSP via the `ContentSecurityPolicy` section of your application's `appsettings.json` file (or in a separate configuration file if preferred). For example:
 
 ```json
 {
