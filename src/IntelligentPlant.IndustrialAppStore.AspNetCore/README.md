@@ -43,7 +43,7 @@ You can define the custom response headers via the `CustomHeaders` section of yo
 
 # Content Security Policy
 
-In addition to defining a hard-coded [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) via the `Content-Security-Policy` response header defined using the custom headers middleware above, the library also provides dedicated middleware and services to define a CSP in a more flexible way.
+A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) gives you fine-grained control over where the browser can load content such as scripts and images from. For simple use cases, you can set a hard-coded `Content-Security-Policy` response header using the custom headers middleware above. However, the library also provides dedicated middleware and services to define a CSP in a more flexible way.
 
 First, register the required services and middlware with your application:
 
