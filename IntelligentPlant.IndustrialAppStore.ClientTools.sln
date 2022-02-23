@@ -61,6 +61,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data-core-api-client", "dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomTokenStoreExample", "samples\CustomTokenStoreExample\CustomTokenStoreExample.csproj", "{A6FD636F-5B3B-4DEB-888F-E28AF37A3C46}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntelligentPlant.IndustrialAppStore.AspNetCore", "src\IntelligentPlant.IndustrialAppStore.AspNetCore\IntelligentPlant.IndustrialAppStore.AspNetCore.csproj", "{CBF71748-0368-4A1F-88AE-08216DF55397}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,10 @@ Global
 		{A6FD636F-5B3B-4DEB-888F-E28AF37A3C46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6FD636F-5B3B-4DEB-888F-E28AF37A3C46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6FD636F-5B3B-4DEB-888F-E28AF37A3C46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBF71748-0368-4A1F-88AE-08216DF55397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBF71748-0368-4A1F-88AE-08216DF55397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBF71748-0368-4A1F-88AE-08216DF55397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBF71748-0368-4A1F-88AE-08216DF55397}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +109,7 @@ Global
 		{83C9EAEA-E7D7-42AF-BA17-63CD63568A70} = {49E8C063-F41F-451F-81BF-C4960B9A0168}
 		{B394A8BF-92A8-46B8-B703-C8D398DAF61E} = {34009963-21E6-4DBE-ADF8-FE005C4FC279}
 		{A6FD636F-5B3B-4DEB-888F-E28AF37A3C46} = {65FE3E10-29B7-4A78-9ED8-C8384AE9D420}
+		{CBF71748-0368-4A1F-88AE-08216DF55397} = {49E8C063-F41F-451F-81BF-C4960B9A0168}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D12472DA-7354-4A19-8F60-4F9D42C71241}

@@ -33,6 +33,7 @@ namespace Microsoft.Extensions.DependencyInjection {
             });
 
             services.AddCustomHeaders();
+            services.AddContentSecurityPolicy();
 
             services.AddIndustrialAppStoreAuthentication(options => {
                 // Bind the settings from the app configuration to the Industrial App Store 
@@ -67,8 +68,6 @@ namespace Microsoft.Extensions.DependencyInjection {
         ///   The <see cref="IWebHostEnvironment"/>.
         /// </param>
         internal static void ConfigureApp(IApplicationBuilder app, IWebHostEnvironment env) {
-            app.UseCustomHeaders();
-
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
@@ -81,6 +80,9 @@ namespace Microsoft.Extensions.DependencyInjection {
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCustomHeaders();
+            app.UseContentSecurityPolicy();
 
             app.UseAuthentication();
             app.UseAuthorization();

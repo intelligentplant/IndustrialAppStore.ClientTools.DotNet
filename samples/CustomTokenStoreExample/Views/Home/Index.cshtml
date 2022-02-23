@@ -135,11 +135,19 @@
         rxjs.operators.share()
       )
       .subscribe(function (next) {
+        let container;
         if (currentPage === 1) {
-          $('#tags-container').html(next.response);
+          container = $('#tags-container').html(next.response);
         } else {
-          $('#load-next-page').replaceWith(next.response);
+          container = $('#load-next-page').replaceWith(next.response);
         }
+
+        container.find('.show-chart').on('click', function(evt) {
+          loadChart(evt.target);
+        });
+        container.find('#load-next-page').on('click', function(evt) {
+          loadPage(evt.target);
+        });
       });
 
     const chartDataSubject = new rxjs.Subject();
@@ -249,14 +257,19 @@
       tagNameFilterSubject.next($(this).val());
     });
 
-    window.loadPage = function (page) {
+    const loadPage = function (el) {
+      const item = $(el);
+      const page = parseInt(item.data('ias-next-page'));
       pageSubject.next(page);
     }
 
-    window.loadChart = function (dataSourceName, tagName) {
+    const loadChart = function (el) {
+      const item = $(el);
+      const dsn = item.data('ias-dsn');
+      const tag = item.data('ias-tag');
       chartDataSubject.next({
-        dataSourceName: dataSourceName,
-        tagName: tagName
+        dataSourceName: dsn,
+        tagName: tag
       });
     }
 

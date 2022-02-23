@@ -1,0 +1,42 @@
+﻿{
+  "ContentSecurityPolicy": {
+    "Policies": {
+      "_": {
+        "Match": [ "*" ],
+        "Policy": {
+          "default-src": [
+            "'self'"
+          ],
+          "frame-ancestors": [
+            "'none'"
+          ],
+          "script-src": [
+            "'self'"
+          ],
+          "style-src": [
+            "'self'"
+          ],
+          "img-src": [
+            "'self'"
+          ]
+        }
+      },
+      "home_controller": {
+        "Match": [ "/", "/Home", "/Home/Index" ],
+        "Policy": {
+          "script-src": [
+            "'unsafe-hashes'",
+            "'sha256-xzhLGrw7novI3sfqwa1y2oKXixPoY89o+n4dy1X+lWU='"
+          ],
+          "style-src": [
+            "'sha256-0pgtLHffxw9208zzWrww2r1Jt4PeiShv+N72R+PmXAU='"
+          ],
+          "img-src": [
+            "data:",
+            "https://appstore.intelligentplant.com"
+          ]
+        }
+      }
+    }
+  }
+}
