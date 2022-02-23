@@ -83,7 +83,8 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<UserOrGroupPrincipal>>(cancellationToken).ConfigureAwait(false);
+                    var result = await httpResponse.Content.ReadAsAsync<PagedApiResponse<UserOrGroupPrincipal>>(cancellationToken).ConfigureAwait(false);
+                    return result.Items;
                 }
             }
             finally {
