@@ -139,7 +139,8 @@
         if (currentPage === 1) {
           container = $('#tags-container').html(next.response);
         } else {
-          container = $('#load-next-page').replaceWith(next.response);
+          container = $(next.response);
+          $('#load-next-page').replaceWith(container);
         }
 
         container.find('.show-chart').on('click', function(evt) {

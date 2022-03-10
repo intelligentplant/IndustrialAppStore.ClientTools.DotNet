@@ -111,6 +111,34 @@ namespace Microsoft.Extensions.DependencyInjection {
             }
 
             app.Use(async (ctx, next) => {
+                ctx.Response.OnStarting(ApplyContentSecurityPolicy, Tuple.Create(ctx, configure));
+                await next.Invoke().ConfigureAwait(false);
+            });
+
+            return app;
+        }
+
+
+        /// <summary>
+        /// Generates the content security policy for an HTTP response.
+        /// </summary>
+        /// <param name="state">
+        ///   The state for the callback.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="Task"/> that will generate the CSP.
+        /// </returns>
+        private static async Task ApplyContentSecurityPolicy(object state) {
+            var tuple = (Tuple<HttpContext, Func<HttpContext, ContentSecurityPolicyBuilder, Task>?>) state;
+            var ctx = tuple.Item1;
+            var configure = tuple.Item2;
+
+            if (string.IsNullOrWhiteSpace(ctx.Response.ContentType)) {
+                return;
+            }
+
+            // Only send CSP response header with text/html content
+            if (new System.Net.Mime.ContentType(ctx.Response.ContentType).MediaType.Equals("text/html", StringComparison.OrdinalIgnoreCase)) {
                 var policyProvider = ctx.RequestServices.GetRequiredService<ContentSecurityPolicyProvider>();
                 var policyBuilder = policyProvider.CreatePolicyBuilder(ctx.Request.Path);
 
@@ -136,11 +164,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                     }
 #endif
                 }
-
-                await next.Invoke().ConfigureAwait(false);
-            });
-
-            return app;
+            }
         }
 
 #endregion
