@@ -26,7 +26,7 @@
         "Policy": {
           "script-src": [
             "'unsafe-hashes'",
-            "'sha256-xzhLGrw7novI3sfqwa1y2oKXixPoY89o+n4dy1X+lWU='"
+            "'sha256-16ci6CSyJjgcDD5uh81EbfMDP9gfREJecoeJMSAOcmI='"
           ],
           "style-src": [
             "'sha256-0pgtLHffxw9208zzWrww2r1Jt4PeiShv+N72R+PmXAU='"
