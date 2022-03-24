@@ -27,7 +27,7 @@
     building via build.ps1 or build.sh. It is defined here to allow Visual Studio to build  
     the solution with the correct version number.
     -->
-    <Version>2.1.0</Version>
+    <Version>2.3.0-pre</Version>
   </PropertyGroup>
 
   <Choose>
