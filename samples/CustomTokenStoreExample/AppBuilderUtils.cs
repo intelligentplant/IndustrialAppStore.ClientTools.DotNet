@@ -35,16 +35,23 @@ namespace Microsoft.Extensions.DependencyInjection {
             services.AddCustomHeaders();
             services.AddContentSecurityPolicy();
 
-            services.AddIndustrialAppStoreAuthentication(options => {
+            services.AddIndustrialAppStoreAuthentication<EFTokenStore>(options => {
                 // Bind the settings from the app configuration to the Industrial App Store 
                 // authentication options.
                 configuration.GetSection("IAS").Bind(options);
 
-                // Specify the path to be our login page.
+                // Redirect to our login page when an authentication challenge is issued.
                 options.LoginPath = new PathString("/Account/Login");
 
-                // The IndustrialAppStoreAuthenticationOptions.ConfigureHttpClient property can be
-                // used to customise the HttpClient that is used for Data Core API calls e.g. 
+                // The UseCookieSessionIdGenerator extension method configures the SessionIdGenerator
+                // property to store a persistent device ID cookie in the calling user agent, so
+                // that logins from the same browser will always use the same session ID. If
+                // SessionIdGenerator is not configured, a new session ID will be generated for
+                // every login.
+                options.UseCookieSessionIdGenerator();
+
+                // The ConfigureHttpClient property can be used to customise the HttpClient that is
+                // used for Data Core API calls e.g. 
                 //options.ConfigureHttpClient = builder => builder.AddHttpMessageHandler<MyCustomHandler>();
             });
 
