@@ -21,7 +21,7 @@ namespace ExampleMvcApplication.Models {
 
         public DateTimeOffset? ExpiryTime { get; set; }
 
-        public string RefreshToken { get; set; }
+        public string? RefreshToken { get; set; }
 
     }
 }
