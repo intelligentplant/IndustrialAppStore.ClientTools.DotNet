@@ -132,12 +132,20 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// </para>
         /// 
         /// <para>
+        ///   The <seealso cref="IndustrialAppStoreAuthenticationExtensions.UseCookieSessionIdGenerator"/> 
+        ///   extension method can be used to assign a value to <see cref="SessionIdGenerator"/> 
+        ///   that will store an identifier for the browser in a persistent cookie and re-use it 
+        ///   across different login sessions.
+        /// </para>
+        /// 
+        /// <para>
         ///   If <see cref="SessionIdGenerator"/> is <see langword="null"/> or returns a 
         ///   <see langword="null"/> or white space value, a unique identifier will be generated 
         ///   for the session.
         /// </para>
         /// 
         /// </remarks>
+        /// <seealso cref="IndustrialAppStoreAuthenticationExtensions.UseCookieSessionIdGenerator"/>
         public Func<ClaimsIdentity, HttpContext, string>? SessionIdGenerator { get; set; }
 
     }
