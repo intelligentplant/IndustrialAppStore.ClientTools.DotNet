@@ -136,6 +136,16 @@ namespace Microsoft.Extensions.DependencyInjection {
                 options.BaseAddress = new Uri(opts.DataCoreUrl);
             });
 
+            // HTTP client for backchannel communications with the IAS OAuth token endpoint.
+            services.AddHttpClient("ias_oauth_backchannel");
+
+            services.AddScoped<ITokenStore, TTokenStore>(sp => {
+                var http = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ias_oauth_backchannel");
+                return factory == null
+                    ? ActivatorUtilities.CreateInstance<TTokenStore>(sp, http)
+                    : factory.Invoke(sp, http);
+            });
+
             if (opts.UseExternalAuthentication) {
                 ConfigureExternalAuthentication(services, userIasHttpClientBuilder, backchannelIasHttpClientBuilder);
             } 
@@ -143,7 +153,8 @@ namespace Microsoft.Extensions.DependencyInjection {
                 ConfigureIndustrialAppStoreAuthentication(services, userIasHttpClientBuilder, backchannelIasHttpClientBuilder, opts, factory);
             }
 
-            opts.ConfigureHttpClient?.Invoke(userIasHttpClientBuilder);
+            opts.ConfigureHttpClient?.Invoke(typeof(IndustrialAppStoreHttpClient), userIasHttpClientBuilder);
+            opts.ConfigureHttpClient?.Invoke(typeof(BackchannelIndustrialAppStoreHttpClient), backchannelIasHttpClientBuilder);
 
             return services;
         }
@@ -212,16 +223,6 @@ namespace Microsoft.Extensions.DependencyInjection {
             IndustrialAppStoreAuthenticationOptions iasOptions,
             Func<IServiceProvider, HttpClient, TTokenStore>? factory
         ) where TTokenStore : class, ITokenStore {
-            // HTTP client for backchannel communications with the IAS OAuth token endpoint.
-            services.AddHttpClient("ias_oauth_backchannel");
-
-            services.AddScoped<ITokenStore, TTokenStore>(sp => {
-                var http = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ias_oauth_backchannel");
-                return factory == null
-                    ? ActivatorUtilities.CreateInstance<TTokenStore>(sp, http)
-                    : factory.Invoke(sp, http);
-            });
-
             userHttpClientBuilder.AddHttpMessageHandler(() => {
                 return IndustrialAppStoreHttpClient.CreateAuthenticationMessageHandler(
                     async (req, ctx, ct) => {
