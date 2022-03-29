@@ -97,10 +97,15 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
         /// <summary>
         /// A callback that can be used to customise the <see cref="IHttpClientBuilder"/> 
-        /// registration used by the <see cref="IndustrialAppStoreHttpClient"/> application 
-        /// service.
+        /// registration used by the <see cref="IndustrialAppStoreHttpClient"/> and 
+        /// <see cref="BackchannelIndustrialAppStoreHttpClient"/> application 
+        /// services.
         /// </summary>
-        public Action<IHttpClientBuilder>? ConfigureHttpClient { get; set; }
+        /// <remarks>
+        ///   The <see cref="Type"/> parameter in the callback is the type that the 
+        ///   <see cref="IHttpClientBuilder"/> is being configured for.
+        /// </remarks>
+        public Action<Type, IHttpClientBuilder>? ConfigureHttpClient { get; set; }
 
         /// <summary>
         /// Additional event handlers for cookie authentication events raised by the application.
