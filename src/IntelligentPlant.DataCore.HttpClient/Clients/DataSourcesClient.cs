@@ -913,7 +913,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/search");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request.Filter, new JsonMediaTypeFormatter())
+                Content = new ObjectContent(request.Filter.GetType(), request.Filter, new JsonMediaTypeFormatter())
             }.AddStateProperty(context);
 
             try {
