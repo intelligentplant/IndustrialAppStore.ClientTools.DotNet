@@ -5,7 +5,7 @@
   <!-- Dev/Test/Benchmark Packages -->
   <PropertyGroup>
     <MicrosoftCodeAnalysisNetAnalyzersVersion>6.0.0</MicrosoftCodeAnalysisNetAnalyzersVersion>
-    <MicrosoftSourceLinkGitHubVersion>1.1.0</MicrosoftSourceLinkGitHubVersion>
+    <MicrosoftSourceLinkGitHubVersion>1.1.1</MicrosoftSourceLinkGitHubVersion>
   </PropertyGroup>
   
 </Project>
