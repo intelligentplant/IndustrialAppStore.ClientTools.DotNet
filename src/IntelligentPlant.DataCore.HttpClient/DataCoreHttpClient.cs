@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
 using IntelligentPlant.DataCore.Client.Clients;
@@ -127,8 +128,256 @@ namespace IntelligentPlant.DataCore.Client {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="request"/> is <see langword="null"/>.
         /// </exception>
-        public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken = default) {
-            return HttpClient.SendAsync(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
+        /// <remarks>
+        ///   Use <see cref="SendAsync(HttpRequestMessage, TContext?, CancellationToken)"/> if the 
+        ///   request requires a <typeparamref name="TContext"/> to be set for authentication purposes.
+        /// </remarks>
+        /// <seealso cref="SendAsync(HttpRequestMessage, TContext?, CancellationToken)"/>
+        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken = default) {
+            return await HttpClient.SendAsync(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken).ConfigureAwait(false);
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP request using the underlying <see cref="System.Net.Http.HttpClient"/>.
+        /// </summary>
+        /// <param name="request">
+        ///   The request to send.
+        /// </param>
+        /// <param name="context">
+        ///   The <typeparamref name="TContext"/> to associate with the request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="request"/> is <see langword="null"/>.
+        /// </exception>
+        /// <seealso cref="SendAsync(HttpRequestMessage, CancellationToken)"/>
+        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, TContext? context = default, CancellationToken cancellationToken = default) {
+            if (request == null) {
+                throw new ArgumentNullException(nameof(request));
+            }
+            return await HttpClient.SendAsync(request.AddStateProperty(context), cancellationToken).ConfigureAwait(false);
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP GET request using the underlying <see cref="System.Net.Http.HttpClient"/>.
+        /// </summary>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="context">
+        ///   The <typeparamref name="TContext"/> to associate with the request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public async Task<HttpResponseMessage> GetAsync(string requestUri, TContext? context = default, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUri ?? throw new ArgumentNullException(nameof(requestUri)));
+            var httpResponse = await SendAsync(httpRequest, context, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP GET request using the underlying <see cref="System.Net.Http.HttpClient"/>.
+        /// </summary>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="context">
+        ///   The <typeparamref name="TContext"/> to associate with the request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public async Task<HttpResponseMessage> GetAsync(Uri requestUri, TContext? context = default, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUri ?? throw new ArgumentNullException(nameof(requestUri)));
+            var httpResponse = await SendAsync(httpRequest, context, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP POST request with a JSON-encoded request body using the underlying 
+        /// <see cref="System.Net.Http.HttpClient"/>.
+        /// </summary>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="request">
+        ///   The request object to serialize to JSON.
+        /// </param>
+        /// <param name="context">
+        ///   The <typeparamref name="TContext"/> to associate with the request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public async Task<HttpResponseMessage> PostAsJsonAsync<TRequest>(string requestUri, TRequest request, TContext? context = default, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = new ObjectContent(typeof(TRequest), request, new JsonMediaTypeFormatter()) };
+            var httpResponse = await SendAsync(httpRequest, context, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP POST request with a JSON-encoded request body using the underlying 
+        /// <see cref="System.Net.Http.HttpClient"/>.
+        /// </summary>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="request">
+        ///   The request object to serialize to JSON.
+        /// </param>
+        /// <param name="context">
+        ///   The <typeparamref name="TContext"/> to associate with the request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public async Task<HttpResponseMessage> PostAsJsonAsync<TRequest>(Uri requestUri, TRequest request, TContext? context = default, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = new ObjectContent(typeof(TRequest), request, new JsonMediaTypeFormatter()) };
+            var httpResponse = await SendAsync(httpRequest, context, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP PUT request with a JSON-encoded request body using the underlying 
+        /// <see cref="System.Net.Http.HttpClient"/>.
+        /// </summary>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="request">
+        ///   The request object to serialize to JSON.
+        /// </param>
+        /// <param name="context">
+        ///   The <typeparamref name="TContext"/> to associate with the request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public async Task<HttpResponseMessage> PutAsJsonAsync<TRequest>(string requestUri, TRequest request, TContext? context = default, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Put, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = new ObjectContent(typeof(TRequest), request, new JsonMediaTypeFormatter()) };
+            var httpResponse = await SendAsync(httpRequest, context, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP PUT request with a JSON-encoded request body using the underlying 
+        /// <see cref="System.Net.Http.HttpClient"/>.
+        /// </summary>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="request">
+        ///   The request object to serialize to JSON.
+        /// </param>
+        /// <param name="context">
+        ///   The <typeparamref name="TContext"/> to associate with the request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public async Task<HttpResponseMessage> PutAsJsonAsync<TRequest>(Uri requestUri, TRequest request, TContext? context = default, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Put, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = new ObjectContent(typeof(TRequest), request, new JsonMediaTypeFormatter()) };
+            var httpResponse = await SendAsync(httpRequest, context, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP DELETE request using the underlying <see cref="System.Net.Http.HttpClient"/>.
+        /// </summary>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="context">
+        ///   The <typeparamref name="TContext"/> to associate with the request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public async Task<HttpResponseMessage> DeleteAsync<TRequest>(string requestUri, TContext? context = default, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, requestUri ?? throw new ArgumentNullException(nameof(requestUri)));
+            var httpResponse = await SendAsync(httpRequest, context, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP DELETE request using the underlying <see cref="System.Net.Http.HttpClient"/>.
+        /// </summary>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="context">
+        ///   The <typeparamref name="TContext"/> to associate with the request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public async Task<HttpResponseMessage> DeleteAsync<TRequest>(Uri requestUri, TContext? context = default, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, requestUri ?? throw new ArgumentNullException(nameof(requestUri)));
+            var httpResponse = await SendAsync(httpRequest, context, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
         }
 
         #endregion
