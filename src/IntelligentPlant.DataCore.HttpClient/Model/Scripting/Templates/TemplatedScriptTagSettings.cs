@@ -63,6 +63,12 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting.Templates {
         /// </summary>
         public ScriptTagArchiveSettings? ArchiveSettings { get; set; }
 
+        /// <summary>
+        /// An optional delay that will be applied prior to beginning recalculation of the script 
+        /// tag.
+        /// </summary>
+        public TimeSpan? EvaluationDelay { get; set; }
+
 
         /// <summary>
         /// Validates the object.
