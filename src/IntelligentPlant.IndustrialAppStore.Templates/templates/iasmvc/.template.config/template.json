@@ -23,10 +23,6 @@
         {
           "choice": "net6.0",
           "description": ".NET 6.0"
-        },
-        {
-          "choice": "netcoreapp3.1",
-          "description": ".NET Core 3.1"
         }
       ],
       "defaultValue": "net6.0",
