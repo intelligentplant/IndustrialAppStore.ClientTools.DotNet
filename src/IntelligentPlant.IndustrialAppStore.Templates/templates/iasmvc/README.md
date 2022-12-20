@@ -57,7 +57,7 @@ Next, you must update the `appsettings.json` file (in the same folder as this RE
 
 ### Client Secrets
 
-If you generated a secret key for your app, use the [ASP.NET Core Secret Manager](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets) to save the secret using the following command:
+If you generated a secret key for your app, use the [ASP.NET Core Secret Manager](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets) to save the secret by running the following command from the project folder:
 
     dotnet user-secrets set "IAS:ClientSecret" "<YOUR CLIENT SECRET>"
 
