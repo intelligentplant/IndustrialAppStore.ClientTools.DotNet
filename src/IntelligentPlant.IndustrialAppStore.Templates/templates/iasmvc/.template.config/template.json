@@ -21,6 +21,10 @@
       "datatype": "choice",
       "choices": [
         {
+          "choice": "net7.0",
+          "description": ".NET 7.0"
+        },
+        {
           "choice": "net6.0",
           "description": ".NET 6.0"
         }
@@ -28,13 +32,13 @@
       "defaultValue": "net6.0",
       "replaces": "net6.0"
     },
+    "IsNet70": {
+      "type": "computed",
+      "value": "(Framework == \"net7.0\")"
+    },
     "IsNet60": {
       "type": "computed",
       "value": "(Framework == \"net6.0\")"
-    },
-    "IsNetCore31": {
-      "type": "computed",
-      "value": "(Framework == \"netcoreapp3.1\")"
     },
     "AppName": {
       "type": "parameter",
