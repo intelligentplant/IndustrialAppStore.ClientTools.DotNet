@@ -33,13 +33,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{AD574C
 		build.sh = build.sh
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8967B5AD-F86A-4109-8DA1-881E0070280D}"
 	ProjectSection(SolutionItems) = preProject
-		build\Dependencies.props = build\Dependencies.props
 		build\version.json = build\version.json
 	EndProjectSection
 	ProjectSection(FolderGlobals) = preProject
@@ -61,7 +61,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data-core-api-client", "dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomTokenStoreExample", "samples\CustomTokenStoreExample\CustomTokenStoreExample.csproj", "{A6FD636F-5B3B-4DEB-888F-E28AF37A3C46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntelligentPlant.IndustrialAppStore.AspNetCore", "src\IntelligentPlant.IndustrialAppStore.AspNetCore\IntelligentPlant.IndustrialAppStore.AspNetCore.csproj", "{CBF71748-0368-4A1F-88AE-08216DF55397}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelligentPlant.IndustrialAppStore.AspNetCore", "src\IntelligentPlant.IndustrialAppStore.AspNetCore\IntelligentPlant.IndustrialAppStore.AspNetCore.csproj", "{CBF71748-0368-4A1F-88AE-08216DF55397}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
