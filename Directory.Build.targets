@@ -22,16 +22,16 @@
   <ItemGroup Condition=" '$(IncludeDevelopmentPackages)' == 'true' ">
     <!-- SourceLink NuGet Package -->
     <PackageReference Remove="Microsoft.SourceLink.GitHub" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)">
+    <PackageReference Include="Microsoft.SourceLink.GitHub">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net6.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netstandard2.1' ">
     <!-- .NET Analyzers NuGet Package -->
     <PackageReference Remove="Microsoft.CodeAnalysis.NetAnalyzers" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="$(MicrosoftCodeAnalysisNetAnalyzersVersion)">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

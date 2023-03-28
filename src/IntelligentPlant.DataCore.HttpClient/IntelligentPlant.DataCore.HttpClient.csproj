@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IntelligentPlant.ProblemDetails.Core" Version="3.1.0" />
-    <PackageReference Include="IntelligentPlant.Relativity" Version="1.0.0" />
-    <PackageReference Include="Jaahas.HttpRequestTransformer" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="IntelligentPlant.ProblemDetails.Core" />
+    <PackageReference Include="IntelligentPlant.Relativity" />
+    <PackageReference Include="Jaahas.HttpRequestTransformer" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="System.ComponentModel.Annotations"/>
   </ItemGroup>
 
   <ItemGroup>
