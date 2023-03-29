@@ -41,7 +41,7 @@ Note that, when installing the templates from source, the reference to the `Inte
 
 # Creating an App using Visual Studio
 
-Before creating a new app, you should [create an app registration](https://appstore.intelligentplant.com/Developer/AddApplication) on the Industrial App Store. 
+Before creating a new app, you should [create an app registration](https://appstore.intelligentplant.com/Developer/Settings/Create) on the Industrial App Store. 
 
 Once the template package has been installed, search for `Industrial App Store` in Visual Studio's "Create a new project" window or choose `Industrial App Store` from the project types list:
 
