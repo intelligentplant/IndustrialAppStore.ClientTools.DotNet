@@ -30,7 +30,7 @@ dotnet new --install IntelligentPlant.IndustrialAppStore.Templates::1.2.3-alpha.
 
 __From Source:__
 
-Alternatively, you can install the templates from source by checking out this repository, building the solution, navigating to the [root templates folder](/src/IntelligentPlant.IndustrialAppStore.Templates) from the command line, and running the following command:
+Alternatively, you can install the templates from source by checking out this repository, building the solution, navigating to the [root templates folder](..) from the command line, and running the following command:
 
 ```
 dotnet new --install .\
