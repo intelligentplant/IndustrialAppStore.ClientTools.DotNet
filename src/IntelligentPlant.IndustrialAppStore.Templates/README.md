@@ -7,7 +7,7 @@ This project defines [Industrial App Store](https://appstore.intelligentplant.co
 
 # Quick Start
 
-1. Run the following command from the command line: `dotnet new --install IntelligentPlant.IndustrialAppStore.Templates`
+1. Run the following command from the command line: `dotnet new install IntelligentPlant.IndustrialAppStore.Templates`
 2. Open Visual Studio, create a new project, and search for "Industrial App Store" in the project templates list.
 3. Follow the instructions in your project's `README.md` file to register your app with the Industrial App Store.
 
@@ -19,13 +19,13 @@ You can install the Industrial App Store [templates package](https://www.nuget.o
 __Latest Release Version from NuGet.org:__
 
 ```
-dotnet new --install IntelligentPlant.IndustrialAppStore.Templates
+dotnet new install IntelligentPlant.IndustrialAppStore.Templates
 ```
 
 __Specific Version from NuGet.org (including pre-release versions):__
 
 ```
-dotnet new --install IntelligentPlant.IndustrialAppStore.Templates::1.2.3-alpha.4
+dotnet new install IntelligentPlant.IndustrialAppStore.Templates::1.2.3-alpha.4
 ```
 
 __From Source:__
@@ -33,7 +33,7 @@ __From Source:__
 Alternatively, you can install the templates from source by checking out this repository, building the solution, navigating to the [root templates folder](/src/IntelligentPlant.IndustrialAppStore.Templates) from the command line, and running the following command:
 
 ```
-dotnet new --install .\
+dotnet new install .\
 ```
 
 Note that, when installing the templates from source, the reference to the `IntelligentPlant.IndustrialAppStore.Authentication` NuGet package in projects generated using templates will specify an incorrect version. You will have to update generated projects to use the correct package version, or replace the package reference with a project reference to the `IntelligentPlant.IndustrialAppStore.Authentication` project in this repository.
