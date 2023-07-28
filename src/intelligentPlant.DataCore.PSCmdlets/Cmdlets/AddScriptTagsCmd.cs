@@ -18,7 +18,7 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
         public DateTime DateTime = DateTime.UtcNow.AddDays(0);
 
         [Parameter]
-        public string Datasource { get; set; }
+        public string DataSource { get; set; }
 
         [Parameter]
         public string DataCoreUrl { get; set; }
@@ -31,20 +31,11 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
 
         protected override void BeginProcessing()
         {
-            if (Datasource == null)
-            {
-                Console.Write("Data Source: ");
-                Datasource = Console.ReadLine();
-            }
-            if (DataCoreUrl == null)
-            {
-                DataCoreUrl = ValidateDataCoreUrl();
-            }
-            if (FilePath == null)
-            {
-                Console.Write("File Path: ");
-                FilePath = Console.ReadLine();
-            }
+            DataSource = ValidateDataSource(DataSource);
+
+            DataCoreUrl = ValidateDataCoreUrl(DataCoreUrl);
+            FilePath = ValidateFilePath(FilePath);
+  
         }
         protected override void ProcessRecord()
         {   
@@ -52,7 +43,7 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
             uploadScriptTagDefinitions.Init(DataCoreUrl);
 
             var csvData = CsvMethods.ReadCSV(FilePath).Result;
-            uploadScriptTagDefinitions.UploadScriptTagDefenitions(Datasource, ScriptEngine, DateTime, csvData).Wait();
+            uploadScriptTagDefinitions.UploadScriptTagDefenitions(DataSource, ScriptEngine, DateTime, csvData).Wait();
         }
         
     }

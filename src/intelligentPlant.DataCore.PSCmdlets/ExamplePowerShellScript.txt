@@ -1,0 +1,49 @@
+﻿Import-Module C:\Dev\GitHub\IntelligentPlant.IndustrialAppStore.ClientTools\src\IntelligentPlant.DataCore.PSCmdlets\bin\Debug\net7.0\IntelligentPlant.DataCore.PSCmdlets.dll
+
+#'Variables'
+
+$DataSourceFacit = "Facit"
+$DataSourceEdge = "Edge Historian"
+$DataSourceInvalid = "Invalid DataSource"
+
+$DataCoreUrl = "http://localhost:2006/service/runtime/997A4E3FD58B6CA3DEAA6C222108C040C078CF21844D0481236EE8DCEC831464/datacore/"
+$DataCoreUrl_Invalid = "Notaurl"
+
+$FilePathLoad = "C:\Temp\SaveFile.csv"
+$FilePathSave = "C:\Temp\ExampleScripts.csv"
+$FilePathSave_Invalid = "Not a filepath"
+$FilePathSaveData = "C:\Temp\Data.csv"
+
+$TemplateId = "hi-lo-limit-monitor"
+$TemplateId_Invalid = "Invalid TemplateID"
+
+$NameFilter = "blah"
+
+$TagName1 = "Telemetry.performance_counters.memory.available_mbytes#value"
+$TagName2 = "Telemetry.performance_counters.processor.pct_processor_time#value"
+$TagNameInvalid = "Invalid-TagName"
+
+$Samples = 50
+$Interval = 50
+$DataFunction = "INTERP"
+
+$StartDate = "24/7/23"
+$EndDate = "26/7/23"
+$InvalidDate = "7/23/3000"
+
+
+#'Functions'
+
+Add-ScriptTags -Datasource $DataSourceFacit -DataCoreUrl $DataCoreUrl_Invalid -FilePath $FilePathLoad 
+
+Get-ExampleScriptTagDefinitions -DataSource $DataSourceFacit -DataCoreUrl $DataCoreUrl -TemplateId $TemplateId -FilePath $FilePathSave 
+
+get-scriptTagDefinitions -Datasource $DataSourceFacit -DataCoreUrl $DataCoreUrl -FilePath $FilePathSave -TemplateId $TemplateId -NameFilter $NameFilter
+
+Get-SnapShot -DataSource $DataSourceInvalid -TagName $TagName1 -DataCoreUrl $DataCoreUrl
+
+Get-Raw -DataCoreUrl $DataCoreUrl -DataSource $DataSourceInvalid -Tag1 $TagName1 -Samples $Samples -StartDate $StartDate -EndDate $EndDate
+
+Get-Plot -DataSource $DataSourceEdge -DataCoreUrl $DataCoreUrl -Tag1 $TagName1 -StartDate $StartDate -EndDate $EndDate -Interval $Interval -FilePath $FilePathSave_Invalid 
+
+get-Processed -DataSource $DataSourceEdge -DataCoreUrl $DataCoreUrl -Tag1 $TagName1 -StartDate $StartDate -EndDate $EndDate -DataFunction $DataFunction -Interval $Interval -FilePath $FilePathSave

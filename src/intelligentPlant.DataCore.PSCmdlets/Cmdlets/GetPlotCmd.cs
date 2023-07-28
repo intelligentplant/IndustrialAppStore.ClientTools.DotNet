@@ -13,7 +13,7 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
         /// Allow the user to export data optimised for plot format.
         /// </summary>
 
-        [Parameter(Mandatory = true)]
+        [Parameter]
         public string DataSource { get; set; }
 
         [Parameter]
@@ -25,11 +25,11 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
         [Parameter]
         public string Tag2 { get; set; } = string.Empty;
 
-        [Parameter(Mandatory = true)]
-        public DateTime StartDate { get; set; }
+        [Parameter]
+        public string StartDate { get; set; }
 
-        [Parameter(Mandatory = true)]
-        public DateTime EndDate { get; set; }
+        [Parameter]
+        public string EndDate { get; set; }
 
         [Parameter(Mandatory = true)]
         public int Interval { get; set; }
@@ -37,28 +37,32 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
         [Parameter]
         public string FilePath { get; set; }
 
-        [Parameter]
         public string SaveToCsv { get; set; }
 
         public Dictionary<string,HistoricalTagValues>.ValueCollection TagData { get; set; }
 
+        public DateTime VerifiedStartDate;
+
+        public DateTime VerifiedEndDate;
+
 
         protected override void BeginProcessing()
         {
-            if(DataCoreUrl == null)
-            {
-                DataCoreUrl = ValidateDataCoreUrl();
-            }
+            DataSource = ValidateDataSource(DataSource);
+            DataCoreUrl = ValidateDataCoreUrl(DataCoreUrl);
 
-            if (string.IsNullOrEmpty(Tag2))
-            {
-                Console.Write("Tag2 (Optional): ");
-                string userInput = Console.ReadLine()?.Trim();
-                if (!string.IsNullOrEmpty(userInput))
-                {
-                    Tag2 = userInput;
-                }
-            }
+            VerifiedStartDate = ValidateDate("Start", StartDate);
+            VerifiedEndDate = ValidateDate("End", EndDate);
+
+            //if (string.IsNullOrEmpty(Tag2))
+            //{
+            //    Console.Write("Tag2 (Optional): ");
+            //    string userInput = Console.ReadLine()?.Trim();
+            //    if (!string.IsNullOrEmpty(userInput))
+            //    {
+            //        Tag2 = userInput;
+            //    }
+            //}
 
         }
         protected override void ProcessRecord()
@@ -66,47 +70,11 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
             GetPlot getPlot = new GetPlot();
             getPlot.Init(DataCoreUrl);
 
-            TagData = getPlot.GetPlotValues(DataSource, Tag1, Tag2, StartDate, EndDate,Interval);
+            TagData = getPlot.GetPlotValues(DataSource, Tag1, Tag2, VerifiedStartDate, VerifiedEndDate, Interval);
 
             ConsoleOutput.PrintTagData(TagData).Wait();
 
-            ToCsv();
-
-            //if(SaveToCsv == null)
-            //{
-            //    Console.WriteLine();
-            //    Console.Write("Export Data to csv? (y/n): ");
-            //    SaveToCsv = Console.ReadLine();
-            //}
-            //
-            //if(SaveToCsv == "y" || SaveToCsv == "Y")
-            //{
-            //    if(FilePath == null)
-            //    {
-            //        FilePath = ValidateFilePath();
-            //    }
-            //    CsvMethods.RawDataToCSv(TagData, FilePath);
-            //}   
-        }
-
-        public void ToCsv ()
-        {
-            if (FilePath == null)
-            {
-                Console.WriteLine();
-                Console.Write("Export Data to csv? (y/n): ");
-                SaveToCsv = Console.ReadLine();
-
-                if (SaveToCsv == "y" || SaveToCsv == "Y")
-                {
-                    FilePath = ValidateFilePath();
-                }
-                else
-                {
-                    return;
-                }
-            }
-            CsvMethods.RawDataToCSv(TagData, FilePath);
+            ToCsv(FilePath,TagData);
         }
     }
 }

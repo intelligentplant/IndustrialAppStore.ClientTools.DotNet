@@ -115,6 +115,7 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Tools
                         }
                     }
                 }
+                Console.WriteLine("Data sucessfully saved to file! Path: " + filePath);
             }catch(Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");

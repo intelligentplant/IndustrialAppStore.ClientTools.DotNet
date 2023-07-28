@@ -13,7 +13,7 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
         [Parameter]
         public string DataCoreUrl { get; set; }
 
-        [Parameter(Mandatory = true)]
+        [Parameter]
         public string DataSource { get; set; }
 
         [Parameter(Mandatory = true)]
@@ -21,15 +21,9 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
 
         protected override void BeginProcessing()
         {
-            if (DataCoreUrl == null)
-            {
-                DataCoreUrl = ValidateDataCoreUrl();
-            }
-            if (DataSource == null)
-            {
-                Console.Write("Data Source: ");
-                DataSource = Console.ReadLine();
-            }
+            DataSource = ValidateDataSource(DataSource);
+            DataCoreUrl = ValidateDataCoreUrl(DataCoreUrl);
+            DataSource = ValidateDataSource(DataSource);
         }
         protected override void ProcessRecord()
         { 
@@ -37,7 +31,7 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
             GetSnapshot getSnapshot = new GetSnapshot();
             getSnapshot.Init(DataCoreUrl);
 
-            var result = getSnapshot.ReadSnapshotNumeric(DataCoreUrl, TagName);
+            var result = getSnapshot.ReadSnapshotNumeric(DataSource, TagName);
             Console.WriteLine(result);
         }
     }

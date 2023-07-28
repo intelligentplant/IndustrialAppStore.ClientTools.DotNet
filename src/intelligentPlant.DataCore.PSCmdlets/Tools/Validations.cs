@@ -8,15 +8,6 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Tools
         /// Provide Validations for user inputs
         /// </summary>s
 
-        public static bool ValidateFilePathTest(string filePath)
-        {
-            if (!Regex.IsMatch(filePath, @"^[A-Za-z]:\\(?:[\w]+\\)*[\w]+\.csv$"))
-            {
-                return false;
-            }
-            return true;
-        }
-
         public static bool ValidateUrl(string url)
         {
             return Uri.IsWellFormedUriString(url,UriKind.Absolute);

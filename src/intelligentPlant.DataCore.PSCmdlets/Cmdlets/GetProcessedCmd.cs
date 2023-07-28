@@ -10,7 +10,7 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
     public class GetProcessedCmd:BaseCmdlet
     {
 
-        [Parameter(Mandatory = true)]
+        [Parameter]
         public string DataSource { get; set; }
 
         [Parameter]
@@ -19,33 +19,39 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
         [Parameter(Mandatory = true)]
         public string Tag1 { get; set; }
 
-        [Parameter(Mandatory = true)]
-        public DateTime StartDate { get; set; }
+        [Parameter]
+        public string StartDate { get; set; }
 
-        [Parameter(Mandatory = true)]
-        public DateTime EndDate { get; set; }
+        [Parameter]
+        public string EndDate { get; set; }
 
         [Parameter]
         public string DataFunction { get; set; }
 
-        [Parameter(Mandatory = true)]
-        public TimeSpan Interval { get; set; }
+        [Parameter]
+        public string Interval { get; set; }
 
         [Parameter]
         public string FilePath { get; set; }
 
-        public Dictionary<string,HistoricalTagValues> TagData { get; set; }
+        public string SaveToCsv { get; set; }
+
+        public Dictionary<string,HistoricalTagValues>.ValueCollection TagData { get; set; }
+
+        public DateTime VerifiedStartDate;
+
+        public DateTime VerifiedEndDate;
+
+        public TimeSpan VerifiedInterval;
 
         protected override void BeginProcessing()
         {
-            if(DataCoreUrl == null)
-            {
-                DataCoreUrl = ValidateDataCoreUrl();
-            }
-            if(DataFunction == null)
-            {
-                DataFunction = ValidateDataFunction();
-            }
+            DataSource = ValidateDataSource(DataSource);
+            DataCoreUrl = ValidateDataCoreUrl(DataCoreUrl);
+            DataFunction = ValidateDataFunction(DataFunction);
+            VerifiedStartDate = ValidateDate("Start", StartDate);
+            VerifiedEndDate = ValidateDate("End", EndDate);
+            VerifiedInterval = ValidateTimeSpan(Interval);
         }
 
 
@@ -54,19 +60,11 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
             GetProcessed getProcessed = new GetProcessed();
             getProcessed.Init(DataCoreUrl);
 
-            var TagData = getProcessed.GetProcessedValues(DataSource, Tag1, StartDate, EndDate, DataFunction, Interval);
+            TagData = getProcessed.GetProcessedValues(DataSource, Tag1, VerifiedStartDate, VerifiedEndDate, DataFunction, VerifiedInterval);
 
             ConsoleOutput.PrintTagData(TagData).Wait();
 
-            Console.WriteLine();
-            Console.Write("Export Data to CSV? (y/n): ");
-            var saveFile = Console.ReadLine();
-
-            if(saveFile == "y" || saveFile == "Y")
-            {
-                FilePath = ValidateFilePath();
-                CsvMethods.RawDataToCSv(TagData, FilePath);
-            }
+            ToCsv(FilePath,TagData);
         }
     }
 }

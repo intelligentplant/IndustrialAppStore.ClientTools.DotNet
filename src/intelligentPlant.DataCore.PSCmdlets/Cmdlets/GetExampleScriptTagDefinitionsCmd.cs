@@ -32,27 +32,13 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
 
         protected override void BeginProcessing()
         {
-            if (DataSource == null)
-            {
-                Console.Write("Data Source: ");
-                DataSource = Console.ReadLine();
-            }
-            if (DataCoreUrl == null)
-            {
-                DataCoreUrl = ValidateDataCoreUrl();
-            }
+            DataSource = ValidateDataSource(DataSource);
+            DataCoreUrl = ValidateDataCoreUrl(DataCoreUrl);
 
             var ValidTemplates = GetValidTemplates.GetScriptTagTemplatesList(DataSource, ScriptEngine, DataCoreUrl).Result;
 
-            if (TemplateId == null)
-            {
-                TemplateId = ValidateTemplateId(ValidTemplates);
-            }
-
-            if (FilePath == null)
-            {
-                FilePath = ValidateFilePath();
-            }
+            TemplateId = ValidateTemplateId(ValidTemplates, TemplateId);
+            FilePath = ValidateFilePath(FilePath);
         }
 
         protected override void ProcessRecord()
@@ -62,6 +48,7 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
             getExampleScriptTagDefinitions.Init(DataCoreUrl);
 
             getExampleScriptTagDefinitions.DownloadExampleScriptTagDefinitions(DataSource, ScriptEngine, TemplateId, FilePath).Wait();
+            WriteObject("File saved sucessfully!");
         }
     }
 }

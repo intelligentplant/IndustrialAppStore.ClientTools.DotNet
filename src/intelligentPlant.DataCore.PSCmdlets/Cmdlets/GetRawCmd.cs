@@ -12,7 +12,7 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
         public string DataCoreUrl { get; set; }
 
         [Parameter]
-        public required string DataSource { get; set; }
+        public string DataSource { get; set; }
 
         [Parameter(Mandatory = true)]
         public required string Tag1 { get; set; }
@@ -24,24 +24,23 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
         [Parameter(Mandatory = false)]
         public string Tag2 { get; set; } = string.Empty;
 
-        [Parameter(Mandatory = true)]
-        public DateTime StartDate { get; set; } = DateTime.UtcNow.AddHours(-1);
+        [Parameter]
+        public string StartDate { get; set; } 
 
-        [Parameter(Mandatory = true)]
-        public DateTime EndDate { get; set; } = DateTime.UtcNow;
+        [Parameter]
+        public string EndDate { get; set; }
+
+        public DateTime VerifiedStartDate;
+
+        public DateTime VerifiedEndDate;
 
         protected override void BeginProcessing()
         {
-            if(DataCoreUrl == null)
-            {
-                DataCoreUrl = ValidateDataCoreUrl();
-            }
-        }
+            DataSource = ValidateDataSource(DataSource);
+            DataCoreUrl = ValidateDataCoreUrl(DataCoreUrl);
 
-
-        protected override void ProcessRecord()
-        {
-            
+            VerifiedStartDate = ValidateDate("Start", StartDate);
+            VerifiedEndDate = ValidateDate("End", EndDate);
 
             //if (string.IsNullOrEmpty(Tag2))
             //{
@@ -52,12 +51,14 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
             //        Tag2 = userInput;
             //    }
             //}
+        }
 
+        protected override void ProcessRecord()
+        {
             GetRaw getRaw = new GetRaw();
             getRaw.Init(DataCoreUrl);
 
-            var TagData = getRaw.ReadRawValues(DataSource, Tag1, Samples, Tag2, StartDate, EndDate);
-
+            var TagData = getRaw.ReadRawValues(DataSource, Tag1, Samples, Tag2, VerifiedStartDate, VerifiedEndDate);
             ConsoleOutput.PrintTagData(TagData).Wait();
         }
     }

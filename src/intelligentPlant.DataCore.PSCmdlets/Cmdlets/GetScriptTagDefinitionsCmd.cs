@@ -18,13 +18,13 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
         public required string DataSource;
 
         [Parameter]
-        public required string DatacoreUrl; 
+        public required string DataCoreUrl; 
 
         [Parameter]
         public string ScriptEngine = ScriptEngineType.CSharp;
 
         [Parameter]
-        public string NameFilter = "*"; //defualt value
+        public string NameFilter;
 
         [Parameter]
         public required string FilePath { get; set; }
@@ -34,37 +34,29 @@ namespace IntelligentPlant.DataCore.PSCmdlets.Cmdlets
 
         protected override void BeginProcessing()
         {
-            if (DatacoreUrl == null)
-            {
-                DatacoreUrl = ValidateDataCoreUrl();
-            }
-            if (DataSource == null)
-            {
-                Console.Write("Data Source: ");
-                DataSource = Console.ReadLine();
-            }
+            DataCoreUrl = ValidateDataCoreUrl(DataCoreUrl);
+            DataSource = ValidateDataSource(DataSource);
 
-            var ValidTemplates = GetValidTemplates.GetScriptTagTemplatesList(DataSource, ScriptEngine, DatacoreUrl).Result;
+            var ValidTemplates = GetValidTemplates.GetScriptTagTemplatesList(DataSource, ScriptEngine, DataCoreUrl).Result;
 
-            if (FilePath == null)
-            {
-                FilePath = ValidateFilePath();
-            }
-            if (TemplateId == null)
-            {
-                TemplateId = ValidateTemplateId(ValidTemplates);
-            }
+            FilePath = ValidateFilePath(FilePath);
+            TemplateId = ValidateTemplateId(ValidTemplates, TemplateId);
+
             if (NameFilter == null)
             {
                 Console.Write("Name Filter (* for all): ");
                 NameFilter = Console.ReadLine();
+            }
+
+            if(NameFilter == null) {
+                NameFilter = "*";   //default value
             }
         }
 
         protected override void ProcessRecord()
         { 
             GetScriptTagDefinitions getScriptTagDefinitions = new GetScriptTagDefinitions();
-            getScriptTagDefinitions.Init(DatacoreUrl);
+            getScriptTagDefinitions.Init(DataCoreUrl);
 
             getScriptTagDefinitions.ExportScriptTagDefinitions(DataSource, ScriptEngine, TemplateId, NameFilter, FilePath).Wait();
         }
