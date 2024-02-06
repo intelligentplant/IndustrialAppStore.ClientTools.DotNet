@@ -965,7 +965,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<ScriptTagDefinition>>(cancellationToken).ConfigureAwait(false);
+                    var result = await httpResponse.Content.ReadAsAsync<IDictionary<string, ScriptTagDefinition>>(cancellationToken).ConfigureAwait(false);
+                    return result.Values.ToArray();
                 }
             }
             finally {
