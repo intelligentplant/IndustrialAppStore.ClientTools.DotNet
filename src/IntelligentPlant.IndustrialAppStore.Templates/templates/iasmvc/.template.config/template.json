@@ -21,6 +21,10 @@
       "datatype": "choice",
       "choices": [
         {
+          "choice": "net8.0",
+          "description": ".NET 8.0"
+        },
+        {
           "choice": "net7.0",
           "description": ".NET 7.0"
         },
@@ -29,8 +33,12 @@
           "description": ".NET 6.0"
         }
       ],
-      "defaultValue": "net6.0",
+      "defaultValue": "net8.0",
       "replaces": "net6.0"
+    },
+    "IsNet80": {
+      "type": "computed",
+      "value": "(Framework == \"net8.0\")"
     },
     "IsNet70": {
       "type": "computed",
