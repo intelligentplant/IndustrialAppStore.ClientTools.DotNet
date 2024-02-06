@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net8.0;net6.0;net472;netstandard2.0</TargetFrameworks>
     <RootNamespace>IntelligentPlant.DataCore.Client</RootNamespace>
     <Description>Strongly-typed client for Intelligent Plant's Data Core API.</Description>
   </PropertyGroup>
