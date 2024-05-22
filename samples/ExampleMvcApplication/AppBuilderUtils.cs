@@ -1,4 +1,7 @@
-﻿namespace Microsoft.Extensions.DependencyInjection {
+﻿using IntelligentPlant.Relativity.AspNetCore;
+using IntelligentPlant.Relativity.DependencyInjection;
+
+namespace Microsoft.Extensions.DependencyInjection {
 
     /// <summary>
     /// Utility methods for configuring the application.
@@ -44,6 +47,10 @@
                 services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
             }
 
+            services.AddRelativity()
+                .AddQueryStringTimeZoneProvider()
+                .AddRequestHeaderTimeZoneProvider();
+
             services.AddControllersWithViews().AddNewtonsoftJson();
         }
 
@@ -76,6 +83,8 @@
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseRelativity();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapDefaultControllerRoute();

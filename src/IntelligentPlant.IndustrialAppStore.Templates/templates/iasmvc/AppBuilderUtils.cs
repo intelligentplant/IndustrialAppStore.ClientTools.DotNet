@@ -1,4 +1,6 @@
-﻿
+﻿using IntelligentPlant.Relativity.AspNetCore;
+using IntelligentPlant.Relativity.DependencyInjection;
+
 namespace Microsoft.Extensions.DependencyInjection {
 
     /// <summary>
@@ -19,6 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection {
             // Adds services required for the custom headers middleware. Custom headers are
             // configured in appsettings.json.
             services.AddCustomHeaders();
+
             // Adds services required for the Content Security Policy middleware. The CSP is
             // configured in csp.json.
             services.AddContentSecurityPolicy();
@@ -49,6 +52,12 @@ namespace Microsoft.Extensions.DependencyInjection {
                 services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
             }
 
+            // Allow the time zone for Relativity timestamp parsing to be specified in the query
+            // string or request header.
+            services.AddRelativity()
+                .AddQueryStringTimeZoneProvider()
+                .AddRequestHeaderTimeZoneProvider();
+
             services.AddControllersWithViews().AddNewtonsoftJson();
         }
 
@@ -72,8 +81,8 @@ namespace Microsoft.Extensions.DependencyInjection {
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
 
+            app.UseStaticFiles();
             app.UseRouting();
 
             app.UseCustomHeaders();
@@ -81,6 +90,8 @@ namespace Microsoft.Extensions.DependencyInjection {
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseRelativity();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapDefaultControllerRoute();

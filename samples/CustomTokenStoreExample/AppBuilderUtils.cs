@@ -1,5 +1,8 @@
 ﻿using ExampleMvcApplication.Services;
 
+using IntelligentPlant.Relativity.AspNetCore;
+using IntelligentPlant.Relativity.DependencyInjection;
+
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -61,6 +64,10 @@ namespace Microsoft.Extensions.DependencyInjection {
                 services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
             }
 
+            services.AddRelativity()
+                .AddQueryStringTimeZoneProvider()
+                .AddRequestHeaderTimeZoneProvider();
+
             services.AddControllersWithViews().AddNewtonsoftJson();
         }
 
@@ -93,6 +100,8 @@ namespace Microsoft.Extensions.DependencyInjection {
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseRelativity();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapDefaultControllerRoute();

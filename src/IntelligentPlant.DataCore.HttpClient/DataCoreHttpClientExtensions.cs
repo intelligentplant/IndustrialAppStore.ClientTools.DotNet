@@ -24,13 +24,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="absoluteOrRelativeTime">
         ///   The absolute or relative time stamp literal.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use for conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The time zone that <paramref name="absoluteOrRelativeTime"/> is assumed to be in. 
-        ///   Specify <see langword="null"/> to assume local time.
-        /// </param>
         /// <param name="parameterName">
         ///   The name of the parameter in the calling method that is being parsed. This will be 
         ///   included in the <see cref="ArgumentException"/> thrown if <paramref name="absoluteOrRelativeTime"/> 
@@ -39,12 +32,8 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="utcTime">
         ///   The parsed UTC <see cref="DateTime"/>.
         /// </param>
-        private static void ParseTimeStamp(string absoluteOrRelativeTime, CultureInfo? cultureInfo, TimeZoneInfo? timeZone, string parameterName, out DateTime utcTime) {
-            if (!IntelligentPlant.Relativity.RelativityParser.TryGetParser(cultureInfo, out var parser)) {
-                parser = IntelligentPlant.Relativity.RelativityParser.Default;
-            }
-            
-            if (!parser.TryConvertToUtcDateTime(absoluteOrRelativeTime, out utcTime, timeZone ?? TimeZoneInfo.Local)) {
+        private static void ParseTimeStamp(string absoluteOrRelativeTime, string parameterName, out DateTime utcTime) {
+            if (!Relativity.RelativityParser.Current.TryConvertToUtcDateTime(absoluteOrRelativeTime, null, out utcTime)) {
                 throw new ArgumentException(Resources.Error_InvalidTimeStamp, parameterName);
             }
         }
@@ -57,18 +46,11 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="sampleInterval">
         ///   The long-hand or short-hand time span literal.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use for conversions.
-        /// </param>
         /// <param name="ts">
         ///   The parsed <see cref="TimeSpan"/>.
         /// </param>
-        private static void ParseSampleInterval(string sampleInterval, CultureInfo? cultureInfo, out TimeSpan ts) {
-            if (!IntelligentPlant.Relativity.RelativityParser.TryGetParser(cultureInfo, out var parser)) {
-                parser = IntelligentPlant.Relativity.RelativityParser.Default;
-            }
-
-            if (!parser.TryConvertToTimeSpan(sampleInterval, out ts)) {
+        private static void ParseSampleInterval(string sampleInterval, out TimeSpan ts) {
+            if (!Relativity.RelativityParser.Current.TryConvertToTimeSpan(sampleInterval, out ts)) {
                 throw new ArgumentException(Resources.Error_InvalidSampleInterval, nameof(sampleInterval));
             }
         }
@@ -559,13 +541,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -580,13 +555,11 @@ namespace IntelligentPlant.DataCore.Client {
             int pointCount,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
+            ParseTimeStamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
+            ParseTimeStamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
 
             return ReadRawTagValuesAsync(
                 client,
@@ -716,13 +689,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -738,13 +704,11 @@ namespace IntelligentPlant.DataCore.Client {
             int pointCount,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
+            ParseTimeStamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
+            ParseTimeStamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
 
             return ReadRawTagValuesAsync(
                 client, 
@@ -878,13 +842,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -899,13 +856,11 @@ namespace IntelligentPlant.DataCore.Client {
             int intervals,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
+            ParseTimeStamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
+            ParseTimeStamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
 
             return ReadPlotTagValuesAsync(
                 client,
@@ -1045,13 +1000,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1067,13 +1015,11 @@ namespace IntelligentPlant.DataCore.Client {
             int intervals,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
+            ParseTimeStamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
+            ParseTimeStamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
 
             return ReadPlotTagValuesAsync(
                 client,
@@ -1206,9 +1152,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in the sample interval conversion.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1224,11 +1167,10 @@ namespace IntelligentPlant.DataCore.Client {
             string sampleInterval,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
-            ParseSampleInterval(sampleInterval, cultureInfo, out var ts);
+            ParseSampleInterval(sampleInterval, out var ts);
 
             return ReadProcessedTagValuesAsync(
                 client,
@@ -1283,13 +1225,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1305,13 +1240,11 @@ namespace IntelligentPlant.DataCore.Client {
             TimeSpan sampleInterval,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
+            ParseTimeStamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
+            ParseTimeStamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
 
             return ReadProcessedTagValuesAsync(
                 client,
@@ -1365,13 +1298,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp and sample interval conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1387,13 +1313,11 @@ namespace IntelligentPlant.DataCore.Client {
             string sampleInterval,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
+            ParseTimeStamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
+            ParseTimeStamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
 
             return ReadProcessedTagValuesAsync(
                 client,
@@ -1404,7 +1328,6 @@ namespace IntelligentPlant.DataCore.Client {
                 sampleInterval,
                 properties,
                 context,
-                cultureInfo,
                 cancellationToken
             );
         }
@@ -1534,9 +1457,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in the sample interval conversion.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1553,11 +1473,10 @@ namespace IntelligentPlant.DataCore.Client {
             string sampleInterval,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
-            ParseSampleInterval(sampleInterval, cultureInfo, out var ts);
+            ParseSampleInterval(sampleInterval, out var ts);
 
             return ReadProcessedTagValuesAsync(
                 client,
@@ -1616,13 +1535,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1639,13 +1551,11 @@ namespace IntelligentPlant.DataCore.Client {
             TimeSpan sampleInterval,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
+            ParseTimeStamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
+            ParseTimeStamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
 
             return ReadProcessedTagValuesAsync(
                 client,
@@ -1704,13 +1614,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp and sample interval conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1727,12 +1630,10 @@ namespace IntelligentPlant.DataCore.Client {
             string sampleInterval,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
-            ParseSampleInterval(sampleInterval, cultureInfo, out var ts);
+            ParseSampleInterval(sampleInterval, out var ts);
 
             return ReadProcessedTagValuesAsync(
                 client,
@@ -1744,8 +1645,6 @@ namespace IntelligentPlant.DataCore.Client {
                 ts,
                 properties,
                 context,
-                cultureInfo,
-                timeZone,
                 cancellationToken
             );
         }
@@ -1841,13 +1740,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1860,8 +1752,6 @@ namespace IntelligentPlant.DataCore.Client {
             IEnumerable<string> absoluteOrRelativeSampleTimes,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -1872,7 +1762,7 @@ namespace IntelligentPlant.DataCore.Client {
             var sampleTimes = new List<DateTime>();
             if (absoluteOrRelativeSampleTimes != null) {
                 foreach (var item in absoluteOrRelativeSampleTimes) {
-                    ParseTimeStamp(item, cultureInfo, timeZone, nameof(absoluteOrRelativeSampleTimes), out var dt);
+                    ParseTimeStamp(item, nameof(absoluteOrRelativeSampleTimes), out var dt);
                     sampleTimes.Add(dt);
                 }
             }
@@ -1986,13 +1876,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -2006,8 +1889,6 @@ namespace IntelligentPlant.DataCore.Client {
             IEnumerable<string> absoluteOrRelativeSampleTimes,
             IDictionary<string, string>? properties = null,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
 
@@ -2018,7 +1899,7 @@ namespace IntelligentPlant.DataCore.Client {
             var sampleTimes = new List<DateTime>();
             if (absoluteOrRelativeSampleTimes != null) {
                 foreach (var item in absoluteOrRelativeSampleTimes) {
-                    ParseTimeStamp(item, cultureInfo, timeZone, nameof(absoluteOrRelativeSampleTimes), out var dt);
+                    ParseTimeStamp(item, nameof(absoluteOrRelativeSampleTimes), out var dt);
                     sampleTimes.Add(dt);
                 }
             }
@@ -2697,13 +2578,6 @@ namespace IntelligentPlant.DataCore.Client {
         ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
         ///   header value for the outgoing request.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -2718,8 +2592,6 @@ namespace IntelligentPlant.DataCore.Client {
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
             TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
         ) where TOptions : DataCoreHttpClientOptions {
             if (client == null) {
@@ -2730,8 +2602,8 @@ namespace IntelligentPlant.DataCore.Client {
                 throw new ArgumentException(Resources.Error_DataSourceNameIsRequired, nameof(dataSourceName));
             }
 
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
+            ParseTimeStamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
+            ParseTimeStamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
 
             return ReadAnnotationsAsync(
                 client,

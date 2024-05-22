@@ -85,7 +85,7 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// </returns>
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
             if (TriggerType == ScriptTagTriggerType.Schedule) {
-                if (String.IsNullOrWhiteSpace(Schedule)) {
+                if (string.IsNullOrWhiteSpace(Schedule)) {
                     yield return new ValidationResult(Resources.Error_Scripting_ScheduleIsRequired, new[] { nameof(Schedule) });
                 }
             }
@@ -94,19 +94,19 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
                 if (InputDataFunctions?.Length < 1) {
                     yield return new ValidationResult(Resources.Error_Scripting_AggregatedFunctionListCannotBeEmpty, new[] { nameof(InputDataFunctions) });
                 }
-                if (InputDataFunctions.Any(x => String.IsNullOrWhiteSpace(x))) {
+                if (InputDataFunctions.Any(x => string.IsNullOrWhiteSpace(x))) {
                     yield return new ValidationResult(Resources.Error_Scripting_AggregatedFunctionListCannotContainEmptyValues, new[] { nameof(InputDataFunctions) });
                 }
                 if (InputDataFunctions.Contains(DataFunctions.Raw, StringComparer.OrdinalIgnoreCase) || InputDataFunctions.Contains(DataFunctions.Plot, StringComparer.OrdinalIgnoreCase) || InputDataFunctions.Contains(DataFunctions.CurrentValue, StringComparer.OrdinalIgnoreCase)) {
-                    yield return new ValidationResult(String.Format(CultureInfo.CurrentCulture, Resources.Error_Scripting_AggregatedFunctionListCanContainOnlyAggregateFunctions, String.Join(", ", new[] { DataFunctions.Raw, DataFunctions.Plot, DataFunctions.CurrentValue })), new[] { nameof(InputDataFunctions) });
+                    yield return new ValidationResult(string.Format(CultureInfo.CurrentCulture, Resources.Error_Scripting_AggregatedFunctionListCanContainOnlyAggregateFunctions, String.Join(", ", new[] { DataFunctions.Raw, DataFunctions.Plot, DataFunctions.CurrentValue })), new[] { nameof(InputDataFunctions) });
                 }
-
-                if (string.IsNullOrWhiteSpace(InputDataSampleInterval) || !IntelligentPlant.Relativity.RelativityParser.Default.TryConvertToTimeSpan(InputDataSampleInterval, out var _)) {
+                
+                if (string.IsNullOrWhiteSpace(InputDataSampleInterval) || !Relativity.RelativityParser.InvariantUtc.TryConvertToTimeSpan(InputDataSampleInterval!, out var _)) {
                     yield return new ValidationResult(Resources.Error_Scripting_InvalidTimeSpan, new[] { nameof(InputDataSampleInterval) });
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(InputDataBlockSize) || !IntelligentPlant.Relativity.RelativityParser.Default.TryConvertToTimeSpan(InputDataBlockSize, out var _)) {
+            if (string.IsNullOrWhiteSpace(InputDataBlockSize) || !Relativity.RelativityParser.InvariantUtc.TryConvertToTimeSpan(InputDataBlockSize!, out var _)) {
                 yield return new ValidationResult(Resources.Error_Scripting_InvalidTimeSpan, new[] { nameof(InputDataBlockSize) });
             }
         }
