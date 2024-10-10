@@ -4,9 +4,15 @@
   <PropertyGroup>
     <ParentProject>$([MSBuild]::GetPathOfFileAbove('$(MSBuildThisFile)', '$(MSBuildThisFileDirectory)../'))</ParentProject>
   </PropertyGroup>
-  <Import Project="$(ParentProject)" Condition=" '$(ParentProject)' != '' " /> 
+  <Import Project="$(ParentProject)" Condition=" '$(ParentProject)' != '' " />
 
-  <!-- Opt in to FxCop and SourceLink package references by default. -->
+  <!-- Enable .NET code analyzers for projects targeting earlier than .NET 5.0 (requires .NET 5.0 
+       SDK or later to be installed). -->
+  <PropertyGroup>
+    <AnalysisMode Condition=" '$(AnalysisMode)' == '' ">Default</AnalysisMode>
+  </PropertyGroup>
+  
+  <!-- Opt in SourceLink package reference by default. -->
   <PropertyGroup>
     <IncludeDevelopmentPackages Condition=" '$(IncludeDevelopmentPackages)' == '' ">true</IncludeDevelopmentPackages>
   </PropertyGroup>
@@ -23,15 +29,6 @@
     <!-- SourceLink NuGet Package -->
     <PackageReference Remove="Microsoft.SourceLink.GitHub" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net6.0' ">
-    <!-- .NET Analyzers NuGet Package -->
-    <PackageReference Remove="Microsoft.CodeAnalysis.NetAnalyzers" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="$(MicrosoftCodeAnalysisNetAnalyzersVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
