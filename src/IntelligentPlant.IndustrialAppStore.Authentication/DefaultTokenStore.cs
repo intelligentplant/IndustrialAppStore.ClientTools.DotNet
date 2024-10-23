@@ -103,7 +103,14 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
             var refreshToken = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.RefreshTokenName);
 
-            return new ValueTask<OAuthTokens?>(new OAuthTokens(tokenType!, accessToken, refreshToken!, accessTokenExpiry));
+            var tokensCreatedAt = Clock.UtcNow;
+            var createdAt = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.CreatedAtTokenName);
+
+            if (!string.IsNullOrWhiteSpace(createdAt) && DateTimeOffset.TryParseExact(createdAt, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var ca)) {
+                tokensCreatedAt = ca;
+            }
+
+            return new ValueTask<OAuthTokens?>(new OAuthTokens(tokensCreatedAt, tokenType!, accessToken, refreshToken!, accessTokenExpiry));
         }
 
 
@@ -113,12 +120,16 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 throw new InvalidOperationException(Resources.Error_TokenStoreHasNotBeenInitialised);
             }
  
-            var authTokens = new List<AuthenticationToken>();
-
-            authTokens.Add(new AuthenticationToken {
-                Name = IndustrialAppStoreAuthenticationDefaults.AccessTokenName,
-                Value = tokens.AccessToken
-            });
+            var authTokens = new List<AuthenticationToken> {
+                new AuthenticationToken { 
+                    Name = IndustrialAppStoreAuthenticationDefaults.CreatedAtTokenName,
+                    Value = tokens.UtcCreatedAt.ToString("o", CultureInfo.InvariantCulture)
+                },
+                new AuthenticationToken {
+                    Name = IndustrialAppStoreAuthenticationDefaults.AccessTokenName,
+                    Value = tokens.AccessToken
+                }
+            };
 
             if (!string.IsNullOrEmpty(tokens.RefreshToken)) {
                 authTokens.Add(new AuthenticationToken {
