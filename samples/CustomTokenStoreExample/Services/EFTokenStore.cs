@@ -51,6 +51,7 @@ namespace ExampleMvcApplication.Services {
 
             // Decrypt access token and refresh token.
             return new OAuthTokens(
+                dbTokens.CreatedAt == DateTimeOffset.MinValue ? Clock.UtcNow : dbTokens.CreatedAt,
                 dbTokens.TokenType, 
                 dbTokens.AccessToken == null ? null : UnprotectToken(dbTokens.AccessToken), 
                 dbTokens.RefreshToken == null ? null : UnprotectToken(dbTokens.RefreshToken), 
@@ -70,6 +71,7 @@ namespace ExampleMvcApplication.Services {
             }
 
             // Encrypt access token and refresh token.
+            dbTokens.CreatedAt = tokens.UtcCreatedAt;
             dbTokens.TokenType = tokens.TokenType;
             dbTokens.AccessToken = ProtectToken(tokens.AccessToken);
             dbTokens.RefreshToken = tokens.RefreshToken == null 
