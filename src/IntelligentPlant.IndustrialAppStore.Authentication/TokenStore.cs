@@ -30,7 +30,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <summary>
         /// The system clock.
         /// </summary>
-        private readonly ISystemClock _clock;
+        protected ISystemClock Clock { get; }
 
         /// <summary>
         /// Flags if <see cref="ITokenStore.InitAsync"/> has been called.
@@ -70,7 +70,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ) {
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _backchannelHttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            Clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
 
@@ -154,7 +154,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 _options.ClientSecret!, 
                 _options.GetTokenEndpoint(), 
                 _backchannelHttpClient, 
-                _clock
+                Clock
             );
             await SaveTokensAsync(tokens);
 
@@ -294,7 +294,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 utcExpiresAt = clock.UtcNow.Add(expiresIn.Value);
             }
 
-            return new OAuthTokens(tokenType, accessToken, refreshToken, utcExpiresAt);
+            return new OAuthTokens(clock.UtcNow, tokenType, accessToken, refreshToken, utcExpiresAt);
         }
 
 
