@@ -96,7 +96,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         ///   The <see cref="IApplicationBuilder"/>.
         /// </param>
         /// <param name="configure">
-        ///   AN optional delegate that can be used to customise the Content Security Policy 
+        ///   An optional delegate that can be used to customise the Content Security Policy 
         ///   generated from the default policy definitions.
         /// </param>
         /// <returns>
@@ -105,7 +105,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="app"/> is <see langword="null"/>.
         /// </exception>
-        public static IApplicationBuilder UseContentSecurityPolicy(this IApplicationBuilder app, Func<HttpContext, ContentSecurityPolicyBuilder, Task>? configure = null) {
+        public static IApplicationBuilder UseContentSecurityPolicy(this IApplicationBuilder app, ContentSecurityPolicyConfigurationDelegate? configure = null) {
             if (app == null) {
                 throw new ArgumentNullException(nameof(app));
             }
@@ -129,7 +129,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         ///   A <see cref="Task"/> that will generate the CSP.
         /// </returns>
         private static async Task ApplyContentSecurityPolicy(object state) {
-            var tuple = (Tuple<HttpContext, Func<HttpContext, ContentSecurityPolicyBuilder, Task>?>) state;
+            var tuple = (Tuple<HttpContext, ContentSecurityPolicyConfigurationDelegate?>) state;
             var ctx = tuple.Item1;
             var configure = tuple.Item2;
 
@@ -148,21 +148,12 @@ namespace Microsoft.Extensions.DependencyInjection {
 
                 var policy = policyBuilder.Build();
                 if (!string.IsNullOrWhiteSpace(policy)) {
-#if NET6_0_OR_GREATER
                     if (policyBuilder.ReportOnly) {
                         ctx.Response.Headers.ContentSecurityPolicyReportOnly = policy;
                     }
                     else {
                         ctx.Response.Headers.ContentSecurityPolicy = policy;
                     }
-#else
-                    if (policyBuilder.ReportOnly) {
-                        ctx.Response.Headers.Add("Content-Security-Policy-Report-Only", policy);
-                    }
-                    else {
-                        ctx.Response.Headers.Add("Content-Security-Policy", policy);
-                    }
-#endif
                 }
             }
         }
