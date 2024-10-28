@@ -96,7 +96,11 @@ namespace Microsoft.Extensions.DependencyInjection {
 
             return services.AddIndustrialAppStoreServices()
                 .AddHttpFactory<TokenStoreHttpFactory>()
-                .AddApiClient(http => http.AddStandardResilienceHandler())
+                .AddApiClient(http => http
+                    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler() {
+                        EnableMultipleHttp2Connections = true
+                    })
+                    .AddStandardResilienceHandler())
                 .AddCoreAuthenticationServices()
                 .AddAuthentication(configure);
         }
