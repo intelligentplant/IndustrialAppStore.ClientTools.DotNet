@@ -16,7 +16,6 @@ var tags = await client.DataSources.FindTagsAsync(
     "PT-*",
     page: 3,
     pageSize: 20,
-    context: Request.HttpContext,
     cancellationToken: cancellationToken    
 );
 
@@ -29,7 +28,7 @@ tags = await client.DataSources.FindTagsAsync(new FindTagsRequest() {
         Page = 3,
         PageSize = 20
     }
-}, Request.HttpContext, cancellationToken);
+}, cancellationToken);
 ```
 
 The query response is a collection of [TagSearchResult](/src/IntelligentPlant.DataCore.HttpClient/Model/TagSearchResult.cs) objects. Each result contains properties for the tag's name, description, unit of measure, and so on. Additional, data source-specific properties are specified in the tag's `Properties` collection.

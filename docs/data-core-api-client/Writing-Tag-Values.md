@@ -23,7 +23,6 @@ var writeResult = await client.DataSources.WriteSnapshotTagValueAsync(
     "Tag1",
     DateTime.UtcNow,
     100,
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -34,7 +33,6 @@ writeResult = await client.DataSources.WriteSnapshotTagValueAsync(
     DateTime.UtcNow,
     "Calculation Error",
     status: TagValueStatus.Bad,
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -47,7 +45,6 @@ writeResult = await client.DataSources.WriteSnapshotTagValuesAsync(
         [DateTime.UtcNow.AddMinutes(-2.5)] = 50,
         [DateTime.UtcNow] = 0
     },
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -60,7 +57,6 @@ writeResult = await client.DataSources.WriteSnapshotTagValuesAsync(
         [DateTime.UtcNow.AddMinutes(-2.5)] = "App",
         [DateTime.UtcNow] = "Store"
     },
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -89,7 +85,6 @@ var multiTagWriteResults = await client.DataSources.WriteSnapshotTagValuesAsync(
             null
         )
     },
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -120,7 +115,6 @@ multiTagWriteResults = await client.DataSources.WriteSnapshotTagValuesAsync(
             )
         }
     }, 
-    Request.HttpContext, 
     cancellationToken
 );
 ```
@@ -144,7 +138,6 @@ var writeResult = await client.DataSources.WriteHistoricalTagValuesAsync(
         [DateTime.UtcNow.AddMinutes(-55)] = 50,
         [DateTime.UtcNow.AddMinutes(-50)] = 0
     },
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -157,7 +150,6 @@ writeResult = await client.DataSources.WriteHistoricalTagValuesAsync(
         [DateTime.UtcNow.AddMinutes(-55)] = "App",
         [DateTime.UtcNow.AddMinutes(-50)] = "Store"
     },
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -186,7 +178,6 @@ var multiTagWriteResults = await client.DataSources.WriteHistoricalTagValuesAsyn
             null
         )
     },
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -216,8 +207,7 @@ multiTagWriteResults = await client.DataSources.WriteHistoricalTagValuesAsync(
                 null
             )
         }
-    }, 
-    Request.HttpContext, 
+    },
     cancellationToken
 );
 ```
