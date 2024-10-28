@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
@@ -12,7 +13,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
     /// Default <see cref="ITokenStore"/> implementation that retrieves tokens from the 
     /// authentication session.
     /// </summary>
-    internal sealed class DefaultTokenStore : TokenStore {
+    internal sealed class AuthenticationPropertiesTokenStore : TokenStore {
 
         /// <summary>
         /// The authentication session to store tokens in.
@@ -21,7 +22,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
 
         /// <summary>
-        /// Creates a new <see cref="DefaultTokenStore"/> object.
+        /// Creates a new <see cref="AuthenticationPropertiesTokenStore"/> object.
         /// </summary>
         /// <param name="options">
         ///   The authentication options.
@@ -29,18 +30,18 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <param name="httpClient">
         ///   The backchannel HTTP client to use.
         /// </param>
-        /// <param name="clock">
-        ///   The system clock.
+        /// <param name="timeProvider">
+        ///   The time provider.
         /// </param>
-        public DefaultTokenStore(
-            IndustrialAppStoreAuthenticationOptions options, 
+        public AuthenticationPropertiesTokenStore(
+            IOptions<IndustrialAppStoreAuthenticationOptions> options, 
             HttpClient httpClient,
-            ISystemClock clock
-        ) : base(options, httpClient, clock) { }
+            TimeProvider timeProvider
+        ) : base(options, httpClient, timeProvider) { }
 
 
         /// <summary>
-        /// Initialises the <see cref="DefaultTokenStore"/>.
+        /// Initialises the <see cref="AuthenticationPropertiesTokenStore"/>.
         /// </summary>
         /// <param name="userId">
         ///   The user ID.
@@ -52,7 +53,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   The authentication properties for the session.
         /// </param>
         /// <returns>
-        ///   A <see cref="ValueTask"/> that will initialise the <see cref="DefaultTokenStore"/>.
+        ///   A <see cref="ValueTask"/> that will initialise the <see cref="AuthenticationPropertiesTokenStore"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="userId"/> is <see langword="null"/>.
