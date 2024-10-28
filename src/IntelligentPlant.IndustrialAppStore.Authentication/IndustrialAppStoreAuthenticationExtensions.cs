@@ -85,7 +85,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         ///   </item>
         ///   <item>
         ///     To customise the HTTP client registration used by <see cref="IndustrialAppStoreHttpClient"/>, call 
-        ///     <see cref="IndustrialAppStoreExtensions.AddApiClient(IIndustrialAppStoreBuilder, Action{IHttpClientBuilder})"/>.
+        ///     <see cref="IndustrialAppStoreExtensions.AddApiClient"/>.
         ///   </item>
         /// </list>
         /// 
@@ -94,9 +94,9 @@ namespace Microsoft.Extensions.DependencyInjection {
             ArgumentNullException.ThrowIfNull(services);
             ArgumentNullException.ThrowIfNull(configure);
 
-            return services.AddIndustrialAppStoreServices()
+            return services.AddIndustrialAppStoreApiServices()
                 .AddHttpFactory<TokenStoreHttpFactory>()
-                .AddApiClient(http => http
+                .AddApiClient(configureHttpBuilder: http => http
                     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler() {
                         EnableMultipleHttp2Connections = true
                     })

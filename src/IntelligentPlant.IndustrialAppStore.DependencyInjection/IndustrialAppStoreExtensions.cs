@@ -29,7 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="services"/> is <see langword="null"/>.
         /// </exception>
-        public static IIndustrialAppStoreBuilder AddIndustrialAppStoreServices(this IServiceCollection services) {
+        public static IIndustrialAppStoreBuilder AddIndustrialAppStoreApiServices(this IServiceCollection services) {
             if (services == null) {
                 throw new ArgumentNullException(nameof(services));
             }
@@ -115,23 +115,10 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <param name="builder">
         ///   The builder.
         /// </param>
-        /// <returns>
-        ///   The builder.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        ///   <paramref name="builder"/> is <see langword="null"/>.
-        /// </exception>
-        /// <seealso cref="AddApiClient(IIndustrialAppStoreBuilder, Action{IHttpClientBuilder})"/>
-        public static IIndustrialAppStoreBuilder AddApiClient(this IIndustrialAppStoreBuilder builder) => builder.AddApiClient(_ => { });
-
-
-        /// <summary>
-        /// Registers a scoped <see cref="IndustrialAppStoreHttpClient"/> service with the builder.
-        /// </summary>
-        /// <param name="builder">
-        ///   The builder.
+        /// <param name="configureOptions">
+        ///   A delegate that is used to configure the options for the <see cref="IndustrialAppStoreHttpClient"/>.
         /// </param>
-        /// <param name="configure">
+        /// <param name="configureHttpBuilder">
         ///   A delegate that is used to configure the HTTP client for the <see cref="IndustrialAppStoreHttpClient"/> 
         ///   service.
         /// </param>
@@ -141,16 +128,12 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///   <paramref name="configure"/> is <see langword="null"/>.
-        /// </exception>
-        public static IIndustrialAppStoreBuilder AddApiClient(this IIndustrialAppStoreBuilder builder, Action<IHttpClientBuilder> configure) {
+        public static IIndustrialAppStoreBuilder AddApiClient(this IIndustrialAppStoreBuilder builder, Action<IndustrialAppStoreHttpClientOptions>? configureOptions = null, Action<IHttpClientBuilder>? configureHttpBuilder = null) {
             if (builder == null) {
                 throw new ArgumentNullException(nameof(builder));
             }
-            if (configure == null) {
-                throw new ArgumentNullException(nameof(configure));
-            }
+
+            builder.Services.AddOptions<IndustrialAppStoreHttpClientOptions>().Configure(options => configureOptions?.Invoke(options));
 
             builder.Services.TryAddScoped(provider => {
                 var httpHandler = provider.GetRequiredService<IIndustrialAppStoreHttpFactory>().CreateHandler();
@@ -162,7 +145,7 @@ namespace Microsoft.Extensions.DependencyInjection {
             builder.Services.TryAddScoped<DataCoreHttpClient>(provider => provider.GetRequiredService<IndustrialAppStoreHttpClient>());
 
             var httpBuilder = builder.Services.AddHttpClient(nameof(IndustrialAppStoreHttpClient));
-            configure.Invoke(httpBuilder);
+            configureHttpBuilder?.Invoke(httpBuilder);
 
             return builder;
         }
