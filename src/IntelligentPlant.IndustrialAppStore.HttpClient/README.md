@@ -42,6 +42,8 @@ var dataSources = await client.DataSources.GetDataSourcesAsync();
 
 The second option when creating a client is to dynamically add an authentication header to outgoing requests. This can be done by adding a [DelegatingHandler](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.delegatinghandler) to the request pipeline for the `HttpClient` that is passed to the Industrial App Store API client constructor. 
 
+When writing an ASP.NET Core application, the [IntelligentPlant.IndustrialAppStore.Authentication](../IntelligentPlant.IndustrialAppStore.Authentication) library can be used to create API client instances that authenticate outgoing requests using an access token issued to the current user.
+
 
 # Calling API Methods
 

@@ -166,6 +166,6 @@ app.UseContentSecurityPolicy((HttpContext context, ContentSecurityPolicyBuilder 
       var directive = builder.GetOrCreateDirective("image-src");
       directive.Add("data:");
   }
-  return Task.CompletedTask;
+  return default;
 });
 ```
