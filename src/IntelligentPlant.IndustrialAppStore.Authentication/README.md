@@ -74,7 +74,9 @@ Inject the `IndustrialAppStoreClient` service into your types to obtain an API c
 
 Refer to the [API client documentation](/docs/data-core-api-client) for more details on available API calls.
 
-`IndustrialAppStoreClient` is a _scoped_ service. For scenarios where you need to call the Industrial App Store APIs from a background service or similar, you must ensure that your code runs inside or creates a new dependency injection scope. Additionally, when running outside of the HTTP request pipeline, you must explicitly retrieve and initialise the `ITokenStore` service so that it can be used to provide access tokens to the API client. 
+`IndustrialAppStoreClient` is a _scoped_ service. For scenarios where you need to call the Industrial App Store APIs from a background service or similar, you must ensure that your code runs inside or creates a new dependency injection scope. 
+
+Additionally, when running outside of the HTTP request pipeline, you must explicitly retrieve and initialise the `ITokenStore` service prior to using the `IndustrialAppStoreClient` so that it can correctly provide access tokens to the API client. 
 
 > The `ITokenStore` service is initialised automatically when the client is created within the HTTP request pipeline.
 
@@ -88,34 +90,38 @@ Under many circumstances, this approach is perfectly valid. However, if your app
 > **NOTE:**
 > Access tokens and refresh tokens should be treated with the same level of security as passwords. They should never be persisted without being encrypted first.
 
-When writing a custom `ITokenStore`, you should inherit from the abstract [TokenStore](./TokenStore.cs) base class.
+When writing a custom `ITokenStore`, you should inherit from the abstract [TokenStore](./TokenStore.cs) base class. This ensures that your token store correctly handles token refreshes and persists the new tokens to the store.
 
 An example project showing how to write a custom `ITokenStore` implementation that uses Entity Framework Core to persist tokens to a SQLite database can be found [here](../../samples/CustomTokenStoreExample).
 
 Register your custom token store when adding Industrial App Store authentication to your project as follows:
 
 ```csharp
-services.AddIndustrialAppStoreAuthentication(options => {
-    // Bind the settings from the app configuration to the Industrial App Store 
-    // authentication options.
-    Configuration.GetSection("IAS").Bind(options);
-    // Set the login path to be our login page.
-    options.LoginPath = new PathString("/Account/Login");
-}).AddTokenStore<MyCustomTokenStore>();
-```
-
-You can also provide a factory function to create the token store instance:
-
-```csharp
-services.AddIndustrialAppStoreAuthentication(
-    options => {
+services
+    .AddIndustrialAppStoreAuthentication(options => {
         // Bind the settings from the app configuration to the Industrial App Store 
         // authentication options.
         Configuration.GetSection("IAS").Bind(options);
         // Set the login path to be our login page.
         options.LoginPath = new PathString("/Account/Login");
-    }
-).AddTokenStore((serviceProvider, httpClient) => ActivatorUtils.CreateInstance<MyCustomTokenStore>(serviceProvider, httpClient));
+    })
+    .AddTokenStore<MyCustomTokenStore>();
+```
+
+You can also provide a factory function to create the token store instance:
+
+```csharp
+services
+    .AddIndustrialAppStoreAuthentication(
+        options => {
+            // Bind the settings from the app configuration to the Industrial App Store 
+            // authentication options.
+            Configuration.GetSection("IAS").Bind(options);
+            // Set the login path to be our login page.
+            options.LoginPath = new PathString("/Account/Login");
+        }
+    )
+    .AddTokenStore((serviceProvider, httpClient) => ActivatorUtils.CreateInstance<MyCustomTokenStore>(serviceProvider, httpClient));
 ```
 
 The `HttpClient` instance passed to the token store's constructor is used for backchannel communications with the Industrial App Store authentication server's token endpoint. If your token store inherits from the `TokenStore` base class, the token store will automatically refresh access tokens when they expire and persist the new access token and refresh token to the store.
@@ -136,11 +142,13 @@ services
         // Set the login path to be our login page.
         options.LoginPath = new PathString("/Account/Login");
     })
-    .AddApiClient(httpBuilder => httpBuilder
+    .AddApiClient(configureHttpBuilder: http => http
+        // Configure primary message handler.
         .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler() {
             EnableMultipleHttp2Connections = true
         })
+        // Add resilience via Microsoft.Extensions.Http.Resilience.
         .AddStandardResilienceHandler());
 ```
 
-> The example shown above is for illustration purposes only and is equivalent to the HTTP client registration that is added by default.
+> The example shown above is equivalent to the HTTP client registration that is added by default.
