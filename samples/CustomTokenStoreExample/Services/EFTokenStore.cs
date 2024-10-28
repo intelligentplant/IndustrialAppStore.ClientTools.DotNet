@@ -1,12 +1,9 @@
-﻿using System;
-using System.Net.Http;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 using IntelligentPlant.IndustrialAppStore.Authentication;
 
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 
 namespace ExampleMvcApplication.Services {
 
@@ -24,11 +21,11 @@ namespace ExampleMvcApplication.Services {
 
 
         public EFTokenStore(
-            IndustrialAppStoreAuthenticationOptions options, 
+            IOptions<IndustrialAppStoreAuthenticationOptions> options, 
             HttpClient httpClient, 
-            ISystemClock clock, 
+            TimeProvider timeProvider, 
             UserTokensDbContext dbContext
-        ) : base(options, httpClient, clock) { 
+        ) : base(options, httpClient, timeProvider) { 
             _dbContext = dbContext; 
         }
 

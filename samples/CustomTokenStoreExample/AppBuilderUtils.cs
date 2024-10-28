@@ -1,5 +1,7 @@
 ﻿using ExampleMvcApplication.Services;
 
+using IntelligentPlant.IndustrialAppStore.Authentication;
+
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection {
             services.AddCustomHeaders();
             services.AddContentSecurityPolicy();
 
-            services.AddIndustrialAppStoreAuthentication<EFTokenStore>(options => {
+            services.AddIndustrialAppStoreAuthentication(options => {
                 // Bind the settings from the app configuration to the Industrial App Store 
                 // authentication options.
                 configuration.GetSection("IAS").Bind(options);
@@ -49,11 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                 // SessionIdGenerator is not configured, a new session ID will be generated for
                 // every login.
                 options.UseCookieSessionIdGenerator();
-
-                // The ConfigureHttpClient property can be used to customise the HttpClient that is
-                // used for Data Core API calls e.g. 
-                //options.ConfigureHttpClient = builder => builder.AddHttpMessageHandler<MyCustomHandler>();
-            });
+            }).AddTokenStore<EFTokenStore>();
 
             if (configuration.GetValue<bool>("IAS:UseExternalAuthentication")) {
                 // App is configured to use an authentication provider other than the Industrial

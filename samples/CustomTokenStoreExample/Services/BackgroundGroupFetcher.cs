@@ -1,13 +1,7 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Channels;
-using System.Threading.Tasks;
+﻿using System.Threading.Channels;
 
 using IntelligentPlant.IndustrialAppStore.Authentication;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using IntelligentPlant.IndustrialAppStore.Client;
 
 namespace ExampleMvcApplication.Services {
     public class BackgroundGroupFetcher : BackgroundService {
@@ -35,12 +29,12 @@ namespace ExampleMvcApplication.Services {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
             await foreach (var logonEvent in s_channel.Reader.ReadAllAsync(stoppingToken)) {
                 using (var scope = _serviceProvider.CreateScope()) {
-                    var client = scope.ServiceProvider.GetRequiredService<BackchannelIndustrialAppStoreHttpClient>();
+                    var client = scope.ServiceProvider.GetRequiredService<IndustrialAppStoreHttpClient>();
                     var tokenStore = scope.ServiceProvider.GetRequiredService<ITokenStore>();
                     await tokenStore.InitAsync(logonEvent.UserId, logonEvent.SessionId);
 
-                    var userInfo = await client.UserInfo.GetUserInfoAsync(tokenStore, stoppingToken);
-                    var groups = await client.Organization.GetGroupMembershipsAsync(tokenStore, stoppingToken);
+                    var userInfo = await client.UserInfo.GetUserInfoAsync(stoppingToken);
+                    var groups = await client.Organization.GetGroupMembershipsAsync(stoppingToken);
                     foreach (var group in groups) {
                         _logger.LogInformation($"{userInfo.DisplayName} is a member of {group.DisplayName} (Organisation: {group.Org})");
                     }

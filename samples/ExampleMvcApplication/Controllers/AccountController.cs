@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-
-using ExampleMvcApplication.Models;
+﻿using ExampleMvcApplication.Models;
 
 using IntelligentPlant.IndustrialAppStore.Authentication;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace ExampleMvcApplication.Controllers {
     public class AccountController : Controller {
@@ -14,8 +12,8 @@ namespace ExampleMvcApplication.Controllers {
         private readonly IndustrialAppStoreAuthenticationOptions _authenticationOptions;
 
 
-        public AccountController(IndustrialAppStoreAuthenticationOptions authenticationOptions) {
-            _authenticationOptions = authenticationOptions ?? throw new ArgumentNullException(nameof(authenticationOptions));
+        public AccountController(IOptions<IndustrialAppStoreAuthenticationOptions> authenticationOptions) {
+            _authenticationOptions = authenticationOptions.Value;
         }
 
 

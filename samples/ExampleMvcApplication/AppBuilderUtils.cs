@@ -32,10 +32,6 @@
                 // SessionIdGenerator is not configured, a new session ID will be generated for
                 // every login.
                 //options.UseCookieSessionIdGenerator();
-
-                // The ConfigureHttpClient property can be used to customise the HttpClient that is
-                // used for Data Core API calls e.g. 
-                //options.ConfigureHttpClient = builder => builder.AddHttpMessageHandler<MyCustomHandler>();
             });
 
             if (configuration.GetValue<bool>("IAS:UseExternalAuthentication")) {

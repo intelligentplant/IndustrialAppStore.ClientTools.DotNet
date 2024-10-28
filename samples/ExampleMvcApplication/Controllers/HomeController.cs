@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 using ExampleMvcApplication.Models;
 
 using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.DataCore.Client.Model;
-using IntelligentPlant.IndustrialAppStore.Authentication;
+using IntelligentPlant.IndustrialAppStore.Client;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,10 +18,7 @@ namespace ExampleMvcApplication.Controllers {
             [FromServices] IndustrialAppStoreHttpClient iasClient,
             CancellationToken cancellationToken = default
         ) {
-            var dataSources = await iasClient.DataSources.GetDataSourcesAsync(
-                Request.HttpContext,
-                cancellationToken
-            );
+            var dataSources = await iasClient.DataSources.GetDataSourcesAsync(cancellationToken);
 
             var selectItems = new List<SelectListItem>() { 
                 new SelectListItem() {
@@ -74,7 +66,6 @@ namespace ExampleMvcApplication.Controllers {
                 string.IsNullOrWhiteSpace(request.TagNameFilter) ? "*" : request.TagNameFilter,
                 page: request.Page,
                 pageSize: pageSize,
-                context: Request.HttpContext,
                 cancellationToken: cancellationToken
             );
 
@@ -100,19 +91,17 @@ namespace ExampleMvcApplication.Controllers {
                 return BadRequest(ModelState);
             }
 
-            var now = DateTime.UtcNow;
             var tagValues = await iasClient.DataSources.ReadPlotTagValuesAsync(
                 request.DataSourceName,
-                new[] { request.TagName },
-                now.AddDays(-1),
-                now,
+                [request.TagName],
+                "*-1D",
+                "*",
                 500,
                 null,
-                Request.HttpContext,
                 cancellationToken
             );
 
-            if (!tagValues.TryGetValue(request.TagName, out var values)) {
+            if (tagValues == null || !tagValues.TryGetValue(request.TagName, out var values)) {
                 return NotFound();
             }
 
