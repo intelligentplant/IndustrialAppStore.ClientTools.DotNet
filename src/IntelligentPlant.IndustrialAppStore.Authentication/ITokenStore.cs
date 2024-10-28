@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Authentication;
-
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
     /// <summary>
