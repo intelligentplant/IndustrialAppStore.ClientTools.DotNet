@@ -8,17 +8,10 @@ namespace IntelligentPlant.DataCore.Client.Clients {
     /// <summary>
     /// Provides information and diagnostic queries for Data Core.
     /// </summary>
-    /// <typeparam name="TContext">
-    ///   The context type that is passed to API calls to allow authentication headers to be added 
-    ///   to outgoing requests.
-    /// </typeparam>
-    /// <typeparam name="TOptions">
-    ///   The HTTP client options type.
-    /// </typeparam>
-    public class InfoClient<TContext, TOptions> : ClientBase<TOptions> where TOptions : DataCoreHttpClientOptions {
+    public class InfoClient : ClientBase {
 
         /// <summary>
-        /// Creates a new <see cref="InfoClient{TContext, TOptions}"/> object.
+        /// Creates a new <see cref="InfoClient"/> object.
         /// </summary>
         /// <param name="httpClient">
         ///   The HTTP client to use.
@@ -32,31 +25,22 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public InfoClient(HttpClient httpClient, TOptions options) : base(httpClient, options) { }
+        internal InfoClient(HttpClient httpClient, DataCoreHttpClientOptions options) : base(httpClient, options) { }
 
 
         /// <summary>
         /// Gets the version of the remote Data Core endpoint.
         /// </summary>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The version of Data Core running at the remote endpoint.
         /// </returns>
-        public async Task<string> GetDataCoreVersionAsync(
-            TContext? context = default, 
-            CancellationToken cancellationToken = default
-        ) {
+        public async Task<string> GetDataCoreVersionAsync(CancellationToken cancellationToken = default) {
             var url = GetAbsoluteUrl("api/info");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {

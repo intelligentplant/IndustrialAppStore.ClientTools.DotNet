@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,17 +11,10 @@ namespace IntelligentPlant.DataCore.Client.Clients {
     /// <summary>
     /// Client for performing custom function calls.
     /// </summary>
-    /// <typeparam name="TContext">
-    ///   The context type that is passed to API calls to allow authentication headers to be added 
-    ///   to outgoing requests.
-    /// </typeparam>
-    /// <typeparam name="TOptions">
-    ///   The HTTP client options type.
-    /// </typeparam>
-    internal class CustomFunctionsClient<TContext, TOptions> : ClientBase<TOptions> where TOptions : DataCoreHttpClientOptions {
+    public class CustomFunctionsClient : ClientBase {
 
         /// <summary>
-        /// Creates a new <see cref="CustomFunctionsClient{TContext, TOptions}"/> object.
+        /// Creates a new <see cref="CustomFunctionsClient"/> object.
         /// </summary>
         /// <param name="httpClient">
         ///   The HTTP client to use.
@@ -36,7 +28,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ///<exception cref="ArgumentNullException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public CustomFunctionsClient(HttpClient httpClient, TOptions options) : base(httpClient, options) { }
+        internal CustomFunctionsClient(HttpClient httpClient, DataCoreHttpClientOptions options) : base(httpClient, options) { }
 
 
         /// <summary>
@@ -54,12 +46,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The custom function request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -70,7 +56,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             HttpClient httpClient, 
             Uri url,
             CustomFunctionRequest request,
-            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -79,8 +64,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<CustomFunctionRequest>(request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request)
+            };
 
             try {
                 using (var response = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
