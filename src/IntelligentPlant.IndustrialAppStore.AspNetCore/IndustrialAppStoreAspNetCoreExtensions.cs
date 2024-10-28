@@ -9,7 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection {
     /// <summary>
     /// Extension methods for custom middleware and services.
     /// </summary>
-    public static class IndustrialAppStoreExtensions {
+    public static class IndustrialAppStoreAspNetCoreExtensions {
 
         #region [ Custom Headers ]
 
