@@ -73,11 +73,6 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         internal const string RefreshTokenName = "refresh_token";
 
         /// <summary>
-        /// The token name for the created-at token.
-        /// </summary>
-        internal const string CreatedAtTokenName = "created_at";
-
-        /// <summary>
         /// The token name for the OAuth expires-at token.
         /// </summary>
         internal const string ExpiresAtTokenName = "expires_at";

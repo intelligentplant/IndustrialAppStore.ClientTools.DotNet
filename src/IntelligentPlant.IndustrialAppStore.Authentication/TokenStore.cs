@@ -294,7 +294,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 utcExpiresAt = clock.UtcNow.Add(expiresIn.Value);
             }
 
-            return new OAuthTokens(clock.UtcNow, tokenType, accessToken, refreshToken, utcExpiresAt);
+            return new OAuthTokens(tokenType, accessToken, refreshToken, utcExpiresAt);
         }
 
 
