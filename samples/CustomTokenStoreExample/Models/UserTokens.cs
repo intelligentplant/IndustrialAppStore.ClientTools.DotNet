@@ -14,9 +14,6 @@ namespace ExampleMvcApplication.Models {
         public string SessionId { get; set; }
 
         [Required]
-        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-
-        [Required]
         public string TokenType { get; set; }
 
         [Required]
