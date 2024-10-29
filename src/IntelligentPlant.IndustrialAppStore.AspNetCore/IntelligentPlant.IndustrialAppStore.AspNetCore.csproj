@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
+    <LangVersion>10.0</LangVersion>
     <Description>ASP.NET Core services and middleware for Industrial App Store apps.</Description>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
