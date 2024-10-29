@@ -103,14 +103,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
             var refreshToken = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.RefreshTokenName);
 
-            var tokensCreatedAt = Clock.UtcNow;
-            var createdAt = _authenticationProperties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.CreatedAtTokenName);
-
-            if (!string.IsNullOrWhiteSpace(createdAt) && DateTimeOffset.TryParseExact(createdAt, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var ca)) {
-                tokensCreatedAt = ca;
-            }
-
-            return new ValueTask<OAuthTokens?>(new OAuthTokens(tokensCreatedAt, tokenType!, accessToken, refreshToken!, accessTokenExpiry));
+            return new ValueTask<OAuthTokens?>(new OAuthTokens(tokenType!, accessToken, refreshToken!, accessTokenExpiry));
         }
 
 
@@ -121,10 +114,6 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
             }
  
             var authTokens = new List<AuthenticationToken> {
-                new AuthenticationToken { 
-                    Name = IndustrialAppStoreAuthenticationDefaults.CreatedAtTokenName,
-                    Value = tokens.UtcCreatedAt.ToString("o", CultureInfo.InvariantCulture)
-                },
                 new AuthenticationToken {
                     Name = IndustrialAppStoreAuthenticationDefaults.AccessTokenName,
                     Value = tokens.AccessToken
