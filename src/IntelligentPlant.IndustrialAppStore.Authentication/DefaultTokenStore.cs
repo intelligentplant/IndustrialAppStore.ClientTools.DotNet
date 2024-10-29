@@ -113,12 +113,12 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 throw new InvalidOperationException(Resources.Error_TokenStoreHasNotBeenInitialised);
             }
  
-            var authTokens = new List<AuthenticationToken>();
-
-            authTokens.Add(new AuthenticationToken {
-                Name = IndustrialAppStoreAuthenticationDefaults.AccessTokenName,
-                Value = tokens.AccessToken
-            });
+            var authTokens = new List<AuthenticationToken> {
+                new AuthenticationToken {
+                    Name = IndustrialAppStoreAuthenticationDefaults.AccessTokenName,
+                    Value = tokens.AccessToken
+                }
+            };
 
             if (!string.IsNullOrEmpty(tokens.RefreshToken)) {
                 authTokens.Add(new AuthenticationToken {

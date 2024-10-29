@@ -315,6 +315,11 @@ namespace Microsoft.Extensions.DependencyInjection {
                         var tokenStore = ctx.HttpContext.RequestServices.GetRequiredService<ITokenStore>();
                         await InitTokenStoreAsync(tokenStore, ctx.Principal!, ctx.Properties).ConfigureAwait(false);
 
+                        // The default cookie-based token store sets an authentication property
+                        // specifying when the access token will expire. This will be null for
+                        // other token stores.
+                        var expiresAtOriginal = ctx.Properties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.ExpiresAtTokenName);
+
                         var accessToken = await tokenStore.GetTokensAsync().ConfigureAwait(false);
 
                         if (accessToken == null) {
@@ -322,6 +327,14 @@ namespace Microsoft.Extensions.DependencyInjection {
                             // will consider the cookie to be invalid.
                             ctx.RejectPrincipal();
                         }
+
+                        // If we are using the default cookie-based token store and the access
+                        // token was refreshed by the GetTokensAsync call above, the authentiation
+                        // property specifying the expires-at timestamp will have changed.
+                        var expiresAtUpdated = ctx.Properties.GetTokenValue(IndustrialAppStoreAuthenticationDefaults.ExpiresAtTokenName);
+
+                        // If the access token has been refreshed, we need to renew the authentication cookie.
+                        ctx.ShouldRenew = !string.Equals(expiresAtOriginal, expiresAtUpdated, StringComparison.Ordinal);
 
                         if (cookieEvents.OnValidatePrincipal != null) {
                             await cookieEvents.OnValidatePrincipal(ctx).ConfigureAwait(false);
