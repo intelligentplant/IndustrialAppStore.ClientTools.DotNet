@@ -128,6 +128,24 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <remarks>
+        /// 
+        /// <para>
+        ///   Note that calling <see cref="HttpClientBuilderExtensions.ConfigureHttpClient(IHttpClientBuilder, Action{HttpClient})"/> 
+        ///   or <see cref="HttpClientBuilderExtensions.ConfigureHttpClient(IHttpClientBuilder, Action{IServiceProvider, HttpClient})"/> 
+        ///   in your <paramref name="configureHttpBuilder"/> delegate has no effect by default. 
+        ///   The final <see cref="HttpClient"/> instance is created by the <see cref="IIndustrialAppStoreHttpFactory"/> 
+        ///   service and the default implementation of this service uses <see cref="IHttpMessageHandlerFactory"/> 
+        ///   to create an <see cref="HttpMessageHandler"/> and then creates its own <see cref="HttpClient"/> 
+        ///   wrapper around the handler.
+        /// </para>
+        /// 
+        /// <para>
+        ///   You can customise the behaviour of the <see cref="HttpClient"/> used by the <see cref="IndustrialAppStoreHttpClient"/> 
+        ///   by registering a custom <see cref="IIndustrialAppStoreHttpFactory"/> service.
+        /// </para>
+        /// 
+        /// </remarks>
         public static IIndustrialAppStoreBuilder AddApiClient(this IIndustrialAppStoreBuilder builder, Action<IndustrialAppStoreHttpClientOptions>? configureOptions = null, Action<IHttpClientBuilder>? configureHttpBuilder = null) {
             if (builder == null) {
                 throw new ArgumentNullException(nameof(builder));
@@ -136,12 +154,7 @@ namespace Microsoft.Extensions.DependencyInjection {
             builder.Services.AddOptions<IndustrialAppStoreHttpClientOptions>().Configure(options => configureOptions?.Invoke(options));
 
             builder.Services.TryAddScoped(provider => {
-                var httpHandler = provider.GetRequiredService<IIndustrialAppStoreHttpFactory>().CreateHandler();
-                var http = new HttpClient(httpHandler, false);
-#if NET8_0_OR_GREATER
-                http.DefaultRequestVersion = System.Net.HttpVersion.Version11;
-                http.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
-#endif
+                var http = provider.GetRequiredService<IIndustrialAppStoreHttpFactory>().CreateClient();
                 var iasClientOptions = provider.GetRequiredService<IOptions<IndustrialAppStoreHttpClientOptions>>();
                 return ActivatorUtilities.CreateInstance<IndustrialAppStoreHttpClient>(provider, http, iasClientOptions.Value);
             });
