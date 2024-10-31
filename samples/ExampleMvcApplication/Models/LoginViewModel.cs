@@ -6,7 +6,7 @@ namespace ExampleMvcApplication.Models {
         public bool IsPersistent { get; set; }
 
         [HiddenInput]
-        public string RedirectUrl { get; set; }
+        public string RedirectUrl { get; set; } = default!;
 
     }
 }
