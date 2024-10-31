@@ -28,7 +28,7 @@ If you have not done so already, you can register as an Industrial App Store dev
 
 Once you have registered as a developer, you can create a new app registration for your app. Make a note of the app ID that is generated for your app. You will also need to add the following redirect URL to the app registration:
 
-    https://localhost:44300/auth/signin-ip
+    https://localhost:44346/auth/signin-ip
 
 Once you have created your app registration, you should generate a secret key for your app. Your app authenticates users via the OAuth 2.0 authorization code flow, using the [Proof Key for Code Exchange (PKCE)](https://oauth.net/2/pkce/) extension. PKCE is an extension to the OAuth2 authorization code flow to enable a more secure transaction when exchanging an authorization code for an access token. It is possible for your app to authenticate users without requiring a secret key. However, for maximum security, you should *always* generate a secret key unless your app requires you to publicly distribute an executable file.
 
@@ -168,11 +168,10 @@ If you choose the second option, the `appsettings.json` file is updated as follo
 }
 ```
 
-# Preparing Your App For Publication
 
-The project contains a Visual Studio [publish profile](./Properties/PublishProfiles/IndustrialAppStoreAuth.pubxml) that can be used to build your app using the Release configuration and create a set of files that can be copied to your deployment destination.
+# Telemetry
 
-See [here](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/visual-studio-publish-profiles#publish-profiles) for more information about publish profiles.
+The app uses OpenTelemetry to collect and export telemetry data in OTLP format. More information about how to configure the export destination can be found [here](https://github.com/wazzamatazz/opentelemetry-extensions#configuring-a-multi-signal-opentelemetry-protocol-otlp-exporter). 
 
 
 # Creating an On-Premises App
@@ -191,23 +190,9 @@ There are some notable differences between Industrial App Store and on-premises 
 
 The Industrial App Store defines APIs for app billing, and organisation and user information queries (accessed via the `AccountTransactions`, `Organization` and `UserInfo` properties on the `IndustrialAppStoreHttpClient` class respectively). These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself.
 
-You can detect if your app is running in Industrial App Store or on-premises mode using any of the following methods:
-
-1. Inject the `IndustrialAppStoreAuthenticationOptions` service into your class and get the value of its `UseExternalAuthentication` property. The `UseExternalAuthentication` property will be `true` when your app is running in on-premises mode.
-2. Inject the `IndustrialAppStoreHttpClient` service into your class and get the value of its `AllowIasApiOperations` property. The `AllowIasApiOperations` property will be `false` when your app is running in on-premises mode.
-
-> See the [AccountController.cs](./Controllers/AccountController.cs) file in this project for an example of how to perform the check using the first method described above.
-
 
 ### API Authentication and Authorization
 
-When running in Industrial App Store mode, your app will automatically add a bearer token to outgoing requests made on behalf of the calling user, allowing the Industrial App Store to authenticate and authorize the request on a per-user basis. When running in on-premises mode, the default network credentials (i.e. [CredentialCache.DefaultNetworkCredentials](https://docs.microsoft.com/en-us/dotnet/api/system.net.credentialcache.defaultnetworkcredentials)) are added to outgoing HTTP requests instead.
+When running in Industrial App Store mode, your app will automatically add a bearer token to outgoing requests made on behalf of the calling user, allowing the Industrial App Store to authenticate and authorize the request on a per-user basis.
 
-> Note that the differences in API authentication mean that it may not be possible to perform per-user authentication when calling the on-premises Data Core API. You should be prepared to apply your own authorization scheme when running in on-premises mode in order to restrict access to the data sources configured in the Data Core API where appropriate.
-
-
-### Publish Profile for On-Premises Deployment
-
-In addition to the [Industrial App Store publish profile](./Properties/PublishProfiles/IndustrialAppStoreAuth.pubxml) described above, the project also contains an [on-premises publish profile](./Properties/PublishProfiles/IISWindowsAuth.pubxml) that can be used to prepare your app for publishing to an on-premises instance of IIS.
-
-The [IISWindowsAuth.transform](./IISWindowsAuth.transform) file is used to transform the application's [web.config](./web.config) file during an on-premises publish operation.
+When running in on-premises mode, you must ensure that the HTTP message handler used to construct the `HttpClient` for the `DataCoreHttpClient` service is configured to use an appropriate authentication scheme when making outgoing requests.
