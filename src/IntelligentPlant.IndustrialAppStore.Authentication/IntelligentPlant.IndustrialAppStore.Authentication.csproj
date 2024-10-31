@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net7.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <Description>ASP.NET Core authentication handler for Intelligent Plant's Industrial App Store.</Description>
   </PropertyGroup>
 
@@ -10,6 +10,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IntelligentPlant.IndustrialAppStore.DependencyInjection\IntelligentPlant.IndustrialAppStore.DependencyInjection.csproj" />
     <ProjectReference Include="..\IntelligentPlant.IndustrialAppStore.HttpClient\IntelligentPlant.IndustrialAppStore.HttpClient.csproj" />
     <ProjectReference Include="..\IntelligentPlant.IndustrialAppStore.AspNetCore\IntelligentPlant.IndustrialAppStore.AspNetCore.csproj" />
   </ItemGroup>

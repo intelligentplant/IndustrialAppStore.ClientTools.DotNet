@@ -36,18 +36,16 @@ A snapshot value is the current instantaneous value of a tag. To request snapsho
 // Get snapshot values from a single data source (extension method).
 var snapshotValues = await client.DataSources.ReadSnapshotTagValuesAsync(
     "MyDataSource",
-    new [] { "Tag1", "Tag2" },
-    context: Request.HttpContext,
+    ["Tag1", "Tag2"],
     cancellationToken: cancellationToken
 );
 
 // Get snapshot values from multiple data sources (extension method).
 var multiDataSourceSnapshotValues = await client.DataSources.ReadSnapshotTagValuesAsync(
     new Dictionary<string, string[]>() {
-        ["MyDataSource"] = new [] { "Tag1", "Tag2" },
-        ["MyOtherDataSource"] = new [] { "Tag3" } 
+        ["MyDataSource"] = ["Tag1", "Tag2"],
+        ["MyOtherDataSource"] = ["Tag3"] 
     },
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -55,11 +53,10 @@ var multiDataSourceSnapshotValues = await client.DataSources.ReadSnapshotTagValu
 multiDataSourceSnapshotValues = await client.DataSources.ReadSnapshotTagValuesAsync(
     new ReadSnapshotTagValuesRequest() {
         Tags = new Dictionary<string, string[]>() {
-            ["MyDataSource"] = new[] { "Tag1", "Tag2" },
-            ["MyOtherDataSource"] = new[] { "Tag3" }
+            ["MyDataSource"] = ["Tag1", "Tag2"],
+            ["MyOtherDataSource"] = ["Tag3"]
         }
     },
-    Request.HttpContext, 
     cancellationToken
 );
 ```
@@ -76,12 +73,11 @@ Raw values are the unprocessed historical values for a tag that are stored in a 
 // (extension method).
 var historicalValues = await client.DataSources.ReadRawTagValuesAsync(
     "MyDataSource",
-    new [] { "Tag1", "Tag2" },
+    ["Tag1", "Tag2"],
     DateTime.UtcNow.AddHours(-1),
     DateTime.UtcNow,
     // Get up to 100 samples per tag
     100,
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -89,12 +85,11 @@ var historicalValues = await client.DataSources.ReadRawTagValuesAsync(
 // range (extension method).
 historicalValues = await client.DataSources.ReadRawTagValuesAsync(
     "MyDataSource",
-    new[] { "Tag1", "Tag2" },
+    ["Tag1", "Tag2"],
     "2020-08-05T07:08:00Z",
     "2020-08-05T08:08:00Z",
     // Get up to 100 samples per tag
     100,
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -102,7 +97,7 @@ historicalValues = await client.DataSources.ReadRawTagValuesAsync(
 // range (extension method).
 historicalValues = await client.DataSources.ReadRawTagValuesAsync(
     "MyDataSource",
-    new[] { "Tag1", "Tag2" },
+    ["Tag1", "Tag2"],
     "*-1H",
     "*",
     // Get up to 100 samples per tag
@@ -115,14 +110,13 @@ historicalValues = await client.DataSources.ReadRawTagValuesAsync(
 // range (extension method).
 var multiDataSourceHistoricalValues = await client.DataSources.ReadRawTagValuesAsync(
     new Dictionary<string, string[]>() {
-        ["MyDataSource"] = new[] { "Tag1", "Tag2" },
-        ["MyOtherDataSource"] = new[] { "Tag3" }
+        ["MyDataSource"] = ["Tag1", "Tag2"],
+        ["MyOtherDataSource"] = ["Tag3"]
     },
     "*-1H",
     "*",
     // Get up to 100 samples per tag
     100,
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -130,8 +124,8 @@ var multiDataSourceHistoricalValues = await client.DataSources.ReadRawTagValuesA
 multiDataSourceHistoricalValues = await client.DataSources.ReadRawTagValuesAsync(
     new ReadRawTagValuesRequest() {
         Tags = new Dictionary<string, string[]>() {
-            ["MyDataSource"] = new[] { "Tag1", "Tag2" },
-            ["MyOtherDataSource"] = new[] { "Tag3" }
+            ["MyDataSource"] = ["Tag1", "Tag2"],
+            ["MyOtherDataSource"] = ["Tag3"]
         },
         StartTime = DateTime.UtcNow.AddHours(-1),
         EndTime = DateTime.UtcNow,
@@ -155,46 +149,42 @@ Plot queries are performed using the `ReadPlotTagValuesAsync` method overloads o
 // Retrieve plot values for a single data source (extension method).
 historicalValues = await client.DataSources.ReadPlotTagValuesAsync(
     "MyDataSource",
-    new[] { "Tag1", "Tag2" },
+    ["Tag1", "Tag2"],
     DateTime.UtcNow.AddDays(-1),
     DateTime.UtcNow,
     500,
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 )
 
 // Retrieve plot values for a single data source using absolute timestamps (extension method).
 historicalValues = await client.DataSources.ReadPlotTagValuesAsync(
     "MyDataSource",
-    new[] { "Tag1", "Tag2" },
+    ["Tag1", "Tag2"],
     "2020-08-04T08:08:00Z",
     "2020-08-05T08:08:00Z",
     500,
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
 // Retrieve plot values for a single data source using relative timestamps (extension method).
 historicalValues = await client.DataSources.ReadPlotTagValuesAsync(
     "MyDataSource",
-    new[] { "Tag1", "Tag2" },
+    ["Tag1", "Tag2"],
     "*-1D",
     "*",
     500,
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
 // Retrieve plot values for multiple data sources using relative timestamps (extension method).
 multiDataSourceHistoricalValues = await client.DataSources.ReadPlotTagValuesAsync(
     new Dictionary<string, string[]>() {
-        ["MyDataSource"] = new[] { "Tag1", "Tag2" },
-        ["MyOtherDataSource"] = new[] { "Tag3" }
+        ["MyDataSource"] = ["Tag1", "Tag2"],
+        ["MyOtherDataSource"] = ["Tag3"]
     },
     "*-1D",
     "*",
     500,
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -202,14 +192,13 @@ multiDataSourceHistoricalValues = await client.DataSources.ReadPlotTagValuesAsyn
 multiDataSourceHistoricalValues = await client.DataSources.ReadPlotTagValuesAsync(
     new ReadPlotTagValuesRequest() {
         Tags = new Dictionary<string, string[]>() {
-            ["MyDataSource"] = new[] { "Tag1", "Tag2" },
-            ["MyOtherDataSource"] = new[] { "Tag3" }
+            ["MyDataSource"] = ["Tag1", "Tag2"],
+            ["MyOtherDataSource"] = ["Tag3"]
         },
         StartTime = DateTime.UtcNow.AddDays(-1),
         EndTime = DateTime.UtcNow,
         Intervals = 500
     },
-    Request.HttpContext,
     cancellationToken
 );
 ```
@@ -235,12 +224,11 @@ Additional data functions may be supported; please refer to the vendor's documen
 // method).
 historicalValues = await client.DataSources.ReadProcessedTagValuesAsync(
     "MyDataSource",
-    new[] { "Tag1", "Tag2" },
+    ["Tag1", "Tag2"],
     DateTime.UtcNow.AddDays(-1),
     DateTime.UtcNow,
     "AVG"
     "1H",
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -248,27 +236,24 @@ historicalValues = await client.DataSources.ReadProcessedTagValuesAsync(
 // (extension method).
 historicalValues = await client.DataSources.ReadProcessedTagValuesAsync(
     "MyDataSource",
-    new[] { "Tag1", "Tag2" },
+    ["Tag1", "Tag2"],
     "*-5M",
     "*",
     "MIN"
     "1M",
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
 // Retrieve the maximum value each minute over the last 5 minutes for multiple data sources 
 // (extension method).
 multiDataSourceHistoricalValues = await client.DataSources.ReadProcessedTagValuesAsync(
-    new Dictionary<string, string[]>() {
-        ["MyDataSource"] = new[] { "Tag1", "Tag2" },
-        ["MyOtherDataSource"] = new[] { "Tag3" }
+    new Dictionary<string, ["Tag1", "Tag2"],
+        ["MyOtherDataSource"] = ["Tag3"]
     },
     "*-5M",
     "*",
     "MAX"
     "1M",
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -277,8 +262,8 @@ multiDataSourceHistoricalValues = await client.DataSources.ReadProcessedTagValue
 multiDataSourceHistoricalValues = await client.DataSources.ReadProcessedTagValuesAsync(
     new ReadProcessedTagValuesRequest() {
         Tags = new Dictionary<string, string[]>() {
-            ["MyDataSource"] = new[] { "Tag1", "Tag2" },
-            ["MyOtherDataSource"] = new[] { "Tag3" }
+            ["MyDataSource"] = ["Tag1", "Tag2"],
+            ["MyOtherDataSource"] = ["Tag3"]
         },
         StartTime = DateTime.UtcNow.AddMinutes(-5),
         EndTime = DateTime.UtcNow,

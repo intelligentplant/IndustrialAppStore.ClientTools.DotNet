@@ -15,20 +15,16 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
     /// <summary>
     /// Client for performing account transactions.
     /// </summary>
-    /// <typeparam name="TContext">
-    ///   The context type that is passed to API calls to allow authentication headers to be added 
-    ///   to outgoing requests.
-    /// </typeparam>
-    public class AccountTransactionsClient<TContext> : IasClientBase {
+    public class AccountTransactionsClient : IasClientBase {
 
         /// <summary>
-        /// Creates a new <see cref="AccountTransactionsClient{TContext}"/> object.
+        /// Creates a new <see cref="AccountTransactionsClient"/> object.
         /// </summary>
         /// <param name="httpClient">
         ///   The HTTP client to use.
         /// </param>
         /// <param name="options">
-        ///   The HTTP client options.
+        ///   The client options.
         /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
@@ -36,7 +32,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public AccountTransactionsClient(HttpClient httpClient, IndustrialAppStoreHttpClientOptions options)
+        internal AccountTransactionsClient(HttpClient httpClient, IndustrialAppStoreHttpClientOptions options)
             : base(httpClient, options) { }
 
 
@@ -45,12 +41,6 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// </summary>
         /// <param name="request">
         ///   The request.
-        /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
         /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
@@ -66,7 +56,6 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// </exception>
         public async Task<DebitUserResponse> DebitUserAsync(
             DebitUserRequest request,
-            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -77,8 +66,8 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
             var url = GetAbsoluteUrl("api/resource/debit");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<double>(request.DebitAmount, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request.DebitAmount)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -133,12 +122,6 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// <param name="request">
         ///   The refund request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -154,7 +137,6 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// </exception>
         public async Task<RefundUserResponse> RefundUserAsync(
             RefundUserRequest request,
-            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -165,8 +147,8 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
             var url = GetAbsoluteUrl("api/resource/refund");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<string>(request.TransactionRef, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request.TransactionRef)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {

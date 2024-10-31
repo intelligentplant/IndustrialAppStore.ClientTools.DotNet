@@ -1,8 +1,5 @@
-# Ignore template project files generated at compile time.
-templates/iasmvc/*.csproj
+# Ignore all files copied to template folders at compile time.
+templates/iasmvc/*
 
-# Ignore files obtained from libman.
-templates/iasmvc/wwwroot/lib/*
-
-# Allow publish profiles included in templates
-!templates/iasmvc/Properties/PublishProfiles/*.pubxml
+# Ensure that the template configuration files are tracked.
+!templates/iasmvc/.template.config

@@ -4,7 +4,7 @@
   "classifications": [ "Industrial App Store", "Web", "MVC", "IoT" ],
   "identity": "IntelligentPlant.IndustrialAppStore.StarterMvcTemplate",
   "name": "Industrial App Store App",
-  "description": "A project template for creating an ASP.NET Core application that integrates with Intelligent Plant's Industrial App Store.",
+  "description": "A project template for creating an ASP.NET Core MVC application that integrates with Intelligent Plant's Industrial App Store.",
   "shortName": "iasmvc",
   "tags": {
     "language": "C#",
@@ -21,32 +21,24 @@
       "datatype": "choice",
       "choices": [
         {
+          "choice": "net9.0",
+          "description": ".NET 9.0"
+        },
+        {
           "choice": "net8.0",
           "description": ".NET 8.0"
-        },
-        {
-          "choice": "net7.0",
-          "description": ".NET 7.0"
-        },
-        {
-          "choice": "net6.0",
-          "description": ".NET 6.0"
         }
       ],
       "defaultValue": "net8.0",
-      "replaces": "net6.0"
+      "replaces": "net8.0"
     },
     "IsNet80": {
       "type": "computed",
       "value": "(Framework == \"net8.0\")"
     },
-    "IsNet70": {
+    "IsNet90": {
       "type": "computed",
-      "value": "(Framework == \"net7.0\")"
-    },
-    "IsNet60": {
-      "type": "computed",
-      "value": "(Framework == \"net6.0\")"
+      "value": "(Framework == \"net9.0\")"
     },
     "AppName": {
       "type": "parameter",
@@ -97,7 +89,7 @@
         "sourceVariableName": "HttpsPortGenerated",
         "fallbackVariableName": "HttpsPortGenerated"
       },
-      "replaces": "44300"
+      "replaces": "44346"
     }
   },
   "primaryOutputs": [
@@ -108,22 +100,7 @@
   "defaultName": "IasWebApplication",
   "sources": [
     {
-      "modifiers": [
-        {
-          "condition": "(!IsNetCore31)",
-          "exclude": [
-            "Program_netcoreapp31.cs",
-            "Startup.cs"
-          ]
-        },
-        {
-          "condition": "(IsNetCore31)",
-          "exclude": "Program.cs",
-          "rename": {
-            "Program_netcoreapp31.cs": "Program.cs"
-          }
-        }
-      ]
+      "modifiers": []
     }
   ],
   "postActions": [

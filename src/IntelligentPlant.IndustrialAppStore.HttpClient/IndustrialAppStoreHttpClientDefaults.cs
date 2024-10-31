@@ -1,7 +1,7 @@
 ﻿namespace IntelligentPlant.IndustrialAppStore.Client {
 
     /// <summary>
-    /// Defines constants used by <see cref="IndustrialAppStoreHttpClient{TContext}"/>.
+    /// Defines constants used by <see cref="IndustrialAppStoreHttpClient"/>.
     /// </summary>
     public static class IndustrialAppStoreHttpClientDefaults {
 

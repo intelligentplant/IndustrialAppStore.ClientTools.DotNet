@@ -3,7 +3,7 @@
     "Policies": {
       "_": {
         "Policy": {
-          "default-src": [ "'self'", "wss://localhost:52132", "ws://localhost:52133" ]
+          "default-src": [ "'self'", "http://localhost:*", "https://localhost:*", "ws://localhost:*", "wss://localhost:*" ]
         }
       }
     }

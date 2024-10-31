@@ -10,7 +10,7 @@ namespace IntelligentPlant.IndustrialAppStore.AspNetCore {
     /// <summary>
     /// Service that defines the default content security policy provider to add to HTTP responses.
     /// </summary>
-    public class ContentSecurityPolicyProvider : IDisposable {
+    public partial class ContentSecurityPolicyProvider : IDisposable {
 
         /// <summary>
         /// <see cref="IConfiguration"/> section to load the default policy from.
@@ -25,17 +25,7 @@ namespace IntelligentPlant.IndustrialAppStore.AspNetCore {
         /// <summary>
         /// The logger for the provider.
         /// </summary>
-        private readonly ILogger _logger;
-
-        /// <summary>
-        /// Logs when policies are loaded or reloaded.
-        /// </summary>
-        private static readonly Action<ILogger, Exception?> s_logPoliciesLoaded = LoggerMessage.Define(LogLevel.Debug, new EventId(1, "PoliciesLoaded"), Resources.Log_ContentSecurityPoliciesLoaded);
-        
-        /// <summary>
-        /// Logs when a policy is applied.
-        /// </summary>
-        private static readonly Action<ILogger, string, int, Exception?> s_logPolicyApplied = LoggerMessage.Define<string, int>(LogLevel.Trace, new EventId(2, "PolicyApplied"), Resources.Log_ContentSecurityPolicyApplied);
+        private readonly ILogger<ContentSecurityPolicyProvider> _logger;
 
         /// <summary>
         /// The <see cref="IConfiguration"/> to load the default policy from.
@@ -130,7 +120,7 @@ namespace IntelligentPlant.IndustrialAppStore.AspNetCore {
                 }
             }
             finally {
-                s_logPoliciesLoaded(_logger, null);
+                LogPoliciesLoaded();
             }
         }
 
@@ -189,7 +179,7 @@ namespace IntelligentPlant.IndustrialAppStore.AspNetCore {
                             }
                         }
 
-                        s_logPolicyApplied(_logger, policy.Name, policy.Priority, null);
+                        LogPolicyApplied(policy.Name, policy.Priority);
                     }
                 }
             }
@@ -211,5 +201,13 @@ namespace IntelligentPlant.IndustrialAppStore.AspNetCore {
             _lock.Dispose();
             _disposed = true;
         }
+
+
+        [LoggerMessage(1, LogLevel.Debug, "Content Security Policy was loaded from configuration.")]
+        partial void LogPoliciesLoaded();
+
+        [LoggerMessage(2, LogLevel.Trace, "Applied CSP '{name}' (priority: {priority}).")]
+        partial void LogPolicyApplied(string name, int priority);
+
     }
 }

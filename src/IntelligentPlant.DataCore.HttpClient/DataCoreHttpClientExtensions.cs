@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
 using IntelligentPlant.DataCore.Client.Clients;
-using IntelligentPlant.DataCore.Client.Queries;
 using IntelligentPlant.DataCore.Client.Model;
 using IntelligentPlant.DataCore.Client.Model.Scripting;
+using IntelligentPlant.DataCore.Client.Queries;
+using IntelligentPlant.Relativity;
 
 namespace IntelligentPlant.DataCore.Client {
 
@@ -16,7 +18,7 @@ namespace IntelligentPlant.DataCore.Client {
     /// </summary>
     public static class DataCoreHttpClientExtensions {
 
-        #region [ Helper Methods ]
+        #region [ Timestamp/Sample Interval Parsing ]
 
         /// <summary>
         /// Converts an absolute or relative time stamp into a UTC <see cref="DateTime"/>.
@@ -24,29 +26,23 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="absoluteOrRelativeTime">
         ///   The absolute or relative time stamp literal.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use for conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The time zone that <paramref name="absoluteOrRelativeTime"/> is assumed to be in. 
-        ///   Specify <see langword="null"/> to assume local time.
-        /// </param>
         /// <param name="parameterName">
         ///   The name of the parameter in the calling method that is being parsed. This will be 
         ///   included in the <see cref="ArgumentException"/> thrown if <paramref name="absoluteOrRelativeTime"/> 
         ///   cannot be converted to a <see cref="DateTime"/>.
         /// </param>
-        /// <param name="utcTime">
+        /// <returns>
         ///   The parsed UTC <see cref="DateTime"/>.
-        /// </param>
-        private static void ParseTimeStamp(string absoluteOrRelativeTime, CultureInfo? cultureInfo, TimeZoneInfo? timeZone, string parameterName, out DateTime utcTime) {
-            if (!IntelligentPlant.Relativity.RelativityParser.TryGetParser(cultureInfo, out var parser)) {
-                parser = IntelligentPlant.Relativity.RelativityParser.Default;
-            }
-            
-            if (!parser.TryConvertToUtcDateTime(absoluteOrRelativeTime, out utcTime, timeZone ?? TimeZoneInfo.Local)) {
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        ///   <paramref name="absoluteOrRelativeTime"/> is not a valid absolute or relative timestamp.
+        /// </exception>
+        private static DateTime ParseTimestamp(string absoluteOrRelativeTime, string parameterName) { 
+            if (!RelativityParser.Current.TryConvertToUtcDateTime(absoluteOrRelativeTime, null, out var result)) {
                 throw new ArgumentException(Resources.Error_InvalidTimeStamp, parameterName);
             }
+
+            return result;
         }
 
 
@@ -57,20 +53,265 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="sampleInterval">
         ///   The long-hand or short-hand time span literal.
         /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use for conversions.
+        /// <param name="parameterName">
+        ///   The name of the parameter in the calling method that is being parsed. This will be 
+        ///   included in the <see cref="ArgumentException"/> thrown if <paramref name="sampleInterval"/> 
+        ///   cannot be converted to a <see cref="TimeSpan"/>.
         /// </param>
-        /// <param name="ts">
+        /// <returns>
         ///   The parsed <see cref="TimeSpan"/>.
-        /// </param>
-        private static void ParseSampleInterval(string sampleInterval, CultureInfo? cultureInfo, out TimeSpan ts) {
-            if (!IntelligentPlant.Relativity.RelativityParser.TryGetParser(cultureInfo, out var parser)) {
-                parser = IntelligentPlant.Relativity.RelativityParser.Default;
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        ///   <paramref name="sampleInterval"/> is not a valid sample interval.
+        /// </exception>
+        private static TimeSpan ParseSampleInterval(string sampleInterval, string parameterName) {
+            if (!RelativityParser.Current.TryConvertToTimeSpan(sampleInterval, out var result)) {
+                throw new ArgumentException(Resources.Error_InvalidSampleInterval, parameterName);
             }
 
-            if (!parser.TryConvertToTimeSpan(sampleInterval, out ts)) {
-                throw new ArgumentException(Resources.Error_InvalidSampleInterval, nameof(sampleInterval));
-            }
+            return result;
+        }
+
+        #endregion
+
+        #region [ General HTTP Requests ]
+
+        /// <summary>
+        /// Sends an HTTP request using the underlying <see cref="HttpClient"/>.
+        /// </summary>
+        /// <param name="client">
+        ///   The <see cref="DataCoreHttpClient"/>.
+        /// </param>
+        /// <param name="request">
+        ///   The request to send.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="request"/> is <see langword="null"/>.
+        /// </exception>
+        public static async Task<HttpResponseMessage> SendAsync(this DataCoreHttpClient client, HttpRequestMessage request, CancellationToken cancellationToken = default) {
+            return await client.HttpClient.SendAsync(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken).ConfigureAwait(false);
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP GET request using the underlying <see cref="HttpClient"/>.
+        /// </summary>
+        /// <param name="client">
+        ///   The <see cref="DataCoreHttpClient"/>.
+        /// </param>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public static async Task<HttpResponseMessage> GetAsync(this DataCoreHttpClient client, string requestUri, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUri ?? throw new ArgumentNullException(nameof(requestUri)));
+            var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP GET request using the underlying <see cref="HttpClient"/>.
+        /// </summary>
+        /// <param name="client">
+        ///   The <see cref="DataCoreHttpClient"/>.
+        /// </param>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public static async Task<HttpResponseMessage> GetAsync(this DataCoreHttpClient client, Uri requestUri, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUri ?? throw new ArgumentNullException(nameof(requestUri)));
+            var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP POST request with a JSON-encoded request body using the underlying 
+        /// <see cref="HttpClient"/>.
+        /// </summary>
+        /// <param name="client">
+        ///   The <see cref="DataCoreHttpClient"/>.
+        /// </param>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="request">
+        ///   The request object to serialize to JSON.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public static async Task<HttpResponseMessage> PostAsJsonAsync<TRequest>(this DataCoreHttpClient client, string requestUri, TRequest request, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = DataCoreHttpClient.CreateJsonContent(request) };
+            var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP POST request with a JSON-encoded request body using the underlying 
+        /// <see cref="HttpClient"/>.
+        /// </summary>
+        /// <param name="client">
+        ///   The <see cref="DataCoreHttpClient"/>.
+        /// </param>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="request">
+        ///   The request object to serialize to JSON.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public static async Task<HttpResponseMessage> PostAsJsonAsync<TRequest>(this DataCoreHttpClient client, Uri requestUri, TRequest request, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = DataCoreHttpClient.CreateJsonContent(request) };
+            var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP PUT request with a JSON-encoded request body using the underlying 
+        /// <see cref="HttpClient"/>.
+        /// </summary>
+        /// <param name="client">
+        ///   The <see cref="DataCoreHttpClient"/>.
+        /// </param>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="request">
+        ///   The request object to serialize to JSON.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public static async Task<HttpResponseMessage> PutAsJsonAsync<TRequest>(this DataCoreHttpClient client, string requestUri, TRequest request, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Put, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = DataCoreHttpClient.CreateJsonContent(request) };
+            var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP PUT request with a JSON-encoded request body using the underlying 
+        /// <see cref="HttpClient"/>.
+        /// </summary>
+        /// <param name="client">
+        ///   The <see cref="DataCoreHttpClient"/>.
+        /// </param>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="request">
+        ///   The request object to serialize to JSON.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public static async Task<HttpResponseMessage> PutAsJsonAsync<TRequest>(this DataCoreHttpClient client, Uri requestUri, TRequest request, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Put, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = DataCoreHttpClient.CreateJsonContent(request) };
+            var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP DELETE request using the underlying <see cref="HttpClient"/>.
+        /// </summary>
+        /// <param name="client">
+        ///   The <see cref="DataCoreHttpClient"/>.
+        /// </param>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public static async Task<HttpResponseMessage> DeleteAsync<TRequest>(this DataCoreHttpClient client, string requestUri, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, requestUri ?? throw new ArgumentNullException(nameof(requestUri)));
+            var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
+        }
+
+
+        /// <summary>
+        /// Sends an HTTP DELETE request using the underlying <see cref="HttpClient"/>.
+        /// </summary>
+        /// <param name="client">
+        ///   The <see cref="DataCoreHttpClient"/>.
+        /// </param>
+        /// <param name="requestUri">
+        ///   The request URL.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return the HTTP response message.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="requestUri"/> is <see langword="null"/>.
+        /// </exception>
+        public static async Task<HttpResponseMessage> DeleteAsync<TRequest>(this DataCoreHttpClient client, Uri requestUri, CancellationToken cancellationToken = default) {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, requestUri ?? throw new ArgumentNullException(nameof(requestUri)));
+            var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            return httpResponse;
         }
 
         #endregion
@@ -80,13 +321,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Finds tags on the specified data source.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -108,29 +342,22 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="pageSize">
         ///   The page size for the query.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The search results.
         /// </returns>
-        public static Task<IEnumerable<TagSearchResult>> FindTagsAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client, 
+        public static Task<IEnumerable<TagSearchResult>> FindTagsAsync(
+            this DataSourcesClient client, 
             string dataSourceName, 
             string? nameFilter = "*", 
             string? descriptionFilter = null, 
             string? unitsFilter = null,
             int page = 1,
             int pageSize = 20,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
@@ -143,8 +370,7 @@ namespace IntelligentPlant.DataCore.Client {
                         PageSize = pageSize,
                         Page = page
                     }
-                }, 
-                context, 
+                },
                 cancellationToken
             );
         }
@@ -153,13 +379,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Finds script tags on the specified data source.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -181,29 +400,22 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="pageSize">
         ///   The page size for the query.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The search results.
         /// </returns>
-        public static Task<IEnumerable<ScriptTagDefinition>> FindScriptTagsAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static Task<IEnumerable<ScriptTagDefinition>> FindScriptTagsAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             string? nameFilter = "*",
             string? descriptionFilter = null,
             string? unitsFilter = null,
             int page = 1,
             int pageSize = 20,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
@@ -217,7 +429,6 @@ namespace IntelligentPlant.DataCore.Client {
                         Page = page
                     }
                 },
-                context,
                 cancellationToken
             );
         }
@@ -226,13 +437,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets script tags on the specified data source.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -242,25 +446,18 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="namesOrIds">
         ///   The names or IDs of the script tags to retrieve.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The search results.
         /// </returns>
-        public static Task<IEnumerable<ScriptTagDefinition>> GetScriptTagsAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static Task<IEnumerable<ScriptTagDefinition>> GetScriptTagsAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> namesOrIds,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -270,7 +467,6 @@ namespace IntelligentPlant.DataCore.Client {
                     DataSourceName = dataSourceName,
                     TagNamesOrIds = namesOrIds?.ToArray()!
                 },
-                context,
                 cancellationToken
             );
         }
@@ -279,13 +475,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets a single script tag on the specified data source.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -295,25 +484,18 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="nameOrId">
         ///   The name or ID of the script tag to retrieve.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The search results.
         /// </returns>
-        public static Task<ScriptTagDefinition> GetScriptTagAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static Task<ScriptTagDefinition> GetScriptTagAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             string nameOrId,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
@@ -324,25 +506,17 @@ namespace IntelligentPlant.DataCore.Client {
                     DataSourceName = dataSourceName,
                     TagNameOrId = nameOrId
                 },
-                context,
                 cancellationToken
             );
         }
 
         #endregion
 
-        #region [ NOW Tag Value Queries ]
+        #region [ Snapshot Tag Value Queries ]
 
         /// <summary>
         /// Gets snapshot (current) tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -352,25 +526,18 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The snapshot tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<IDictionary<string, SnapshotTagValueDictionary>> ReadSnapshotTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static Task<IDictionary<string, SnapshotTagValueDictionary>> ReadSnapshotTagValuesAsync(
+            this DataSourcesClient client,
             IDictionary<string, string[]> tagMap,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -380,7 +547,6 @@ namespace IntelligentPlant.DataCore.Client {
                     Tags = tagMap,
                     QueryProperties = properties!
                 },
-                context,
                 cancellationToken
             );
         }
@@ -389,13 +555,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets snapshot (current) tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -408,26 +567,19 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The snapshot tag values, indexed by tag name.
         /// </returns>
-        public static async Task<SnapshotTagValueDictionary?> ReadSnapshotTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<SnapshotTagValueDictionary?> ReadSnapshotTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -443,7 +595,6 @@ namespace IntelligentPlant.DataCore.Client {
                     },
                     QueryProperties = properties
                 },
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -457,13 +608,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets raw historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -483,28 +627,21 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadRawTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadRawTagValuesAsync(
+            this DataSourcesClient client,
             IDictionary<string, string[]> tagMap,
             DateTime utcStartTime,
             DateTime utcEndTime,
             int pointCount,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
@@ -518,7 +655,6 @@ namespace IntelligentPlant.DataCore.Client {
                     PointCount = pointCount,
                     QueryProperties = properties
                 },
-                context,
                 cancellationToken
             );
         }
@@ -527,13 +663,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets raw historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -553,49 +682,32 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadRawTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   <paramref name="absoluteOrRelativeStartTime"/> and <paramref name="absoluteOrRelativeEndTime"/> 
+        ///   are parsed using <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadRawTagValuesAsync(
+            this DataSourcesClient client,
             IDictionary<string, string[]> tagMap,
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
             int pointCount,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
-
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
-
+        ) {
             return ReadRawTagValuesAsync(
                 client,
                 tagMap,
-                utcStartTime,
-                utcEndTime,
+                ParseTimestamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime)),
+                ParseTimestamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime)),
                 pointCount,
                 properties,
-                context,
                 cancellationToken
             );
         }
@@ -604,13 +716,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets raw historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -633,29 +738,22 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static async Task<HistoricalTagValuesDictionary?> ReadRawTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<HistoricalTagValuesDictionary?> ReadRawTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             DateTime utcStartTime,
             DateTime utcEndTime,
             int pointCount,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (string.IsNullOrWhiteSpace(dataSourceName)) {
                 throw new ArgumentException(Resources.Error_DataSourceNameIsRequired, nameof(dataSourceName));
@@ -664,13 +762,12 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await ReadRawTagValuesAsync(
                 client,
                 new Dictionary<string, string[]>() {
-                        { dataSourceName, tagNames?.Distinct()?.ToArray()! }
-                    },
+                    { dataSourceName, tagNames?.Distinct()?.ToArray()! }
+                },
                 utcStartTime,
                 utcEndTime,
                 pointCount,
                 properties,
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -681,13 +778,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets raw historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -710,51 +800,34 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<HistoricalTagValuesDictionary?> ReadRawTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   <paramref name="absoluteOrRelativeStartTime"/> and <paramref name="absoluteOrRelativeEndTime"/> 
+        ///   are parsed using <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<HistoricalTagValuesDictionary?> ReadRawTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
             int pointCount,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
-
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
-
+        ) {
             return ReadRawTagValuesAsync(
                 client, 
                 dataSourceName, 
-                tagNames, 
-                utcStartTime, 
-                utcEndTime, 
+                tagNames,
+                ParseTimestamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime)),
+                ParseTimestamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime)), 
                 pointCount, 
                 properties, 
-                context, 
                 cancellationToken
             );
         }
@@ -767,13 +840,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// Gets visualization-friendly (plot) historical tag values, suitable for displaying on a 
         /// chart.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -797,28 +863,21 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadPlotTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadPlotTagValuesAsync(
+            this DataSourcesClient client,
             IDictionary<string, string[]> tagMap,
             DateTime utcStartTime,
             DateTime utcEndTime,
             int intervals,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
@@ -832,7 +891,6 @@ namespace IntelligentPlant.DataCore.Client {
                     Intervals = intervals,
                     QueryProperties = properties
                 },
-                context,
                 cancellationToken
             );
         }
@@ -842,13 +900,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// Gets visualization-friendly (plot) historical tag values, suitable for displaying on a 
         /// chart.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -872,49 +923,32 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadPlotTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   <paramref name="absoluteOrRelativeStartTime"/> and <paramref name="absoluteOrRelativeEndTime"/> 
+        ///   are parsed using <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadPlotTagValuesAsync(
+            this DataSourcesClient client,
             IDictionary<string, string[]> tagMap,
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
             int intervals,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
-
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
-
+        ) {
             return ReadPlotTagValuesAsync(
                 client,
                 tagMap,
-                utcStartTime,
-                utcEndTime,
+                ParseTimestamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime)),
+                ParseTimestamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime)),
                 intervals,
                 properties,
-                context,
                 cancellationToken
             );
         }
@@ -924,13 +958,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// Gets visualization-friendly (plot) historical tag values, suitable for displaying on a 
         /// chart.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -957,29 +984,22 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static async Task<HistoricalTagValuesDictionary?> ReadPlotTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<HistoricalTagValuesDictionary?> ReadPlotTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             DateTime utcStartTime,
             DateTime utcEndTime,
             int intervals,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (string.IsNullOrWhiteSpace(dataSourceName)) {
                 throw new ArgumentException(Resources.Error_DataSourceNameIsRequired, nameof(dataSourceName));
@@ -988,13 +1008,12 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await ReadPlotTagValuesAsync(
                 client,
                 new Dictionary<string, string[]>() {
-                        { dataSourceName, tagNames?.Distinct()?.ToArray()! }
-                    },
+                    [dataSourceName] = tagNames?.Distinct()?.ToArray()!
+                },
                 utcStartTime,
                 utcEndTime,
                 intervals,
                 properties,
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -1006,13 +1025,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// Gets visualization-friendly (plot) historical tag values, suitable for displaying on a 
         /// chart.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1039,51 +1051,34 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<HistoricalTagValuesDictionary?> ReadPlotTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   <paramref name="absoluteOrRelativeStartTime"/> and <paramref name="absoluteOrRelativeEndTime"/> 
+        ///   are parsed using <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<HistoricalTagValuesDictionary?> ReadPlotTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
             int intervals,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
-
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
-
+        ) {
             return ReadPlotTagValuesAsync(
                 client,
                 dataSourceName,
                 tagNames,
-                utcStartTime,
-                utcEndTime,
+                ParseTimestamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime)),
+                ParseTimestamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime)),
                 intervals,
                 properties,
-                context,
                 cancellationToken
             );
         }
@@ -1095,13 +1090,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets processed (aggregated) historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1125,29 +1113,22 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadProcessedTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadProcessedTagValuesAsync(
+            this DataSourcesClient client,
             IDictionary<string, string[]> tagMap,
             DateTime utcStartTime,
             DateTime utcEndTime,
             string dataFunction,
             TimeSpan sampleInterval,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
@@ -1162,7 +1143,6 @@ namespace IntelligentPlant.DataCore.Client {
                     SampleInterval = sampleInterval,
                     QueryProperties = properties
                 },
-                context,
                 cancellationToken
             );
         }
@@ -1171,13 +1151,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets processed (aggregated) historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1200,45 +1173,33 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in the sample interval conversion.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadProcessedTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   <paramref name="sampleInterval"/> is parsed using <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadProcessedTagValuesAsync(
+            this DataSourcesClient client,
             IDictionary<string, string[]> tagMap,
             DateTime utcStartTime,
             DateTime utcEndTime,
             string dataFunction,
             string sampleInterval,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
-
-            ParseSampleInterval(sampleInterval, cultureInfo, out var ts);
-
+        ) {
             return ReadProcessedTagValuesAsync(
                 client,
                 tagMap,
                 utcStartTime,
                 utcEndTime,
                 dataFunction,
-                ts,
+                ParseSampleInterval(sampleInterval, nameof(sampleInterval)),
                 properties,
-                context,
                 cancellationToken
             );
         }
@@ -1247,13 +1208,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets processed (aggregated) historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1277,51 +1231,34 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadProcessedTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   <paramref name="absoluteOrRelativeStartTime"/> and <paramref name="absoluteOrRelativeEndTime"/> 
+        ///   are parsed using <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadProcessedTagValuesAsync(
+            this DataSourcesClient client,
             IDictionary<string, string[]> tagMap,
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
             string dataFunction,
             TimeSpan sampleInterval,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
-
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
-
+        ) {
             return ReadProcessedTagValuesAsync(
                 client,
                 tagMap,
-                utcStartTime,
-                utcEndTime,
+                ParseTimestamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime)),
+                ParseTimestamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime)),
                 dataFunction,
                 sampleInterval,
                 properties,
-                context,
                 cancellationToken
             );
         }
@@ -1330,13 +1267,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets processed (aggregated) historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1359,52 +1289,34 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp and sample interval conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadProcessedTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   <paramref name="absoluteOrRelativeStartTime"/>, <paramref name="absoluteOrRelativeEndTime"/> 
+        ///   and <paramref name="sampleInterval"/> are parsed using <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadProcessedTagValuesAsync(
+            this DataSourcesClient client,
             IDictionary<string, string[]> tagMap,
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
             string dataFunction,
             string sampleInterval,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
-
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
-
+        ) {
             return ReadProcessedTagValuesAsync(
                 client,
                 tagMap,
-                utcStartTime,
-                utcEndTime,
+                ParseTimestamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime)),
+                ParseTimestamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime)),
                 dataFunction,
                 sampleInterval,
                 properties,
-                context,
-                cultureInfo,
                 cancellationToken
             );
         }
@@ -1413,13 +1325,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets processed (aggregated) historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1446,20 +1351,14 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static async Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             DateTime utcStartTime,
@@ -1467,9 +1366,8 @@ namespace IntelligentPlant.DataCore.Client {
             string dataFunction,
             TimeSpan sampleInterval,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (string.IsNullOrWhiteSpace(dataSourceName)) {
                 throw new ArgumentException(Resources.Error_DataSourceNameIsRequired, nameof(dataSourceName));
@@ -1485,7 +1383,6 @@ namespace IntelligentPlant.DataCore.Client {
                 dataFunction,
                 sampleInterval,
                 properties,
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -1496,13 +1393,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets processed (aggregated) historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1528,23 +1418,17 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in the sample interval conversion.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   <paramref name="sampleInterval"/> is parsed using <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             DateTime utcStartTime,
@@ -1552,13 +1436,8 @@ namespace IntelligentPlant.DataCore.Client {
             string dataFunction,
             string sampleInterval,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
-
-            ParseSampleInterval(sampleInterval, cultureInfo, out var ts);
-
+        ) {
             return ReadProcessedTagValuesAsync(
                 client,
                 dataSourceName,
@@ -1566,9 +1445,8 @@ namespace IntelligentPlant.DataCore.Client {
                 utcStartTime,
                 utcEndTime,
                 dataFunction,
-                ts,
+                ParseSampleInterval(sampleInterval, nameof(sampleInterval)),
                 properties,
-                context,
                 cancellationToken
             );
         }
@@ -1577,13 +1455,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets processed (aggregated) historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1610,27 +1481,18 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   <paramref name="absoluteOrRelativeStartTime"/> and <paramref name="absoluteOrRelativeEndTime"/> 
+        ///   are parsed using <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             string absoluteOrRelativeStartTime,
@@ -1638,25 +1500,17 @@ namespace IntelligentPlant.DataCore.Client {
             string dataFunction,
             TimeSpan sampleInterval,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
-
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
-
+        ) {
             return ReadProcessedTagValuesAsync(
                 client,
                 dataSourceName,
                 tagNames,
-                utcStartTime,
-                utcEndTime,
+                ParseTimestamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime)),
+                ParseTimestamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime)),
                 dataFunction,
                 sampleInterval,
                 properties,
-                context,
                 cancellationToken
             );
         }
@@ -1665,13 +1519,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets processed (aggregated) historical tag values.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1698,27 +1545,18 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp and sample interval conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   <paramref name="absoluteOrRelativeStartTime"/>, <paramref name="absoluteOrRelativeEndTime"/> 
+        ///   and <paramref name="sampleInterval"/> are parsed using <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<HistoricalTagValuesDictionary?> ReadProcessedTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             string absoluteOrRelativeStartTime,
@@ -1726,14 +1564,8 @@ namespace IntelligentPlant.DataCore.Client {
             string dataFunction,
             string sampleInterval,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
-
-            ParseSampleInterval(sampleInterval, cultureInfo, out var ts);
-
+        ) {
             return ReadProcessedTagValuesAsync(
                 client,
                 dataSourceName,
@@ -1741,11 +1573,8 @@ namespace IntelligentPlant.DataCore.Client {
                 absoluteOrRelativeStartTime,
                 absoluteOrRelativeEndTime,
                 dataFunction,
-                ts,
+                ParseSampleInterval(sampleInterval, nameof(sampleInterval)),
                 properties,
-                context,
-                cultureInfo,
-                timeZone,
                 cancellationToken
             );
         }
@@ -1757,13 +1586,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets historical tag values at specific sample times.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1776,26 +1598,19 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadTagValuesAtTimesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client, 
+        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadTagValuesAtTimesAsync(
+            this DataSourcesClient client, 
             IDictionary<string, string[]> tagMap, 
             IEnumerable<DateTime> utcSampleTimes, 
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
@@ -1807,7 +1622,6 @@ namespace IntelligentPlant.DataCore.Client {
                     UtcSampleTimes = utcSampleTimes?.Distinct()?.ToArray()!,
                     QueryProperties = properties
                 },
-                context,
                 cancellationToken
             );
         }
@@ -1816,13 +1630,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets historical tag values at specific sample times.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1835,35 +1642,23 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadTagValuesAtTimesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   The items in <paramref name="absoluteOrRelativeSampleTimes"/> are parsed using 
+        ///   <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadTagValuesAtTimesAsync(
+            this DataSourcesClient client,
             IDictionary<string, string[]> tagMap,
             IEnumerable<string> absoluteOrRelativeSampleTimes,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
@@ -1872,8 +1667,7 @@ namespace IntelligentPlant.DataCore.Client {
             var sampleTimes = new List<DateTime>();
             if (absoluteOrRelativeSampleTimes != null) {
                 foreach (var item in absoluteOrRelativeSampleTimes) {
-                    ParseTimeStamp(item, cultureInfo, timeZone, nameof(absoluteOrRelativeSampleTimes), out var dt);
-                    sampleTimes.Add(dt);
+                    sampleTimes.Add(ParseTimestamp(item, nameof(absoluteOrRelativeSampleTimes)));
                 }
             }
 
@@ -1883,7 +1677,6 @@ namespace IntelligentPlant.DataCore.Client {
                     UtcSampleTimes = sampleTimes.Distinct().ToArray(),
                     QueryProperties = properties
                 },
-                context,
                 cancellationToken
             );
         }
@@ -1892,13 +1685,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets historical tag values at specific sample times.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1914,27 +1700,20 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static async Task<HistoricalTagValuesDictionary?> ReadTagValuesAtTimesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<HistoricalTagValuesDictionary?> ReadTagValuesAtTimesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             IEnumerable<DateTime> utcSampleTimes,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (string.IsNullOrWhiteSpace(dataSourceName)) {
                 throw new ArgumentException(Resources.Error_DataSourceNameIsRequired, nameof(dataSourceName));
@@ -1947,7 +1726,6 @@ namespace IntelligentPlant.DataCore.Client {
                 },
                 utcSampleTimes,
                 properties,
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -1958,13 +1736,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Gets historical tag values at specific sample times.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The Data Core client.
         /// </param>
@@ -1980,36 +1751,20 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="properties">
         ///   Bespoke query properties.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
-        public static async Task<HistoricalTagValuesDictionary?> ReadTagValuesAtTimesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<HistoricalTagValuesDictionary?> ReadTagValuesAtTimesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             IEnumerable<string> absoluteOrRelativeSampleTimes,
             IDictionary<string, string>? properties = null,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
 
             if (string.IsNullOrWhiteSpace(dataSourceName)) {
                 throw new ArgumentException(Resources.Error_DataSourceNameIsRequired, nameof(dataSourceName));
@@ -2018,8 +1773,7 @@ namespace IntelligentPlant.DataCore.Client {
             var sampleTimes = new List<DateTime>();
             if (absoluteOrRelativeSampleTimes != null) {
                 foreach (var item in absoluteOrRelativeSampleTimes) {
-                    ParseTimeStamp(item, cultureInfo, timeZone, nameof(absoluteOrRelativeSampleTimes), out var dt);
-                    sampleTimes.Add(dt);
+                    sampleTimes.Add(ParseTimestamp(item, nameof(absoluteOrRelativeSampleTimes)));
                 }
             }
 
@@ -2030,7 +1784,6 @@ namespace IntelligentPlant.DataCore.Client {
                 },
                 sampleTimes.Distinct().ToArray(),
                 properties,
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -2044,13 +1797,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Writes values to a data source's snapshot.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2060,12 +1806,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="values">
         ///   The values to write.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -2073,13 +1813,12 @@ namespace IntelligentPlant.DataCore.Client {
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for each tag 
         ///   that was written to.
         /// </returns>
-        public static Task<IEnumerable<TagValueUpdateResponse>> WriteSnapshotTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static Task<IEnumerable<TagValueUpdateResponse>> WriteSnapshotTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<TagValue> values,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -2091,20 +1830,13 @@ namespace IntelligentPlant.DataCore.Client {
             return client.WriteSnapshotTagValuesAsync(new WriteTagValuesRequest() { 
                 DataSourceName = dataSourceName,
                 Values = values?.Where(x => x != null).ToArray()!
-            }, context, cancellationToken);
+            }, cancellationToken);
         }
 
 
         /// <summary>
         /// Writes numeric values to a single tag in a data source's snapshot.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2120,27 +1852,20 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="status">
         ///   The quality status for the values.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for the tag.
         /// </returns>
-        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             string tagName,
             IDictionary<DateTime, double> values,
             TagValueStatus status = TagValueStatus.Good,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -2157,7 +1882,6 @@ namespace IntelligentPlant.DataCore.Client {
                 client,
                 dataSourceName,
                 values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, x.Value, null, status, null))!,
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -2168,13 +1892,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Writes text values to a single tag in a data source's snapshot.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2190,27 +1907,20 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="status">
         ///   The quality status for the values.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for the tag.
         /// </returns>
-        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             string tagName,
             IDictionary<DateTime, string> values,
             TagValueStatus status = TagValueStatus.Good,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -2227,7 +1937,6 @@ namespace IntelligentPlant.DataCore.Client {
                 client,
                 dataSourceName,
                 values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null))!,
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -2238,13 +1947,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Writes a single numeric value to a single tag in a data source's snapshot.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2263,28 +1965,21 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="status">
         ///   The quality status for the value.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for the tag.
         /// </returns>
-        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValueAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValueAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             string tagName,
             DateTime utcSampleTime,
             double value,
             TagValueStatus status = TagValueStatus.Good,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -2310,7 +2005,6 @@ namespace IntelligentPlant.DataCore.Client {
                         null
                     )
                 },
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -2321,13 +2015,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Writes a single text value to a single tag in a data source's snapshot.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2346,28 +2033,21 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="status">
         ///   The quality status for the value.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for the tag.
         /// </returns>
-        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValueAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<TagValueUpdateResponse?> WriteSnapshotTagValueAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             string tagName,
             DateTime utcSampleTime,
             string value,
             TagValueStatus status = TagValueStatus.Good,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -2393,7 +2073,6 @@ namespace IntelligentPlant.DataCore.Client {
                         null
                     )
                 },
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -2404,13 +2083,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Writes values to a data source's history archive.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2420,12 +2092,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="values">
         ///   The values to write.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -2433,13 +2099,12 @@ namespace IntelligentPlant.DataCore.Client {
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for each tag 
         ///   that was written to.
         /// </returns>
-        public static Task<IEnumerable<TagValueUpdateResponse>> WriteHistoricalTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static Task<IEnumerable<TagValueUpdateResponse>> WriteHistoricalTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<TagValue> values,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -2451,20 +2116,13 @@ namespace IntelligentPlant.DataCore.Client {
             return client.WriteHistoricalTagValuesAsync(new WriteTagValuesRequest() {
                 DataSourceName = dataSourceName,
                 Values = values?.Where(x => x != null).ToArray()!
-            }, context, cancellationToken);
+            }, cancellationToken);
         }
 
 
         /// <summary>
         /// Writes numeric values to a single tag in a data source's history archive.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2480,12 +2138,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="status">
         ///   The quality status for the values.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -2493,15 +2145,14 @@ namespace IntelligentPlant.DataCore.Client {
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for each tag 
         ///   that was written to.
         /// </returns>
-        public static async Task<TagValueUpdateResponse?> WriteHistoricalTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<TagValueUpdateResponse?> WriteHistoricalTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             string tagName,
             IDictionary<DateTime, double> values,
             TagValueStatus status = TagValueStatus.Good,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -2518,7 +2169,6 @@ namespace IntelligentPlant.DataCore.Client {
                 client,
                 dataSourceName,
                 values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, x.Value, null, status, null))!,
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -2529,13 +2179,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Writes text values to a single tag in a data source's history archive.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2551,12 +2194,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="status">
         ///   The quality status for the values.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -2564,15 +2201,14 @@ namespace IntelligentPlant.DataCore.Client {
         ///   A <see cref="TagValueUpdateResponse"/> describing the write results for each tag 
         ///   that was written to.
         /// </returns>
-        public static async Task<TagValueUpdateResponse?> WriteHistoricalTagValuesAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<TagValueUpdateResponse?> WriteHistoricalTagValuesAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             string tagName,
             IDictionary<DateTime, string> values,
             TagValueStatus status = TagValueStatus.Good,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -2589,7 +2225,6 @@ namespace IntelligentPlant.DataCore.Client {
                 client,
                 dataSourceName,
                 values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null))!,
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -2603,13 +2238,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Reads annotations from a data source.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2625,12 +2253,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="utcEndTime">
         ///   The UTC end time for the query.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -2638,15 +2260,14 @@ namespace IntelligentPlant.DataCore.Client {
         ///   A collection of <see cref="AnnotationCollection"/> describing the annotations for 
         ///   each tag in the query.
         /// </returns>
-        public static async Task<IEnumerable<AnnotationCollection>> ReadAnnotationsAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        public static async Task<IEnumerable<AnnotationCollection>> ReadAnnotationsAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             DateTime utcStartTime,
             DateTime utcEndTime,
-            TContext? context = default,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -2660,7 +2281,7 @@ namespace IntelligentPlant.DataCore.Client {
                 TagNames = tagNames?.ToArray()!,
                 StartTime = utcStartTime,
                 EndTime = utcEndTime
-            }, context, cancellationToken).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
 
             return result;
         }
@@ -2669,13 +2290,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// Reads annotations from a data source.
         /// </summary>
-        /// <typeparam name="TContext">
-        ///   The context type that is passed to API calls to allow authentication headers to be added 
-        ///   to outgoing requests.
-        /// </typeparam>
-        /// <typeparam name="TOptions">
-        ///   The options type for the client.
-        /// </typeparam>
         /// <param name="client">
         ///   The client.
         /// </param>
@@ -2691,19 +2305,6 @@ namespace IntelligentPlant.DataCore.Client {
         /// <param name="absoluteOrRelativeEndTime">
         ///   The absolute or relative end time for the query.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
-        /// <param name="cultureInfo">
-        ///   The <see cref="CultureInfo"/> to use in relative timestamp conversions.
-        /// </param>
-        /// <param name="timeZone">
-        ///   The assumed time zone in relative timestamp conversions. Specify <see langword="null"/>
-        ///   to assume UTC.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -2711,17 +2312,18 @@ namespace IntelligentPlant.DataCore.Client {
         ///   A collection of <see cref="AnnotationCollection"/> describing the annotations for 
         ///   each tag in the query.
         /// </returns>
-        public static Task<IEnumerable<AnnotationCollection>> ReadAnnotationsAsync<TContext, TOptions>(
-            this DataSourcesClient<TContext, TOptions> client,
+        /// <remarks>
+        ///   <paramref name="absoluteOrRelativeStartTime"/> and <paramref name="absoluteOrRelativeEndTime"/> 
+        ///   are parsed using <see cref="RelativityParser.Current"/>.
+        /// </remarks>
+        public static Task<IEnumerable<AnnotationCollection>> ReadAnnotationsAsync(
+            this DataSourcesClient client,
             string dataSourceName,
             IEnumerable<string> tagNames,
             string absoluteOrRelativeStartTime,
             string absoluteOrRelativeEndTime,
-            TContext? context = default,
-            CultureInfo? cultureInfo = null,
-            TimeZoneInfo? timeZone = null,
             CancellationToken cancellationToken = default
-        ) where TOptions : DataCoreHttpClientOptions {
+        ) {
             if (client == null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -2730,16 +2332,12 @@ namespace IntelligentPlant.DataCore.Client {
                 throw new ArgumentException(Resources.Error_DataSourceNameIsRequired, nameof(dataSourceName));
             }
 
-            ParseTimeStamp(absoluteOrRelativeStartTime, cultureInfo, timeZone, nameof(absoluteOrRelativeStartTime), out var utcStartTime);
-            ParseTimeStamp(absoluteOrRelativeEndTime, cultureInfo, timeZone, nameof(absoluteOrRelativeEndTime), out var utcEndTime);
-
             return ReadAnnotationsAsync(
                 client,
                 dataSourceName,
                 tagNames,
-                utcStartTime,
-                utcEndTime,
-                context,
+                ParseTimestamp(absoluteOrRelativeStartTime, nameof(absoluteOrRelativeStartTime)),
+                ParseTimestamp(absoluteOrRelativeEndTime, nameof(absoluteOrRelativeEndTime)),
                 cancellationToken
             );
         }

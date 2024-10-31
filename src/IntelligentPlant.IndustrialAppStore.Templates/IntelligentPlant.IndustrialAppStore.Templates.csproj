@@ -7,68 +7,61 @@
     <Description>Templates to use when creating an application for the Intelligent Plant Industrial App Store.</Description>
     <PackageTags>$(PackageTags);dotnet-new;templates</PackageTags>
     <TargetFramework>netstandard2.0</TargetFramework>
-
     <IncludeDevelopmentPackages>false</IncludeDevelopmentPackages>
     <DeterministicSourcePaths>false</DeterministicSourcePaths>
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="templates\**\*" Exclude="templates\**\bin\**;templates\**\obj\**" />
-    <Compile Remove="**\*" />
+    <Compile Remove="**\*" /><Compile Remove="**\*" />
+    <Content Include="templates\**\*" />
+    <None Include="src\**\*" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="templates\iasmvc\ExampleMvcApplication.csproj" />
-  </ItemGroup>
+  <Target Name="CopyIasMvcTemplateFiles" BeforeTargets="Build">
+    <ItemGroup>
+      <!-- Delete all files from the template's content folder except for the template 
+           configuration. -->
+      <_FilesToDelete Include="templates\iasmvc\**" Exclude="templates\iasmvc\.template.config\**" />
+      <!-- Copy files from the ExampleMvcApplication project. -->
+      <_FilesToCopy Include="..\..\samples\ExampleMvcApplication\**\*" Exclude="..\..\samples\ExampleMvcApplication\.gitignore;..\..\samples\ExampleMvcApplication\README.md;..\..\samples\ExampleMvcApplication\wwwroot\lib\**;..\..\samples\ExampleMvcApplication\**\bin\**;..\..\samples\ExampleMvcApplication\**\obj\**;..\..\samples\ExampleMvcApplication\**\.config\*;..\..\samples\ExampleMvcApplication\**\*.user" />
+      <!-- Copy files from the src folder in this project. Note that some of these files 
+           overwrite equivalent files included from the ExampleMvcApplication project. -->
+      <_FilesToCopy Include=".\src\iasmvc\**" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="templates\iasmvc\web.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
+    <!-- Delete existing files from the template's content folder. -->
+    <Delete Files="@(_FilesToDelete)" />
 
-  <ItemGroup>
-    <None Update="ExampleMvcApplication.csproj.in">
-      <DependentUpon>templates\iasmvc\ExampleMvcApplication.csproj</DependentUpon>
-    </None>
-    <None Update="templates\iasmvc\Properties\PublishProfiles\IISWindowsAuth.pubxml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-    </None>
-    <None Update="templates\iasmvc\Properties\PublishProfiles\IndustrialAppStoreAuth.pubxml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-    </None>
-  </ItemGroup>
-
-  <Target Name="CreateTemplateProjectFiles" BeforeTargets="Build">
-    <ReplaceFileText InputFilename="ExampleMvcApplication.csproj.in" OutputFilename="templates\iasmvc\ExampleMvcApplication.csproj" Placeholder="#{PACKAGE_VERSION}" Replacement="$(PackageVersion)" />
+    <!-- Copy files to the template's content folder. -->
+    <Copy SkipUnchangedFiles="false" SourceFiles="@(_FilesToCopy)" DestinationFiles="@(_FilesToCopy->'templates\iasmvc\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
-  <UsingTask TaskName="ReplaceFileText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
-    <ParameterGroup>
-      <InputFileName ParameterType="System.String" Required="true" />
-      <OutputFileName ParameterType="System.String" Required="true" />
-      <Placeholder ParameterType="System.String" Required="true" />
-      <Replacement ParameterType="System.String" Required="true" />
-    </ParameterGroup>
-    <Task>
-      <Using Namespace="System" />
-      <Using Namespace="System.IO" />
-      <Code Type="Fragment" Language="cs">
-        <![CDATA[  
-          File.WriteAllText(
-            OutputFileName,
-            File.ReadAllText(InputFileName).Replace(Placeholder, Replacement)
-          );
-        ]]>
-      </Code>
-    </Task>
-  </UsingTask>
+  <Target Name="ReplacePackageVersions" BeforeTargets="Build" AfterTargets="CopyIasMvcTemplateFiles">
+    <!-- On Windows we use PowerShell (powershell.exe) -->
+    <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+      <_PowerShellExe>powershell.exe</_PowerShellExe>
+      <_ExecutionPolicy>-ExecutionPolicy Bypass</_ExecutionPolicy>
+    </PropertyGroup>
+
+    <!-- On Linux/MacOS we use PowerShell Core (pwsh) -->
+    <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+      <_PowerShellExe>pwsh</_PowerShellExe>
+      <_ExecutionPolicy></_ExecutionPolicy>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_PowerShellScriptPath>$([System.IO.Path]::GetFullPath($(MSBuildProjectDirectory)/Insert-PackageVersions.ps1))</_PowerShellScriptPath>
+      <_ProjectFilePath>$([System.IO.Path]::GetFullPath($(MSBuildProjectDirectory)/templates/iasmvc/ExampleMvcApplication.csproj))</_ProjectFilePath>
+      <_PackageVersionsFile>$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../'))</_PackageVersionsFile>
+      <_DefaultPackageVersion>$(Version)</_DefaultPackageVersion>
+    </PropertyGroup>
+
+    <!-- Ensure that the example hosted adapter project specifies the package versions defined by Central Package Management. -->
+    <Exec Command="$(_PowerShellExe) -NoLogo -NonInteractive $(_ExecutionPolicy) -File &quot;$(_PowerShellScriptPath)&quot; -ProjectFile &quot;$(_ProjectFilePath)&quot; -PackageVersionsFile &quot;$(_PackageVersionsFile)&quot; -DefaultPackageVersion &quot;$(_DefaultPackageVersion)&quot;" />
+  </Target>
 
 </Project>
