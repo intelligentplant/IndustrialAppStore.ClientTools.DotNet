@@ -138,6 +138,10 @@ namespace Microsoft.Extensions.DependencyInjection {
             builder.Services.TryAddScoped(provider => {
                 var httpHandler = provider.GetRequiredService<IIndustrialAppStoreHttpFactory>().CreateHandler();
                 var http = new HttpClient(httpHandler, false);
+#if NET8_0_OR_GREATER
+                http.DefaultRequestVersion = System.Net.HttpVersion.Version11;
+                http.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
+#endif
                 var iasClientOptions = provider.GetRequiredService<IOptions<IndustrialAppStoreHttpClientOptions>>();
                 return ActivatorUtilities.CreateInstance<IndustrialAppStoreHttpClient>(provider, http, iasClientOptions.Value);
             });
