@@ -90,10 +90,9 @@ public async Task<IActionResult> Index(
     [FromServices] IndustrialAppStoreHttpClient iasClient,
     CancellationToken cancellationToken = default
 ) {
-    var dataSources = await iasClient.DataSources.GetDataSourcesAsync(
-        Request.HttpContext,
-        cancellationToken
-    );
+    var dataSources = await iasClient
+        .DataSources
+        .GetDataSourcesAsync(cancellationToken);
 
     var selectItems = new List<SelectListItem>() { 
         new SelectListItem() {
@@ -115,7 +114,7 @@ public async Task<IActionResult> Index(
 }
 ```
 
-The `IndustrialAppStoreHttpClient` uses a service called `ITokenStore` to automatically retrieve an Industrial App Store access token from the calling user's `HttpContext` and add it to outgoing requests made on behalf of the calling user.
+The `IndustrialAppStoreHttpClient` uses a service called `ITokenStore` to automatically retrieve an Industrial App Store access token for the calling user and add it to outgoing requests.
 
 > The `ITokenStore` service referenced in this section is not used to authenticate outgoing requests if your app is running in on-premises mode rather than Industrial App Store mode. See notes on creating an on-premises app below for more details.
 
@@ -125,13 +124,13 @@ The `IndustrialAppStoreHttpClient` uses a service called `ITokenStore` to automa
 The project contains the following Visual Studio debugging profiles in its [launchSettings.json](./Properties/launchSettings.json) file:
 
 - `Kestrel (IAS Mode)`
-- `IIS Express (On-Premises Mode)` (disabled by default)
+- `IIS Express (On-Premises Mode)`
 
 The Kestrel profile is used to run and debug your application in Industrial App Store mode. It runs ASP.NET Core's Kestrel web server, using the Industrial App Store for authentication and data queries. 
 
 The IIS Express profile is used to run and debug your application in on-premises mode. It runs IIS Express, using Windows authentication and a local Data Core API instance for data queries.
 
-> See below for more information about writing an on-premises app. The IIS Express profile in `launchSettings.json` is commented out by default; There is no need to uncomment it unless you are writing an on-premises app.
+> See below for more information about writing an on-premises app.
 
 
 # Advanced Configuration
