@@ -31,8 +31,37 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
         }
 
 
+        /// <summary>
+        /// Creates a new HTTP message handler.
+        /// </summary>
+        /// <returns>
+        ///   The HTTP message handler.
+        /// </returns>
+        protected virtual HttpMessageHandler CreateHandler() => _httpMessageHandlerFactory.CreateHandler(nameof(IndustrialAppStoreHttpClient));
+
+
+        /// <summary>
+        /// Creates a new <see cref="HttpClient"/> instance.
+        /// </summary>
+        /// <returns>
+        ///   The <see cref="HttpClient"/> instance.
+        /// </returns>
+        protected virtual HttpClient CreateClient() {
+            var http = new HttpClient(CreateHandler(), false);
+#if NET8_0_OR_GREATER
+            http.DefaultRequestVersion = System.Net.HttpVersion.Version11;
+            http.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
+#endif
+            return http;
+        }
+
+
         /// <inheritdoc/>
-        public virtual HttpMessageHandler CreateHandler() => _httpMessageHandlerFactory.CreateHandler(nameof(IndustrialAppStoreHttpClient));
+        HttpMessageHandler IIndustrialAppStoreHttpFactory.CreateHandler() => CreateHandler();
+
+
+        /// <inheritdoc/>
+        HttpClient IIndustrialAppStoreHttpFactory.CreateClient() => CreateClient();
 
     }
 }
