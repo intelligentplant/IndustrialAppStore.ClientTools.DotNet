@@ -42,7 +42,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication.Http {
 
 
         /// <inheritdoc/>
-        public override HttpMessageHandler CreateHandler() {
+        protected override HttpMessageHandler CreateHandler() {
             var httpHandler = base.CreateHandler();
 
             if (!_options.Value.UseExternalAuthentication) {

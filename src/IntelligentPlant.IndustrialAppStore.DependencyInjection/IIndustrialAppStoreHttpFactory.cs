@@ -7,10 +7,19 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
     /// use with <see cref="Client.IndustrialAppStoreHttpClient"/> instances.
     /// </summary>
     /// <remarks>
+    /// 
+    /// <para>
     ///   <see cref="IIndustrialAppStoreHttpFactory"/> allows the HTTP request pipeline for a 
     ///   client to be customised in ways that may not be possible when using <see cref="IHttpMessageHandlerFactory"/> 
     ///   directly, such as adding custom scope-specific authentication headers to outgoing 
     ///   requests.
+    /// </para>
+    /// 
+    /// <para>
+    ///   Implementations should inherit from <see cref="IndustrialAppStoreHttpFactory"/> instead 
+    ///   of implementing <see cref="IIndustrialAppStoreHttpFactory"/> directly.
+    /// </para>
+    /// 
     /// </remarks>
     public interface IIndustrialAppStoreHttpFactory {
 
@@ -21,6 +30,14 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
         ///   The HTTP message handler.
         /// </returns>
         HttpMessageHandler CreateHandler();
+
+        /// <summary>
+        /// Creates a new <see cref="HttpClient"/> instance.
+        /// </summary>
+        /// <returns>
+        ///   The <see cref="HttpClient"/> instance.
+        /// </returns>
+        HttpClient CreateClient();
 
     }
 
