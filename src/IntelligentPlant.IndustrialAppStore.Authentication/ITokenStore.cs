@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace IntelligentPlant.IndustrialAppStore.Authentication {
+﻿namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
     /// <summary>
     /// <see cref="ITokenStore"/> is used to retrieve the Industrial App Store access token for an 

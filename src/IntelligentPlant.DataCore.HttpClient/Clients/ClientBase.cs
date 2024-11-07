@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-
-namespace IntelligentPlant.DataCore.Client.Clients {
+﻿namespace IntelligentPlant.DataCore.Client.Clients {
 
     /// <summary>
     /// Base class for <see cref="DataCoreHttpClient"/> sub-client types.

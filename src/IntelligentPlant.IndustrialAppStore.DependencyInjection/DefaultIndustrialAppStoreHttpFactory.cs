@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-
-namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
+﻿namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
 
     /// <summary>
     /// Default implementation of <see cref="IIndustrialAppStoreHttpFactory"/>.

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-
-using IntelligentPlant.IndustrialAppStore.Authentication;
+﻿using IntelligentPlant.IndustrialAppStore.Authentication;
 using IntelligentPlant.IndustrialAppStore.Authentication.Http;
 using IntelligentPlant.IndustrialAppStore.Authentication.Options;
 using IntelligentPlant.IndustrialAppStore.Client;

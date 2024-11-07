@@ -1,6 +1,4 @@
-﻿using System;
-
-using IntelligentPlant.IndustrialAppStore.Client;
+﻿using IntelligentPlant.IndustrialAppStore.Client;
 
 using Microsoft.Extensions.Options;
 

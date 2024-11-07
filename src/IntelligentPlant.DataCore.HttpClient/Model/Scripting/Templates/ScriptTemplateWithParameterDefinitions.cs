@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace IntelligentPlant.DataCore.Client.Model.Scripting.Templates {
+﻿namespace IntelligentPlant.DataCore.Client.Model.Scripting.Templates {
 
     /// <summary>
     /// An extended version of <see cref="ScriptTemplate"/> that includes details about the parameters 

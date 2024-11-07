@@ -1,9 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace IntelligentPlant.IndustrialAppStore.Authentication.Http {
+﻿namespace IntelligentPlant.IndustrialAppStore.Authentication.Http {
 
     /// <summary>
     /// <see cref="DelegatingHandler"/> that authenticates outgoing requests using an Industrial 

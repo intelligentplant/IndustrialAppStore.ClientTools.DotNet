@@ -1,9 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace IntelligentPlant.DataCore.Client.Clients {
+﻿namespace IntelligentPlant.DataCore.Client.Clients {
 
     /// <summary>
     /// Provides information and diagnostic queries for Data Core.

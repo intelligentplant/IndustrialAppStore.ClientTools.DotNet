@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace IntelligentPlant.DataCore.Client.Model
-{
+﻿namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     /// Describes the results of a historical data query for a single tag.
     /// </summary>

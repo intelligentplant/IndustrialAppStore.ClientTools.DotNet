@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace IntelligentPlant.IndustrialAppStore.Client.Model {
+﻿namespace IntelligentPlant.IndustrialAppStore.Client.Model {
     /// <summary>
     /// A response containing a page of items.
     /// </summary>

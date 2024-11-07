@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace IntelligentPlant.IndustrialAppStore.Authentication {
+﻿namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
     /// <summary>
     /// Describes OAuth tokens associated with an Industrial App Store authentication session.

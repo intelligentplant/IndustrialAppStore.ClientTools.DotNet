@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-
-using IntelligentPlant.IndustrialAppStore.DependencyInjection;
+﻿using IntelligentPlant.IndustrialAppStore.DependencyInjection;
 
 using Microsoft.Extensions.Options;
 

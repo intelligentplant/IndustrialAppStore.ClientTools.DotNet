@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-using IntelligentPlant.DataCore.Client.Clients;
+﻿using IntelligentPlant.DataCore.Client.Clients;
 using IntelligentPlant.DataCore.Client.Model;
 using IntelligentPlant.DataCore.Client.Model.Scripting;
 using IntelligentPlant.DataCore.Client.Queries;

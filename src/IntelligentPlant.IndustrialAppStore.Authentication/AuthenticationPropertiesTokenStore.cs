@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;

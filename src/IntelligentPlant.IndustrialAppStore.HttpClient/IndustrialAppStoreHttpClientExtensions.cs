@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
-using IntelligentPlant.DataCore.Client;
+﻿using System.ComponentModel.DataAnnotations;
+
 using IntelligentPlant.IndustrialAppStore.Client.Clients;
 using IntelligentPlant.IndustrialAppStore.Client.Model;
 using IntelligentPlant.IndustrialAppStore.Client.Queries;
