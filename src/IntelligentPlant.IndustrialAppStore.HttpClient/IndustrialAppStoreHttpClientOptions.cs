@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 using IntelligentPlant.DataCore.Client;
 
 namespace IntelligentPlant.IndustrialAppStore.Client {
@@ -11,6 +13,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client {
         /// <summary>
         /// The base Industrial App Store API URL.
         /// </summary>
+        [Required]
         public Uri IndustrialAppStoreUrl { get; set; }
 
 
