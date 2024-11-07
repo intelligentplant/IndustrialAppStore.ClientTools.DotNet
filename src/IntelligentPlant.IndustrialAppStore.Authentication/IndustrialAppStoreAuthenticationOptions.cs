@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 using IntelligentPlant.IndustrialAppStore.Client;
@@ -7,7 +6,6 @@ using IntelligentPlant.IndustrialAppStore.Client;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
@@ -19,11 +17,13 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <summary>
         /// The base URL for the Industrial App Store.
         /// </summary>
+        [Required]
         public string IndustrialAppStoreUrl { get; set; } = IndustrialAppStoreHttpClientDefaults.AppStoreUrl;
 
         /// <summary>
         /// The base URL for the Data Core.
         /// </summary>
+        [Required]
         public string DataCoreUrl { get; set; } = IndustrialAppStoreHttpClientDefaults.DataCoreUrl;
 
         /// <summary>
@@ -57,6 +57,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <summary>
         /// The Industrial App Store client ID.
         /// </summary>
+        [Required]
         public string ClientId { get; set; } = default!;
 
         /// <summary>
@@ -125,7 +126,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// </para>
         /// 
         /// <para>
-        ///   The <seealso cref="IndustrialAppStoreAuthenticationExtensions.UseCookieSessionIdGenerator"/> 
+        ///   The <seealso cref="IndustrialAppStoreAuthenticationOptionsExtensions.UseCookieSessionIdGenerator"/> 
         ///   extension method can be used to assign a value to <see cref="SessionIdGenerator"/> 
         ///   that will store an identifier for the browser in a persistent cookie and re-use it 
         ///   across different login sessions.
@@ -138,7 +139,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// </para>
         /// 
         /// </remarks>
-        /// <seealso cref="IndustrialAppStoreAuthenticationExtensions.UseCookieSessionIdGenerator"/>
+        /// <seealso cref="IndustrialAppStoreAuthenticationOptionsExtensions.UseCookieSessionIdGenerator"/>
         public Func<ClaimsIdentity, HttpContext, string>? SessionIdGenerator { get; set; }
 
     }
