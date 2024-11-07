@@ -1,8 +1,6 @@
-﻿using System.Security.Cryptography;
-using System.Text;
+﻿using IntelligentPlant.IndustrialAppStore.Authentication;
 
-using IntelligentPlant.IndustrialAppStore.Authentication;
-
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 
 namespace ExampleMvcApplication.Services {
@@ -12,21 +10,24 @@ namespace ExampleMvcApplication.Services {
     /// context.
     /// </summary>
     /// <remarks>
-    ///   Access tokens and refresh tokens are encrypted at rest using the <see cref="ProtectedData"/> 
-    ///   class. Note that this requires the application to be running on Windows!
+    ///   Access tokens and refresh tokens are encrypted at rest using ASP.NET Core data protection.
     /// </remarks>
     public class EFTokenStore : TokenStore {
 
         private readonly UserTokensDbContext _dbContext;
+
+        private readonly IDataProtector _dataProtector;
 
 
         public EFTokenStore(
             IOptions<IndustrialAppStoreAuthenticationOptions> options, 
             HttpClient httpClient, 
             TimeProvider timeProvider, 
-            UserTokensDbContext dbContext
+            UserTokensDbContext dbContext,
+            IDataProtectionProvider dataProtectionProvider
         ) : base(options, httpClient, timeProvider) { 
-            _dbContext = dbContext; 
+            _dbContext = dbContext;
+            _dataProtector = dataProtectionProvider.CreateProtector(typeof(EFTokenStore).FullName!, "tokens", "v1");
         }
 
 
@@ -49,8 +50,8 @@ namespace ExampleMvcApplication.Services {
             // Decrypt access token and refresh token.
             return new OAuthTokens(
                 dbTokens.TokenType, 
-                dbTokens.AccessToken == null ? null : UnprotectToken(dbTokens.AccessToken), 
-                dbTokens.RefreshToken == null ? null : UnprotectToken(dbTokens.RefreshToken), 
+                dbTokens.AccessToken = UnprotectToken(dbTokens.AccessToken)!, 
+                dbTokens.RefreshToken = UnprotectToken(dbTokens.RefreshToken), 
                 dbTokens.ExpiryTime
             );
         }
@@ -60,37 +61,37 @@ namespace ExampleMvcApplication.Services {
             var dbTokens = await _dbContext.Tokens.FindAsync(UserId, SessionId);
             if (dbTokens == null) {
                 dbTokens = new Models.UserTokens() { 
-                    UserId = UserId,
-                    SessionId = SessionId
+                    UserId = UserId!,
+                    SessionId = SessionId!
                 };
                 _dbContext.Tokens.Add(dbTokens);
             }
 
             // Encrypt access token and refresh token.
             dbTokens.TokenType = tokens.TokenType;
-            dbTokens.AccessToken = ProtectToken(tokens.AccessToken);
-            dbTokens.RefreshToken = tokens.RefreshToken == null 
-                ? null 
-                : ProtectToken(tokens.RefreshToken);
+            dbTokens.AccessToken = ProtectToken(tokens.AccessToken)!;
+            dbTokens.RefreshToken = ProtectToken(tokens.RefreshToken);
             dbTokens.ExpiryTime = tokens.UtcExpiresAt;
 
             await _dbContext.SaveChangesAsync();
         }
 
 
-        private static string UnprotectToken(string protectedToken) {
-            // TODO: allow the use of entropy when unprotecting tokens.
-            var protectedBytes = Convert.FromBase64String(protectedToken);
-            var unprotectedBytes = ProtectedData.Unprotect(protectedBytes, Array.Empty<byte>(), DataProtectionScope.LocalMachine);
-            return Encoding.UTF8.GetString(unprotectedBytes);
+        private string? UnprotectToken(string? protectedToken) {
+            if (protectedToken == null) {
+                return null;
+            }
+
+            return _dataProtector.Unprotect(protectedToken);
         }
 
 
-        private static string ProtectToken(string unprotectedToken) {
-            // TODO: allow the use of entropy when protecting tokens.
-            var unprotectedBytes = Encoding.UTF8.GetBytes(unprotectedToken);
-            var protectedBytes = ProtectedData.Protect(unprotectedBytes, Array.Empty<byte>(), DataProtectionScope.LocalMachine);
-            return Convert.ToBase64String(protectedBytes);
+        private string? ProtectToken(string? unprotectedToken) {
+            if (unprotectedToken == null) {
+                return null;
+            }
+
+            return _dataProtector.Protect(unprotectedToken);
         }
 
     }
