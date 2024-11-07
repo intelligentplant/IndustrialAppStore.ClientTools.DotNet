@@ -1,5 +1,5 @@
 # Ignore all files copied to template folders at compile time.
-templates/iasmvc/*
+templates/**
 
 # Ensure that the template configuration files are tracked.
-!templates/iasmvc/.template.config
+!templates/*/.template.config
