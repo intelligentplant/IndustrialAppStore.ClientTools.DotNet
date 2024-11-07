@@ -151,7 +151,9 @@ namespace Microsoft.Extensions.DependencyInjection {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder.Services.AddOptions<IndustrialAppStoreHttpClientOptions>().Configure(options => configureOptions?.Invoke(options));
+            builder.Services.AddOptions<IndustrialAppStoreHttpClientOptions>()
+                .Configure(options => configureOptions?.Invoke(options))
+                .ValidateDataAnnotations();
 
             builder.Services.TryAddScoped(provider => {
                 var http = provider.GetRequiredService<IIndustrialAppStoreHttpFactory>().CreateClient();

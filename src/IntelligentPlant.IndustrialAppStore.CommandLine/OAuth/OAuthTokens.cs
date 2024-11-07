@@ -1,19 +1,9 @@
-﻿using System;
-
-namespace IntelligentPlant.IndustrialAppStore.Authentication {
+﻿namespace IntelligentPlant.IndustrialAppStore.CommandLine.OAuth {
 
     /// <summary>
     /// Describes OAuth tokens associated with an Industrial App Store authentication session.
     /// </summary>
-    public readonly struct OAuthTokens {
-
-        /// <summary>
-        /// The type of the <see cref="AccessToken"/>.
-        /// </summary>
-        /// <remarks>
-        ///   The <see cref="TokenType"/> is typically the string "bearer".
-        /// </remarks>
-        public string TokenType { get; }
+    public class OAuthTokens {
 
         /// <summary>
         /// The access token for the authenticated user.
@@ -35,9 +25,6 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <summary>
         /// Creates a new <see cref="OAuthTokens"/> instance.
         /// </summary>
-        /// <param name="tokenType">
-        ///   The type of the <paramref name="accessToken"/>. The token type is typically the string "bearer".
-        /// </param>
         /// <param name="accessToken">
         ///   The access token.
         /// </param>
@@ -50,8 +37,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="accessToken"/> is <see langword="null"/>.
         /// </exception>
-        public OAuthTokens(string tokenType, string accessToken, string? refreshToken, DateTimeOffset? utcExpiresAt) {
-            TokenType = tokenType;
+        public OAuthTokens(string accessToken, string? refreshToken, DateTimeOffset? utcExpiresAt) {
             AccessToken = accessToken ?? throw new ArgumentNullException(nameof(accessToken));
             RefreshToken = refreshToken;
             UtcExpiresAt = utcExpiresAt;

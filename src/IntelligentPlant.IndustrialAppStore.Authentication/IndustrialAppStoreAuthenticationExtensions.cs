@@ -211,7 +211,9 @@ namespace Microsoft.Extensions.DependencyInjection {
             ArgumentNullException.ThrowIfNull(configure);
 
             // Add authentication options.
-            builder.Services.AddOptions<IndustrialAppStoreAuthenticationOptions>().Configure(configure);
+            builder.Services.AddOptions<IndustrialAppStoreAuthenticationOptions>()
+                .Configure(configure)
+                .ValidateDataAnnotations();
 
             // Register post-configure actions for IndustrialAppStoreHttpClientOptions and
             // AuthenticationOptions if they are not already registered.

@@ -6,9 +6,6 @@
   </PropertyGroup>
   <Import Project="$(ParentProject)" Condition=" '$(ParentProject)' != '' " /> 
   
-  <!-- Import common NuGet package versions -->
-  <Import Project=".\build\Dependencies.props" Condition="Exists('.\build\Dependencies.props')" />
-
   <PropertyGroup>
     <Authors>Intelligent Plant</Authors>
     <Company>Intelligent Plant</Company>

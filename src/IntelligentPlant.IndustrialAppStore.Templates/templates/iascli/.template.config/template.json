@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Intelligent Plant",
+  "classifications": [ "Industrial App Store", "Console", "IoT" ],
+  "identity": "IntelligentPlant.IndustrialAppStore.StarterCliTemplate",
+  "name": "Industrial App Store Command-Line App",
+  "description": "A project template for creating a command-line application that integrates with Intelligent Plant's Industrial App Store.",
+  "shortName": "iascli",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "ExampleCliApplication",
+  "preferNameDirectory": true,
+  "guids": [
+    "1f2d0a5b-757d-42a1-bf58-04807bd6ba35"
+  ],
+  "symbols": {
+    "Framework": {
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "net9.0",
+          "description": ".NET 9.0"
+        },
+        {
+          "choice": "net8.0",
+          "description": ".NET 8.0"
+        }
+      ],
+      "defaultValue": "net8.0",
+      "replaces": "net8.0"
+    },
+    "ClientId": {
+      "type": "parameter",
+      "displayName": "Client ID",
+      "description": "The Industrial App Store client ID for your app.",
+      "defaultValue": "<YOUR CLIENT ID>",
+      "replaces": "<YOUR CLIENT ID>"
+    },
+    "SkipRestore": {
+      "type": "parameter",
+      "displayName": "Skip Restore",
+      "datatype": "bool",
+      "description": "If specified, skips the automatic restore of the project on create.",
+      "defaultValue": "false"
+    },
+  },
+  "primaryOutputs": [
+    {
+      "path": "ExampleCliApplication.csproj"
+    }
+  ],
+  "defaultName": "IasCliApplication",
+  "sources": [
+    {
+      "modifiers": []
+    }
+  ],
+  "postActions": [
+    {
+      "condition": "(!SkipRestore)",
+      "description": "Restore NuGet packages required by this project.",
+      "manualInstructions": [
+        { "text": "Run 'dotnet restore'" }
+      ],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    }
+  ]
+}
