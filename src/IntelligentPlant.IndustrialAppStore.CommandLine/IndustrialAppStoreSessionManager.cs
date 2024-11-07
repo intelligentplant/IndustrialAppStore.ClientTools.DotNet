@@ -302,6 +302,7 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
             var tokens = await httpClient.AuthenticateWithDeviceCodeAsync(new DeviceLoginOptions() {
                 ClientId = _options.ClientId,
                 ClientSecret = _options.ClientSecret,
+                Scopes = _options.Scopes,
                 DeviceAuthorizationEndpoint = GetDeviceAuthorizationEndpoint(),
                 TokenEndpoint = GetTokenEndpoint(),
                 OnRequestCreated = callback
