@@ -37,6 +37,12 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
         public string? ClientSecret { get; set; }
 
         /// <summary>
+        /// Additional scopes to request when authenticating the user, in addition to the default 
+        /// scopes registered for the app.
+        /// </summary>
+        public string[]? Scopes { get; set; }
+
+        /// <summary>
         /// The path to the folder where tokens will be stored.
         /// </summary>
         /// <remarks>
