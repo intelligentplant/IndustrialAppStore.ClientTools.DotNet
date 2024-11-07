@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace IntelligentPlant.DataCore.Client.Model {
+﻿namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     /// Describes the response sent by Data Core after writing tag values to a data source.
     /// </summary>

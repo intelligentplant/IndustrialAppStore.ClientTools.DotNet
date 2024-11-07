@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace IntelligentPlant.DataCore.Client.Model {
+﻿namespace IntelligentPlant.DataCore.Client.Model {
 
     /// <summary>
     /// Describes a named key-value pair.

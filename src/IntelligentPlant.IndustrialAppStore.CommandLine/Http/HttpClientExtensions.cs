@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net.Http;
 using System.Net.Http.Json;
 
 using IntelligentPlant.IndustrialAppStore.CommandLine.OAuth;

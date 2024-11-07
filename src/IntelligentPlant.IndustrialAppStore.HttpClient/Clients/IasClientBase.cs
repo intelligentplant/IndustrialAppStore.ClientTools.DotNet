@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-
-using IntelligentPlant.DataCore.Client.Clients;
+﻿using IntelligentPlant.DataCore.Client.Clients;
 
 namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
 

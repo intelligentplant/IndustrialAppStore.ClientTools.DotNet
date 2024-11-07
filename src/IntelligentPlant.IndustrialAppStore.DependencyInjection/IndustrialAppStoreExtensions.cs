@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-
-using IntelligentPlant.DataCore.Client;
+﻿using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.IndustrialAppStore.Client;
 using IntelligentPlant.IndustrialAppStore.DependencyInjection;
 using IntelligentPlant.IndustrialAppStore.DependencyInjection.Internal;

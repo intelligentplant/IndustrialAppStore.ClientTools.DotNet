@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>

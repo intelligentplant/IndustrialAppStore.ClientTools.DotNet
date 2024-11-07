@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-using ExampleMvcApplication.Models;
+﻿using ExampleMvcApplication.Models;
 
 using IntelligentPlant.IndustrialAppStore.Authentication;
 

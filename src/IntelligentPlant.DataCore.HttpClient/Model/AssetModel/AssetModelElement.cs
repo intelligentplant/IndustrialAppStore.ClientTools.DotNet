@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace IntelligentPlant.DataCore.Client.Model.AssetModel {
+﻿namespace IntelligentPlant.DataCore.Client.Model.AssetModel {
 
     /// <summary>
     /// Describes an element (node) in an asset model hierarchy.

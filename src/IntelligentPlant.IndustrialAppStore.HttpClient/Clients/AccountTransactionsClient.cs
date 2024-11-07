@@ -1,10 +1,5 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Threading;
-using System.Threading.Tasks;
 
 using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.IndustrialAppStore.Client.Model;

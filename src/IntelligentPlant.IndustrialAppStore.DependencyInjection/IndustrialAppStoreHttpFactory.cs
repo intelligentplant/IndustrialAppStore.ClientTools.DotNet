@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-
-using IntelligentPlant.IndustrialAppStore.Client;
+﻿using IntelligentPlant.IndustrialAppStore.Client;
 
 namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
 
