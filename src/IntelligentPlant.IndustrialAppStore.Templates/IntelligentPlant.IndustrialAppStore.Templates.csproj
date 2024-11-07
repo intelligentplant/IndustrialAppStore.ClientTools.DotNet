@@ -25,22 +25,22 @@
     <ItemGroup>
       <!-- Delete all files from the template's content folder except for the template 
            configuration. -->
-      <_FilesToDelete Include="templates\iasmvc\**" Exclude="templates\iasmvc\.template.config\**" />
+      <_FilesToDeleteMvc Include="templates\iasmvc\**" Exclude="templates\iasmvc\.template.config\**" />
       <!-- Copy files from the ExampleMvcApplication project. -->
-      <_FilesToCopy Include="..\..\samples\ExampleMvcApplication\**\*" Exclude="..\..\samples\ExampleMvcApplication\.gitignore;..\..\samples\ExampleMvcApplication\README.md;..\..\samples\ExampleMvcApplication\wwwroot\lib\**;..\..\samples\ExampleMvcApplication\**\bin\**;..\..\samples\ExampleMvcApplication\**\obj\**;..\..\samples\ExampleMvcApplication\**\.config\*;..\..\samples\ExampleMvcApplication\**\*.user" />
+      <_FilesToCopyMvc Include="..\..\samples\ExampleMvcApplication\**\*" Exclude="..\..\samples\ExampleMvcApplication\.gitignore;..\..\samples\ExampleMvcApplication\README.md;..\..\samples\ExampleMvcApplication\wwwroot\lib\**;..\..\samples\ExampleMvcApplication\**\bin\**;..\..\samples\ExampleMvcApplication\**\obj\**;..\..\samples\ExampleMvcApplication\**\.config\*;..\..\samples\ExampleMvcApplication\**\*.user" />
       <!-- Copy files from the src folder in this project. Note that some of these files 
            overwrite equivalent files included from the ExampleMvcApplication project. -->
-      <_FilesToCopy Include=".\src\iasmvc\**" />
+      <_FilesToCopyMvc Include=".\src\iasmvc\**" />
     </ItemGroup>
 
     <!-- Delete existing files from the template's content folder. -->
-    <Delete Files="@(_FilesToDelete)" />
+    <Delete Files="@(_FilesToDeleteMvc)" />
 
     <!-- Copy files to the template's content folder. -->
-    <Copy SkipUnchangedFiles="false" SourceFiles="@(_FilesToCopy)" DestinationFiles="@(_FilesToCopy->'templates\iasmvc\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SkipUnchangedFiles="false" SourceFiles="@(_FilesToCopyMvc)" DestinationFiles="@(_FilesToCopyMvc->'templates\iasmvc\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
-  <Target Name="ReplacePackageVersions" BeforeTargets="Build" AfterTargets="CopyIasMvcTemplateFiles">
+  <Target Name="ReplaceIasMvcPackageVersions" BeforeTargets="Build" AfterTargets="CopyIasMvcTemplateFiles">
     <!-- On Windows we use PowerShell (powershell.exe) -->
     <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
       <_PowerShellExe>powershell.exe</_PowerShellExe>
@@ -60,7 +60,50 @@
       <_DefaultPackageVersion>$(Version)</_DefaultPackageVersion>
     </PropertyGroup>
 
-    <!-- Ensure that the example hosted adapter project specifies the package versions defined by Central Package Management. -->
+    <!-- Ensure that the example project specifies the package versions defined by Central Package Management. -->
+    <Exec Command="$(_PowerShellExe) -NoLogo -NonInteractive $(_ExecutionPolicy) -File &quot;$(_PowerShellScriptPath)&quot; -ProjectFile &quot;$(_ProjectFilePath)&quot; -PackageVersionsFile &quot;$(_PackageVersionsFile)&quot; -DefaultPackageVersion &quot;$(_DefaultPackageVersion)&quot;" />
+  </Target>
+
+  <Target Name="CopyIasCliTemplateFiles" BeforeTargets="Build">
+    <ItemGroup>
+      <!-- Delete all files from the template's content folder except for the template 
+           configuration. -->
+      <_FilesToDeleteCli Include="templates\iascli\**" Exclude="templates\iascli\.template.config\**" />
+      <!-- Copy files from the ExampleCliApplication project. -->
+      <_FilesToCopyCli Include="..\..\samples\ExampleCliApplication\**\*" Exclude="..\..\samples\ExampleCliApplication\.gitignore;..\..\samples\ExampleCliApplication\README.md;..\..\samples\ExampleCliApplication\**\bin\**;..\..\samples\ExampleCliApplication\**\obj\**;..\..\samples\ExampleCliApplication\**\*.user" />
+      <!-- Copy files from the src folder in this project. Note that some of these files 
+           overwrite equivalent files included from the ExampleCliApplication project. -->
+      <_FilesToCopyCli Include=".\src\iascli\**" />
+    </ItemGroup>
+
+    <!-- Delete existing files from the template's content folder. -->
+    <Delete Files="@(_FilesToDeleteCli)" />
+
+    <!-- Copy files to the template's content folder. -->
+    <Copy SkipUnchangedFiles="false" SourceFiles="@(_FilesToCopyCli)" DestinationFiles="@(_FilesToCopyCli->'templates\iascli\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <Target Name="ReplaceIasCliPackageVersions" BeforeTargets="Build" AfterTargets="CopyIasCliTemplateFiles">
+    <!-- On Windows we use PowerShell (powershell.exe) -->
+    <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+      <_PowerShellExe>powershell.exe</_PowerShellExe>
+      <_ExecutionPolicy>-ExecutionPolicy Bypass</_ExecutionPolicy>
+    </PropertyGroup>
+
+    <!-- On Linux/MacOS we use PowerShell Core (pwsh) -->
+    <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+      <_PowerShellExe>pwsh</_PowerShellExe>
+      <_ExecutionPolicy></_ExecutionPolicy>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_PowerShellScriptPath>$([System.IO.Path]::GetFullPath($(MSBuildProjectDirectory)/Insert-PackageVersions.ps1))</_PowerShellScriptPath>
+      <_ProjectFilePath>$([System.IO.Path]::GetFullPath($(MSBuildProjectDirectory)/templates/iascli/ExampleCliApplication.csproj))</_ProjectFilePath>
+      <_PackageVersionsFile>$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../'))</_PackageVersionsFile>
+      <_DefaultPackageVersion>$(Version)</_DefaultPackageVersion>
+    </PropertyGroup>
+
+    <!-- Ensure that the example project specifies the package versions defined by Central Package Management. -->
     <Exec Command="$(_PowerShellExe) -NoLogo -NonInteractive $(_ExecutionPolicy) -File &quot;$(_PowerShellScriptPath)&quot; -ProjectFile &quot;$(_ProjectFilePath)&quot; -PackageVersionsFile &quot;$(_PackageVersionsFile)&quot; -DefaultPackageVersion &quot;$(_DefaultPackageVersion)&quot;" />
   </Target>
 
