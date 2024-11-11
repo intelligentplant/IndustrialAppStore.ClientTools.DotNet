@@ -30,7 +30,7 @@ using var scope = provider.CreateScope();
 
 var sessionManager = scope.ServiceProvider.GetRequiredService<IndustrialAppStoreSessionManager>();
 await sessionManager.SignInAsync((request, ct) => {
-    Console.WriteLine($"Please sign in by visiting {request.VerificationUri} and entering code {request.UserCode}.");
+    Console.WriteLine($"Please sign in by visiting {request.VerificationUri} and entering the following code: {request.UserCode}");
     return default;
 });
 ```
