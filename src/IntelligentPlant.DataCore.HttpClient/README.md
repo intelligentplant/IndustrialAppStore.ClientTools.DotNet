@@ -10,9 +10,9 @@ Install the [IntelligentPlant.DataCore.HttpClient](https://www.nuget.org/package
 
 # Getting Started
 
-The abstract [DataCoreHttpClient<TContext, TOptions>](./DataCoreHttpClient.cs) class is used to perform Data Core API calls. The class itself has a set of properties (e.g. `DataSources`, `EventSources`) that expose API methods for different feature areas. Additional concrete subclasses (`DataCoreHttpClient<TContext>` and `DataCoreHttpClient`) are available to simplify configuration depending on the type of authentication used by the app.
+The [DataCoreHttpClient](./DataCoreHttpClient.cs) class is used to perform Data Core API calls. The class itself has a set of properties (e.g. `DataSources`, `EventSources`) that expose API methods for different feature areas.
 
-Note that, if you are writing an app that interfaces with the Industrial App Store, you should use the client class from the [IntelligentPlant.IndustrialAppStore.Authentication](/src/IntelligentPlant.IndustrialAppStore.Authentication/IndustrialAppStoreHttpClient.cs) or [IntelligentPlant.IndustrialAppStore.HttpClient](/src/IntelligentPlant.IndustrialAppStore.HttpClient/IndustrialAppStoreHttpClientT.cs) library instead. Please refer to the documentation for those libraries for details of how to configure their respective clients.
+Note that, if you are writing an app that interfaces with the Industrial App Store, you should use the client class from the [IntelligentPlant.IndustrialAppStore.HttpClient](/src/IntelligentPlant.IndustrialAppStore.HttpClient/IndustrialAppStoreHttpClient.cs) library instead.
 
 
 ## Creating a Client
