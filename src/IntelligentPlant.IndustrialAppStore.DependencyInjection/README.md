@@ -10,7 +10,7 @@ Install the [IntelligentPlant.IndustrialAppStore.DependencyInjection](https://ww
 
 # Getting Started
 
-> For ASP.NET Core applications, use the [IntelligentPlant.IndustrialAppStore.Authentication](../IntelligentPlant.IndustrialAppStore.Authentication) library instead. This includes additional ASP.NET Core-specific features for signing users into your application using the Industrial App Store.
+> For ASP.NET Core applications, use the [IntelligentPlant.IndustrialAppStore.AspNetCore](../IntelligentPlant.IndustrialAppStore.AspNetCore) library instead. This includes additional ASP.NET Core-specific features for signing users into your application using the Industrial App Store.
 
 To register a scoped `IndustrialAppStoreHttpClient` service with an `IServiceCollection`, call the `AddIndustrialAppStoreServices` extension method:
 

@@ -1,23 +1,21 @@
 # IntelligentPlant.IndustrialAppStore.CommandLine
 
-Defines types and extensions for building command-line applications that interact with the Intelligent Plant Industrial App Store.
+This package contains types for authenticating with and calling the Intelligent Plant Industrial App Store API from command-line applications.
 
-
-# Installation
-
-Install the [IntelligentPlant.IndustrialAppStore.CommandLine](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.CommandLine) package by following the instructions on NuGet.org.
+Please consider using the [IntelligentPlant.IndustrialAppStore.Templates](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.Templates) package to simplify creation of projects that are pre-configured to use this package.
 
 
 # Getting Started
 
-> The library assumes that your application is using Microsoft.Extensions.DependencyInjection. You can use the services without using the DI system, but you will need to manually create instances of the required types.
+First, visit the [Industrial App Store](https://appstore.intelligentplant.com) and create a registration for your app. When you register your app, you can configure the default scopes (i.e. permissions) that the app will request (user info, reading user data sources, etc). You must also enable the Device Code Authorization Flow for your app.
 
-First, register CLI services with the dependency injection container:
+Next, register CLI services with the dependency injection container:
 
 ```csharp
 services.AddIndustrialAppStoreCliServices(options => {
     options.ClientId = "<YOUR CLIENT ID>";
-    // Relative paths are resolved using the user's local application data folder.
+    // Folder that encrypted authentication tokens will be saved to. Relative 
+    // paths are resolved using the user's local application data folder.
     options.TokenPath = "MyIasApp/tokens";
 });
 ```

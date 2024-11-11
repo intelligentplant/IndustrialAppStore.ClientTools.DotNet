@@ -13,12 +13,17 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="**\*" /><Compile Remove="**\*" />
     <Content Include="templates\**\*" />
     <None Include="src\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PACKAGE_README.md" Pack="true" PackagePath=".\README.md" />
   </ItemGroup>
 
   <Target Name="CopyIasMvcTemplateFiles" BeforeTargets="Build">

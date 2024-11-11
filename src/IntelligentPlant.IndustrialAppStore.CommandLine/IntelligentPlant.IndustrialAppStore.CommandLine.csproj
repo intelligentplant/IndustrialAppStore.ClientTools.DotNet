@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +19,10 @@
   <ItemGroup>
     <ProjectReference Include="..\IntelligentPlant.IndustrialAppStore.DependencyInjection\IntelligentPlant.IndustrialAppStore.DependencyInjection.csproj" />
     <ProjectReference Include="..\IntelligentPlant.IndustrialAppStore.HttpClient\IntelligentPlant.IndustrialAppStore.HttpClient.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PACKAGE_README.md" Pack="true" PackagePath=".\README.md" />
   </ItemGroup>
 
 </Project>

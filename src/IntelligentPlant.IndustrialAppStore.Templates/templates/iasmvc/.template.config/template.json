@@ -3,7 +3,7 @@
   "author": "Intelligent Plant",
   "classifications": [ "Industrial App Store", "Web", "MVC", "IoT" ],
   "identity": "IntelligentPlant.IndustrialAppStore.StarterMvcTemplate",
-  "name": "Industrial App Store Web App",
+  "name": "Industrial App Store Web App (MVC)",
   "description": "A project template for creating an ASP.NET Core MVC application that integrates with Intelligent Plant's Industrial App Store.",
   "shortName": "iasmvc",
   "tags": {

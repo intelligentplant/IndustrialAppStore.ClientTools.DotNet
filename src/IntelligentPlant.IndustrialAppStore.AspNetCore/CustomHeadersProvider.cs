@@ -64,6 +64,9 @@ namespace IntelligentPlant.IndustrialAppStore.AspNetCore {
             }
 
             foreach (var item in config.GetChildren()) {
+                if (item.Value == null) {
+                    continue;
+                }
                 headers[item.Key] = item.Value;
             }
 
