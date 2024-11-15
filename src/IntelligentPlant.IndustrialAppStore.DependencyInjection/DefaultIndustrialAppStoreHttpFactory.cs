@@ -5,6 +5,22 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
     /// <summary>
     /// Default implementation of <see cref="IIndustrialAppStoreHttpFactory"/>.
     /// </summary>
+    /// <remarks>
+    /// 
+    /// <para>
+    ///   <see cref="DefaultIndustrialAppStoreHttpFactory"/> uses the <see cref="AccessTokenProvider"/> 
+    ///   service to retrieve access tokens to use when authenticating outgoing requests.
+    /// </para>
+    /// 
+    /// <para>
+    ///   The primary <see cref="HttpMessageHandler"/> for <see cref="HttpClient"/> instances 
+    ///   created by a <see cref="DefaultIndustrialAppStoreHttpFactory"/> is created using an 
+    ///   <see cref="IHttpMessageHandlerFactory"/>. This allows the same primary handler to be 
+    ///   re-used across multiple <see cref="HttpClient"/> instances while allowing each instance 
+    ///   to define its own handler for applying authentication headers.
+    /// </para>
+    /// 
+    /// </remarks>
     public sealed class DefaultIndustrialAppStoreHttpFactory : IndustrialAppStoreHttpFactory {
 
         /// <summary>
@@ -22,7 +38,7 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
         /// <param name="accessTokenProvider">
         ///   The access token provider to use.
         /// </param>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpMessageHandlerFactory"/> is <see langword="null"/>.
         /// </exception>
         public DefaultIndustrialAppStoreHttpFactory(IHttpMessageHandlerFactory httpMessageHandlerFactory, AccessTokenProvider accessTokenProvider)
