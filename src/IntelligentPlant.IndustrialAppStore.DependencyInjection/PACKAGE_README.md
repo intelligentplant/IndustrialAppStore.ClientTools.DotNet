@@ -15,7 +15,7 @@ Please consider using one of the following packages instead of using this packag
 
 # Getting Started
 
-To register a scoped `IndustrialAppStoreHttpClient` service with an `IServiceCollection`, call the `AddIndustrialAppStoreServices` extension method:
+To register a scoped `IndustrialAppStoreHttpClient` service with an `IServiceCollection`, call the `AddIndustrialAppStoreApiServices` extension method:
 
 ```csharp
 var builder = services.AddIndustrialAppStoreApiServices();
@@ -53,6 +53,7 @@ var builder = services
         return (CancellationToken ct) => accessTokenService.GetAccessTokenAsync(ct);
     });
 ```
+
 
 ## Manually setting the access token factory
 
