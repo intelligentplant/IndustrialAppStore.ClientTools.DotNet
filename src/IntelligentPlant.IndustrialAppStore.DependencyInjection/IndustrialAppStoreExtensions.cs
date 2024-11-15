@@ -164,7 +164,7 @@ namespace Microsoft.Extensions.DependencyInjection {
 
             builder.Services.TryAddScoped<DataCoreHttpClient>(provider => provider.GetRequiredService<IndustrialAppStoreHttpClient>());
 
-            var httpBuilder = builder.Services.AddHttpClient(nameof(IndustrialAppStoreHttpClient));
+            var httpBuilder = builder.Services.AddHttpClient(IndustrialAppStoreHttpFactory.HttpClientName);
             configureHttpBuilder?.Invoke(httpBuilder);
 
             return builder;
@@ -178,7 +178,8 @@ namespace Microsoft.Extensions.DependencyInjection {
         ///   The builder.
         /// </param>
         /// <param name="factory">
-        ///   The access token factory delegate.
+        ///   The access token factory delegate that the <see cref="AccessTokenProvider"/> should 
+        ///   use.
         /// </param>
         /// <returns>
         ///   The builder.
@@ -212,7 +213,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         ///   The builder.
         /// </param>
         /// <param name="implementationFactory">
-        ///   A delegate that will create the access token factory.
+        ///   A delegate that will create the access token factory for the <see cref="AccessTokenProvider"/>.
         /// </param>
         /// <returns>
         ///   The builder.
@@ -236,6 +237,27 @@ namespace Microsoft.Extensions.DependencyInjection {
             });
 
             return builder;
+        }
+
+
+        /// <summary>
+        /// Registers a scoped <see cref="AccessTokenProvider"/> service with the builder that 
+        /// will always return the specified access token.
+        /// </summary>
+        /// <param name="builder">
+        ///   The builder.
+        /// </param>
+        /// <param name="accessToken">
+        ///   The access token to use.
+        /// </param>
+        /// <returns>
+        ///   The builder.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        public static IIndustrialAppStoreBuilder AddStaticAccessTokenProvider(this IIndustrialAppStoreBuilder builder, string? accessToken) {
+            return builder.AddAccessTokenProvider(AccessTokenProvider.CreateStaticAccessTokenFactory(accessToken));
         }
 
     }
