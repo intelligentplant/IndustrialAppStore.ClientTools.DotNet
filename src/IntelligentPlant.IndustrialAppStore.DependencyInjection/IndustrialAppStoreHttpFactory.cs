@@ -9,6 +9,13 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
     public abstract class IndustrialAppStoreHttpFactory : IIndustrialAppStoreHttpFactory {
 
         /// <summary>
+        /// The name of the <see cref="IHttpMessageHandlerFactory"/> configuration to use when 
+        /// creating <see cref="HttpMessageHandler"/>s
+        /// </summary>
+        internal const string HttpClientName = nameof(IndustrialAppStoreHttpClient);
+
+
+        /// <summary>
         /// The HTTP message handler factory.
         /// </summary>
         private readonly IHttpMessageHandlerFactory _httpMessageHandlerFactory;
@@ -34,7 +41,7 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
         /// <returns>
         ///   The HTTP message handler.
         /// </returns>
-        protected virtual HttpMessageHandler CreateHandler() => _httpMessageHandlerFactory.CreateHandler(nameof(IndustrialAppStoreHttpClient));
+        protected virtual HttpMessageHandler CreateHandler() => _httpMessageHandlerFactory.CreateHandler(HttpClientName);
 
 
         /// <summary>
@@ -44,17 +51,31 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
         ///   The <see cref="HttpClient"/> instance.
         /// </returns>
         protected virtual HttpClient CreateClient() {
-            var http = new HttpClient(CreateHandler(), false);
-#if NET8_0_OR_GREATER
-            http.DefaultRequestVersion = System.Net.HttpVersion.Version11;
-            http.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
-#endif
-            return http;
+            var httpClient = new HttpClient(CreateHandler(), false);
+            ConfigureHttpClient(httpClient);
+            return httpClient;
         }
 
 
-        /// <inheritdoc/>
-        HttpMessageHandler IIndustrialAppStoreHttpFactory.CreateHandler() => CreateHandler();
+        /// <summary>
+        /// Configures the specified <see cref="HttpClient"/> instance.
+        /// </summary>
+        /// <param name="httpClient">
+        ///   The <see cref="HttpClient"/> instance to configure.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="httpClient"/> is <see langword="null"/>.
+        /// </exception>
+        protected virtual void ConfigureHttpClient(HttpClient httpClient) {
+            if (httpClient == null) {
+                throw new ArgumentNullException(nameof(httpClient));
+            }
+
+#if NET8_0_OR_GREATER
+            httpClient.DefaultRequestVersion = System.Net.HttpVersion.Version11;
+            httpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
+#endif
+        }
 
 
         /// <inheritdoc/>
