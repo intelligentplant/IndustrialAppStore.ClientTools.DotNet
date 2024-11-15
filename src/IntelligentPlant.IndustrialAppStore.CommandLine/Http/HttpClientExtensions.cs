@@ -61,7 +61,7 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine.Http {
             };
 
             if (!string.IsNullOrEmpty(options.ClientSecret)) {
-                authorizeRequestBody["client_secret"] = options.ClientSecret;
+                authorizeRequestBody["client_secret"] = options.ClientSecret!;
             }
 
             if (options.Scopes != null && options.Scopes.Any()) {
@@ -92,7 +92,7 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine.Http {
             };
 
             if (!string.IsNullOrEmpty(options.ClientSecret)) {
-                tokenRequestBody["client_secret"] = options.ClientSecret;
+                tokenRequestBody["client_secret"] = options.ClientSecret!;
             }
 
             var interval = deviceAuthorizationResponse.Interval ?? 5;
