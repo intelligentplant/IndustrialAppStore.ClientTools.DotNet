@@ -1,5 +1,4 @@
 ﻿using IntelligentPlant.IndustrialAppStore.Authentication;
-using IntelligentPlant.IndustrialAppStore.Authentication.Http;
 using IntelligentPlant.IndustrialAppStore.Authentication.Options;
 using IntelligentPlant.IndustrialAppStore.Client;
 using IntelligentPlant.IndustrialAppStore.DependencyInjection;
@@ -92,14 +91,23 @@ namespace Microsoft.Extensions.DependencyInjection {
             ArgumentNullException.ThrowIfNull(configure);
 
             return services.AddIndustrialAppStoreApiServices()
-                .AddHttpFactory<TokenStoreHttpFactory>()
                 .AddApiClient(configureHttpBuilder: http => http
                     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler() {
                         EnableMultipleHttp2Connections = true
                     })
                     .AddStandardResilienceHandler())
                 .AddCoreAuthenticationServices()
-                .AddAuthentication(configure);
+                .AddAuthentication(configure)
+                .AddAccessTokenProvider(provider => {
+                    var tokenStore = provider.GetService<ITokenStore>();
+                    return async _ => {
+                        var tokens = tokenStore?.Ready ?? false
+                            ? await tokenStore.GetTokensAsync().ConfigureAwait(false)
+                            : default;
+
+                        return tokens?.AccessToken;
+                    };
+                });
         }
 
 

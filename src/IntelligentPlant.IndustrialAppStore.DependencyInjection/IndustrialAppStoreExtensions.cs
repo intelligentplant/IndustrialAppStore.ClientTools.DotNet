@@ -31,9 +31,13 @@ namespace Microsoft.Extensions.DependencyInjection {
                 throw new ArgumentNullException(nameof(services));
             }
             
-            return new IndustrialAppStoreBuilder(services)
+            var builder = new IndustrialAppStoreBuilder(services)
                 .AddHttpFactory<DefaultIndustrialAppStoreHttpFactory>()
                 .AddApiClient();
+
+            builder.Services.TryAddScoped<AccessTokenProvider>();
+
+            return builder;
         }
 
 
@@ -162,6 +166,74 @@ namespace Microsoft.Extensions.DependencyInjection {
 
             var httpBuilder = builder.Services.AddHttpClient(nameof(IndustrialAppStoreHttpClient));
             configureHttpBuilder?.Invoke(httpBuilder);
+
+            return builder;
+        }
+
+
+        /// <summary>
+        /// Registers a scoped <see cref="AccessTokenProvider"/> service with the builder.
+        /// </summary>
+        /// <param name="builder">
+        ///   The builder.
+        /// </param>
+        /// <param name="factory">
+        ///   The access token factory delegate.
+        /// </param>
+        /// <returns>
+        ///   The builder.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="factory"/> is <see langword="null"/>.
+        /// </exception>
+        public static IIndustrialAppStoreBuilder AddAccessTokenProvider(this IIndustrialAppStoreBuilder builder, AccessTokenFactory factory) {
+            if (builder == null) {
+                throw new ArgumentNullException(nameof(builder));
+            }
+            if (factory == null) {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            builder.Services.AddScoped(_ => new AccessTokenProvider() { 
+                Factory = factory 
+            });
+
+            return builder;
+        }
+
+
+        /// <summary>
+        /// Registers a scoped <see cref="AccessTokenProvider"/> service with the builder.
+        /// </summary>
+        /// <param name="builder">
+        ///   The builder.
+        /// </param>
+        /// <param name="implementationFactory">
+        ///   A delegate that will create the access token factory.
+        /// </param>
+        /// <returns>
+        ///   The builder.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="implementationFactory"/> is <see langword="null"/>.
+        /// </exception>
+        public static IIndustrialAppStoreBuilder AddAccessTokenProvider(this IIndustrialAppStoreBuilder builder, Func<IServiceProvider, AccessTokenFactory> implementationFactory) {
+            if (builder == null) {
+                throw new ArgumentNullException(nameof(builder));
+            }
+            if (implementationFactory == null) {
+                throw new ArgumentNullException(nameof(implementationFactory));
+            }
+
+            builder.Services.AddScoped(provider => new AccessTokenProvider() {
+                Factory = implementationFactory.Invoke(provider)
+            });
 
             return builder;
         }

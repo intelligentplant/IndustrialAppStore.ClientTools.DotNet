@@ -33,3 +33,37 @@ Once you have built your container, you can inject the `IndustrialAppStoreHttpCl
 
 > Remember that `IndustrialAppStoreHttpClient` is registered as a _scoped_ service.
 
+
+# Authentication
+
+By default, the scoped `AccessTokenProvider` service is used to provide the Industrial App Store access token for the `IndustrialAppStoreHttpClient` service.
+
+The default `AccessTokenProvider` service registration does not return an access token, meaning that calls to Industrial App Store APIs will fail. To configure an `AccessTokenProvider` service that returns an access token, you can do one of the following:
+
+
+## Replacing the default `AccessTokenProvider` registration
+
+You can replace the default `AccessTokenProvider` registration with a custom implementation that returns an access token. For example:
+
+```csharp
+var builder = services
+    .AddIndustrialAppStoreApiServices()
+    .AddAccessTokenProvider((IServiceProvider provider) => {
+        var accessTokenService = provider.GetRequiredService<MyTokenService>();
+        return (CancellationToken ct) => accessTokenService.GetAccessTokenAsync(ct);
+    });
+```
+
+## Manually setting the access token factory
+
+After creating a new `IServiceScope`, you can retrieve the `AccessTokenProvider` service from the service provider and set the `AccessTokenProvider.Factory` property to a factory method that returns an access token. For example:
+
+```csharp
+using var scope = serviceProvider.CreateScope();
+
+var accessTokenProvider = scope.ServiceProvider.GetRequiredService<AccessTokenProvider>();
+accessTokenProvider.Factory = (CancellationToken ct) => new ValueTask<string?>("my-access-token");
+
+var client = scope.ServiceProvider.GetRequiredService<IndustrialAppStoreHttpClient>();
+var dataSources = await client.DataSources.GetDataSourcesAsync();
+```

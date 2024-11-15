@@ -1,7 +1,6 @@
-﻿using IntelligentPlant.IndustrialAppStore.CommandLine;
-using IntelligentPlant.IndustrialAppStore.CommandLine.Http;
+﻿using IntelligentPlant.IndustrialAppStore.Client;
+using IntelligentPlant.IndustrialAppStore.CommandLine;
 using IntelligentPlant.IndustrialAppStore.CommandLine.Options;
-using IntelligentPlant.IndustrialAppStore.Client;
 using IntelligentPlant.IndustrialAppStore.DependencyInjection;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -45,8 +44,9 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// </remarks>
         public static IIndustrialAppStoreBuilder AddIndustrialAppStoreCliServices(this IServiceCollection services, Action<IndustrialAppStoreSessionManagerOptions> configure) {
             var builder = services.AddIndustrialAppStoreApiServices()
-                .AddApiClient(configureHttpBuilder: builder => {
-                    builder.AddHttpMessageHandler(provider => ActivatorUtilities.CreateInstance<AuthenticationHandler>(provider));
+                .AddAccessTokenProvider(provider => {
+                    var sessionManager = provider.GetRequiredService<IndustrialAppStoreSessionManager>();
+                    return ct => sessionManager.GetAccessTokenAsync(ct);
                 });
 
             builder.Services.AddSingleton(TimeProvider.System);
