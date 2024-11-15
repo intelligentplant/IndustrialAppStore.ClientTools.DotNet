@@ -9,8 +9,8 @@
     /// <para>
     ///   <see cref="IIndustrialAppStoreHttpFactory"/> allows the HTTP request pipeline for a 
     ///   client to be customised in ways that may not be possible when using <see cref="IHttpMessageHandlerFactory"/> 
-    ///   directly, such as adding custom scope-specific authentication headers to outgoing 
-    ///   requests.
+    ///   or <see cref="IHttpClientFactory"/> directly, such as adding custom scope-specific 
+    ///   authentication headers to outgoing requests.
     /// </para>
     /// 
     /// <para>
@@ -20,14 +20,6 @@
     /// 
     /// </remarks>
     public interface IIndustrialAppStoreHttpFactory {
-
-        /// <summary>
-        /// Creates a new HTTP message handler.
-        /// </summary>
-        /// <returns>
-        ///   The HTTP message handler.
-        /// </returns>
-        HttpMessageHandler CreateHandler();
 
         /// <summary>
         /// Creates a new <see cref="HttpClient"/> instance.
