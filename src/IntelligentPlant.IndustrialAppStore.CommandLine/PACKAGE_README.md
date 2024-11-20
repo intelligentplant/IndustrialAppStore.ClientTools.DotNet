@@ -14,9 +14,10 @@ Next, register CLI services with the dependency injection container:
 ```csharp
 services.AddIndustrialAppStoreCliServices(options => {
     options.ClientId = "<YOUR CLIENT ID>";
-    // Folder that encrypted authentication tokens will be saved to. Relative 
-    // paths are resolved using the user's local application data folder.
-    options.TokenPath = "MyIasApp/tokens";
+    // Base folder for application data such as encrypted authentication 
+    // tokens. Relative paths are resolved using the user's local 
+    // application data folder.
+    options.AppDataPath = "MyIasApp";
 });
 ```
 
@@ -39,3 +40,15 @@ Finally, use the `IndustrialAppStoreHttpClient` service to interact with the Ind
 var client = scope.ServiceProvider.GetRequiredService<IndustrialAppStoreHttpClient>();
 var dataSources = await client.DataSources.GetDataSourcesAsync();
 ```
+
+
+# Persisting Application Data
+
+If your application persists data to disk, you can use the `AppDataFolderProvider` service to get the base path for your app's data folder:
+
+```csharp
+var appDataDir = scope.ServiceProvider.GetRequiredService<AppDataFolderProvider>().AppDataFolder;
+var myDataDir = appDataDir.CreateSubdirectory("MyData");
+```
+
+Encrypted authentication tokens are saved to a sub-folder of the base folder provided by `AppDataFolderProvider`.

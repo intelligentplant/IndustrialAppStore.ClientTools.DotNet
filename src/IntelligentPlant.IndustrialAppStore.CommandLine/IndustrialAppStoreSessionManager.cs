@@ -33,6 +33,11 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
         private readonly IndustrialAppStoreSessionManagerOptions _options;
 
         /// <summary>
+        /// The data folder provider.
+        /// </summary>
+        private readonly AppDataFolderProvider _dataFolderProvider;
+
+        /// <summary>
         /// The time provider.
         /// </summary>
         private readonly TimeProvider _timeProvider;
@@ -62,6 +67,9 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
         /// <param name="dataProtectionProvider">
         ///   The data protection provider for protecting and unprotecting tokens at rest.
         /// </param>
+        /// <param name="dataFolderProvider">
+        ///   The data folder provider that provides the base path for storing authentication tokens.
+        /// </param>
         /// <param name="options">
         ///   The options for the session manager.
         /// </param>
@@ -75,32 +83,26 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
         ///   <paramref name="dataProtectionProvider"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
+        ///   <paramref name="dataFolderProvider"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
         public IndustrialAppStoreSessionManager(
             IHttpClientFactory httpClientFactory,
             IDataProtectionProvider dataProtectionProvider,
+            AppDataFolderProvider dataFolderProvider,
             IndustrialAppStoreSessionManagerOptions options,
             TimeProvider? timeProvider = null
         ) {
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-            if (dataProtectionProvider == null) {
-                throw new ArgumentNullException(nameof(dataProtectionProvider));
-            }
-            _dataProtector = dataProtectionProvider.CreateProtector(typeof(IndustrialAppStoreSessionManager).FullName!, "tokens", "v1");
+            _dataProtector = dataProtectionProvider?.CreateProtector(typeof(IndustrialAppStoreSessionManager).FullName!, "tokens", "v1") ?? throw new ArgumentNullException(nameof(dataProtectionProvider));
             _options = options ?? throw new ArgumentNullException(nameof(options));
+            _dataFolderProvider = dataFolderProvider ?? throw new ArgumentNullException(nameof(dataFolderProvider));
 
-            if (_options.TokenPath != null) {
+            if (_dataFolderProvider.AppDataFolder != null) {
                 var tokenFileName = BitConverter.ToString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(_options.IndustrialAppStoreUrl.Authority))).Replace("-", "");
-                var tokenFileFullPath = Path.IsPathRooted(_options.TokenPath)
-                    ? Path.Combine(_options.TokenPath, tokenFileName)
-                    : Path.Combine(
-                        Environment.UserInteractive
-                            ? Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
-                            : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                        _options.TokenPath,
-                        tokenFileName);
-                _tokenFile = new FileInfo(tokenFileFullPath);
+                _tokenFile = new FileInfo(Path.Combine(_dataFolderProvider.AppDataFolder.FullName, ".tokens", tokenFileName));
             }
 
             _timeProvider = timeProvider ?? TimeProvider.System;
