@@ -63,6 +63,11 @@ namespace Microsoft.Extensions.DependencyInjection {
 
             builder.Services.AddSingleton(provider => {
                 var options = provider.GetRequiredService<IOptions<IndustrialAppStoreSessionManagerOptions>>().Value;
+                return new AppDataFolderProvider(options.AppDataPath);
+            });
+
+            builder.Services.AddSingleton(provider => {
+                var options = provider.GetRequiredService<IOptions<IndustrialAppStoreSessionManagerOptions>>().Value;
                 return ActivatorUtilities.CreateInstance<IndustrialAppStoreSessionManager>(provider, options);
             });
 

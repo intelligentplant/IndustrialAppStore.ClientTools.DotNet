@@ -43,13 +43,19 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
         public string[]? Scopes { get; set; }
 
         /// <summary>
-        /// The path to the folder where tokens will be stored.
+        /// The path to the folder where application data such as authentication tokens will be 
+        /// stored.
         /// </summary>
         /// <remarks>
         /// 
         /// <para>
-        ///   If <see cref="TokenPath"/> is <see langword="null"/>, tokens will not be persisted 
-        ///   and a new authentication session must be created each time the application runs.
+        ///   Authentication tokens will be stored in a <c>.tokens</c> folder under this path.
+        /// </para>
+        /// 
+        /// <para>
+        ///   If <see cref="AppDataPath"/> is <see langword="null"/> or white space, tokens will not 
+        ///   be persisted and a new authentication session must be created each time the 
+        ///   application runs.
         /// </para>
         /// 
         /// <para>
@@ -59,7 +65,7 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
         /// </para>
         /// 
         /// </remarks>
-        public string? TokenPath { get; set; }
+        public string? AppDataPath { get; set; }
 
     }
 }
