@@ -336,5 +336,27 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
             _tokens = null;
         }
 
+
+        /// <summary>
+        /// Gets information about the active authentication session.
+        /// </summary>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="ValueTask{TResult}"/> that returns the session information, or 
+        ///   <see langword="null"/> if no session exists.
+        /// </returns>
+        public async ValueTask<SessionInfo?> GetSessionInfoAsync(CancellationToken cancellationToken) {
+            using var handle = await _tokensLock.LockAsync(cancellationToken).ConfigureAwait(false);
+            var tokens = _tokens ??= LoadTokens();
+
+            if (tokens == null) {
+                return null;
+            }
+
+            return new SessionInfo(tokens.UtcExpiresAt, !string.IsNullOrWhiteSpace(tokens.RefreshToken));
+        }
+
     }
 }
