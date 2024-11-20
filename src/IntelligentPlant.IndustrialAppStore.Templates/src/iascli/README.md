@@ -34,12 +34,12 @@ Next, you must update the `appsettings.json` file (in the same folder as this RE
 {
     "IAS": {
         "ClientId": "<YOUR CLIENT ID>",
-        "TokenPath": "<PATH TO SAVE AUTHENTICATION TOKENS TO>"
+        "AppDataPath": "<BASE PATH TO SAVE APPLICATION DATA TO>"
     }
 }
 ```
 
-The `TokenPath` setting specifies the path where the app will save authentication tokens to. This is required in order to persist the authentication tokens between app runs. Specifying a relative path will save the tokens relative to the user's local application data folder.
+The `AppDataPath` setting specifies the base path where the app will save app data such as authentication tokens to. This is required in order to persist the authentication tokens between app runs. Relative paths are made absolute using the user's local application data folder (for interactive environments) or the common application data folder (for non-interactive environments).
 
 
 # Authentication
