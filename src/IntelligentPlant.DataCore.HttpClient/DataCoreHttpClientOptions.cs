@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace IntelligentPlant.DataCore.Client {
 
@@ -10,6 +10,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// The base URL for Data Core API calls.
         /// </summary>
+        [Required]
         public Uri DataCoreUrl { get; set; } = default!;
 
     }

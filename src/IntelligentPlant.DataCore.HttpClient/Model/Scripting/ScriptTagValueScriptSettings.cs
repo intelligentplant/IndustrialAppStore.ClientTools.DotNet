@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Linq;
+
+using IntelligentPlant.Relativity;
 
 namespace IntelligentPlant.DataCore.Client.Model.Scripting {
 
@@ -94,19 +93,21 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
                 if (InputDataFunctions?.Length < 1) {
                     yield return new ValidationResult(Resources.Error_Scripting_AggregatedFunctionListCannotBeEmpty, new[] { nameof(InputDataFunctions) });
                 }
-                if (InputDataFunctions.Any(x => String.IsNullOrWhiteSpace(x))) {
-                    yield return new ValidationResult(Resources.Error_Scripting_AggregatedFunctionListCannotContainEmptyValues, new[] { nameof(InputDataFunctions) });
-                }
-                if (InputDataFunctions.Contains(DataFunctions.Raw, StringComparer.OrdinalIgnoreCase) || InputDataFunctions.Contains(DataFunctions.Plot, StringComparer.OrdinalIgnoreCase) || InputDataFunctions.Contains(DataFunctions.CurrentValue, StringComparer.OrdinalIgnoreCase)) {
-                    yield return new ValidationResult(String.Format(CultureInfo.CurrentCulture, Resources.Error_Scripting_AggregatedFunctionListCanContainOnlyAggregateFunctions, String.Join(", ", new[] { DataFunctions.Raw, DataFunctions.Plot, DataFunctions.CurrentValue })), new[] { nameof(InputDataFunctions) });
+                if (InputDataFunctions != null) {
+                    if (InputDataFunctions.Any(x => string.IsNullOrWhiteSpace(x))) {
+                        yield return new ValidationResult(Resources.Error_Scripting_AggregatedFunctionListCannotContainEmptyValues, new[] { nameof(InputDataFunctions) });
+                    }
+                    if (InputDataFunctions.Contains(DataFunctions.Raw, StringComparer.OrdinalIgnoreCase) || InputDataFunctions.Contains(DataFunctions.Plot, StringComparer.OrdinalIgnoreCase) || InputDataFunctions.Contains(DataFunctions.CurrentValue, StringComparer.OrdinalIgnoreCase)) {
+                        yield return new ValidationResult(String.Format(CultureInfo.CurrentCulture, Resources.Error_Scripting_AggregatedFunctionListCanContainOnlyAggregateFunctions, string.Join(", ", new[] { DataFunctions.Raw, DataFunctions.Plot, DataFunctions.CurrentValue })), new[] { nameof(InputDataFunctions) });
+                    }
                 }
 
-                if (string.IsNullOrWhiteSpace(InputDataSampleInterval) || !IntelligentPlant.Relativity.RelativityParser.Default.TryConvertToTimeSpan(InputDataSampleInterval, out var _)) {
+                if (string.IsNullOrWhiteSpace(InputDataSampleInterval) || !RelativityParser.Current.TryConvertToTimeSpan(InputDataSampleInterval!, out var _)) {
                     yield return new ValidationResult(Resources.Error_Scripting_InvalidTimeSpan, new[] { nameof(InputDataSampleInterval) });
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(InputDataBlockSize) || !IntelligentPlant.Relativity.RelativityParser.Default.TryConvertToTimeSpan(InputDataBlockSize, out var _)) {
+            if (string.IsNullOrWhiteSpace(InputDataBlockSize) || !RelativityParser.Current.TryConvertToTimeSpan(InputDataBlockSize, out var _)) {
                 yield return new ValidationResult(Resources.Error_Scripting_InvalidTimeSpan, new[] { nameof(InputDataBlockSize) });
             }
         }

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Net.Http;
-
-namespace IntelligentPlant.DataCore.Client.Clients {
+﻿namespace IntelligentPlant.DataCore.Client.Clients {
 
     /// <summary>
     /// Base class for <see cref="DataCoreHttpClient"/> sub-client types.
     /// </summary>
-    /// <typeparam name="TOptions">
-    ///   The HTTP client options type.
-    /// </typeparam>
-    public abstract class ClientBase<TOptions> where TOptions : DataCoreHttpClientOptions {
+    public abstract class ClientBase {
 
         /// <summary>
         /// The HTTP client to use when making requests.
@@ -19,7 +13,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <summary>
         /// The HTTP client options.
         /// </summary>
-        protected TOptions Options { get; }
+        protected DataCoreHttpClientOptions Options { get; }
 
         /// <summary>
         /// The base URL for the client.
@@ -28,7 +22,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
 
         /// <summary>
-        /// Creates a new <see cref="ClientBase{TOptions}"/> object.
+        /// Creates a new <see cref="ClientBase"/> instance.
         /// </summary>
         /// <param name="httpClient">
         ///   The HTTP client to use.
@@ -42,7 +36,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        protected ClientBase(HttpClient httpClient, TOptions options) {
+        protected ClientBase(HttpClient httpClient, DataCoreHttpClientOptions options) {
             HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             Options = options ?? throw new ArgumentNullException(nameof(options));
         }
@@ -155,6 +149,22 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             return new Uri(baseUrl, relativeUrl);
         }
+
+
+        /// <summary>
+        /// Creates a new <see cref="HttpContent"/> object that serializes the specified value to 
+        /// JSON.
+        /// </summary>
+        /// <typeparam name="T">
+        ///   The value type.
+        /// </typeparam>
+        /// <param name="value">
+        ///   The value to serialize.
+        /// </param>
+        /// <returns>
+        ///   A new <see cref="HttpContent"/> object.
+        /// </returns>
+        protected internal static HttpContent CreateJsonContent<T>(T value) => DataCoreHttpClient.CreateJsonContent(value);
 
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
@@ -62,6 +60,12 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting.Templates {
         /// perform historical queries on the script tag.
         /// </summary>
         public ScriptTagArchiveSettings? ArchiveSettings { get; set; }
+
+        /// <summary>
+        /// An optional delay that will be applied prior to beginning recalculation of the script 
+        /// tag.
+        /// </summary>
+        public TimeSpan? EvaluationDelay { get; set; }
 
 
         /// <summary>

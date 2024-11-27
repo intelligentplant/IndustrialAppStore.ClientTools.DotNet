@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using IntelligentPlant.DataCore.Client.Model;
+﻿using IntelligentPlant.DataCore.Client.Model;
 
 namespace ExampleMvcApplication.Models {
     public class TagListViewModel {

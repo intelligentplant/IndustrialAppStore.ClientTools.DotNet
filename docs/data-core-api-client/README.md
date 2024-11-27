@@ -49,11 +49,11 @@ When running in on-premises mode, you must supply your own authentication mechan
 
 ## API Availability
 
-The Industrial App Store defines APIs for app billing and organisation and user information queries. These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself. The app template referenced above simplifies this task.
+The Industrial App Store defines APIs for organisation and user information queries. These APIs are not available when running in on-premises mode, and attempts to call these APIs will throw errors. You must account for these differences yourself.
 
 
 ## API Authentication and Authorization
 
-When running in Industrial App Store mode, your app will automatically add a bearer token to outgoing requests made on behalf of the calling user, allowing the Industrial App Store to authenticate and authorize the request on a per-user basis. When running in on-premises mode, the default network credentials (i.e. [CredentialCache.DefaultNetworkCredentials](https://docs.microsoft.com/en-us/dotnet/api/system.net.credentialcache.defaultnetworkcredentials)) are added to outgoing HTTP requests instead.
+When running in Industrial App Store mode, your app will automatically add a bearer token to outgoing requests made on behalf of the calling user, allowing the Industrial App Store to authenticate and authorize the request on a per-user basis. When running in on-premises mode, you must manually add an authentication mechanism to the `HttpClient` used by the API client. This is typically Windows authentication, but may be different depending on the configuration of the Data Core API instance you are querying.
 
 > Note that the differences in API authentication mean that it may not be possible to perform per-user authentication when calling the on-premises Data Core API. You should be prepared to apply your own authorization scheme when running in on-premises mode in order to restrict access to the data sources configured in the Data Core API where appropriate.

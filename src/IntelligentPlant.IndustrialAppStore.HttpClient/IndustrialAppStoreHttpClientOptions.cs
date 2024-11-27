@@ -1,16 +1,18 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
+
 using IntelligentPlant.DataCore.Client;
 
 namespace IntelligentPlant.IndustrialAppStore.Client {
 
     /// <summary>
-    /// Options for <see cref="IndustrialAppStoreHttpClient{TContext}"/>.
+    /// Options for <see cref="IndustrialAppStoreHttpClient"/>.
     /// </summary>
     public class IndustrialAppStoreHttpClientOptions : DataCoreHttpClientOptions {
 
         /// <summary>
         /// The base Industrial App Store API URL.
         /// </summary>
+        [Required]
         public Uri IndustrialAppStoreUrl { get; set; }
 
 

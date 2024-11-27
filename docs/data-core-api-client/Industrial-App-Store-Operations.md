@@ -16,7 +16,7 @@ Please note that the API calls described in this page are only available when us
 User information is retrieved by calling the `GetUserInfoAsync` method on the API client's `UserInfo` property:
 
 ```csharp
-var userInfo = await client.UserInfo.GetUserInfoAsync(Request.HttpContext, cancellationToken);
+var userInfo = await client.UserInfo.GetUserInfoAsync(cancellationToken);
 ```
 
 The result of the call is a [UserOrGroupPrincipal](/src/IntelligentPlant.IndustrialAppStore.HttpClient/Model/UserOrGroupPrincipal.cs) object describing the calling user.
@@ -41,7 +41,6 @@ You can search for users within the caller's organisation using the `FindUsersAs
 // Finds users that match the specified filter (extension method).
 var users = await client.Organization.FindUsersAsync(
     "Smith",
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -54,7 +53,6 @@ users = await client.Organization.FindUsersAsync(
         // Set to true to include matching users from trusted 3rd party organisations.
         IncludeExternalResults = false
     },
-    Request.HttpContext,
     cancellationToken
 );
 ```
@@ -76,7 +74,6 @@ You can search for users within the caller's organisation using the `FindGroupsA
 // Finds users that match the specified filter (extension method).
 var users = await client.Organization.FindGroupsAsync(
     "Admin",
-    context: Request.HttpContext,
     cancellationToken: cancellationToken
 );
 
@@ -89,7 +86,6 @@ users = await client.Organization.FindGroupsAsync(
         // Set to true to include matching groups from trusted 3rd party organisations.
         IncludeExternalResults = false
     },
-    Request.HttpContext,
     cancellationToken
 );
 ```
@@ -126,7 +122,6 @@ To debit the calling user, call the `DebitUserAsync` method on the client's `Acc
 // Debit a user 1 credit (extension method).
 var debitResponse = await client.AccountTransactions.DebitUserAsync(
     1, 
-    Request.HttpContext, 
     cancellationToken
 );
 
@@ -135,7 +130,6 @@ debitResponse = await client.AccountTransactions.DebitUserAsync(
     new DebitUserRequest() {
         DebitAmount = 1
     }, 
-    Request.HttpContext, 
     cancellationToken
 );
 ```
@@ -159,7 +153,6 @@ A refund can be requested by calling the `RefundUserAsync` method on the client'
 // Refund a transaction (extension method).
 var refundResponse = await client.AccountTransactions.RefundUserAsync(
     "abc12345", 
-    Request.HttpContext, 
     cancellationToken
 );
 
@@ -168,7 +161,6 @@ refundResponse = await client.AccountTransactions.RefundUserAsync(
     new RefundUserRequest() {
         TransactionRef = "abc12345"
     }, 
-    Request.HttpContext, 
     cancellationToken
 );
 ```

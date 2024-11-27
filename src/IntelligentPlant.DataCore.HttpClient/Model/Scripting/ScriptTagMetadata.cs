@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace IntelligentPlant.DataCore.Client.Model.Scripting {
+﻿namespace IntelligentPlant.DataCore.Client.Model.Scripting {
 
     /// <summary>
     /// Describes metadata about a script tag.

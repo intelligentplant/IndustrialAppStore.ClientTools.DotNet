@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 using IntelligentPlant.DataCore.Client;
 using IntelligentPlant.IndustrialAppStore.Client.Model;
@@ -15,20 +9,16 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
     /// <summary>
     /// Client for querying an Industrial App Store user's organisation.
     /// </summary>
-    /// <typeparam name="TContext">
-    ///   The context type that is passed to API calls to allow authentication headers to be added 
-    ///   to outgoing requests.
-    /// </typeparam>
-    public class OrganizationInfoClient<TContext> : IasClientBase {
+    public class OrganizationInfoClient : IasClientBase {
 
         /// <summary>
-        /// Creates a new <see cref="OrganizationInfoClient{TContext}"/> object.
+        /// Creates a new <see cref="OrganizationInfoClient"/> object.
         /// </summary>
         /// <param name="httpClient">
         ///   The HTTP client to use.
         /// </param>
         /// <param name="options">
-        ///   The HTTP client options.
+        ///   The client options.
         /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
@@ -36,7 +26,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public OrganizationInfoClient(HttpClient httpClient, IndustrialAppStoreHttpClientOptions options)
+        internal OrganizationInfoClient(HttpClient httpClient, IndustrialAppStoreHttpClientOptions options)
             : base(httpClient, options) { }
 
 
@@ -45,12 +35,6 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// </summary>
         /// <param name="request">
         ///   The search request.
-        /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
         /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
@@ -66,7 +50,6 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// </exception>
         public async Task<IEnumerable<UserOrGroupPrincipal>> FindUsersAsync(
             UserOrGroupPrincipalSearchRequest request,
-            TContext? context = default,
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -77,8 +60,8 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
             var url = GetAbsoluteUrl("api/user-search/users");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<UserOrGroupPrincipalSearchRequest>(request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -99,12 +82,6 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// <param name="request">
         ///   The search request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -119,7 +96,6 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// </exception>
         public async Task<IEnumerable<UserOrGroupPrincipal>> FindGroupsAsync(
            UserOrGroupPrincipalSearchRequest request,
-           TContext? context = default,
            CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -130,8 +106,8 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
             var url = GetAbsoluteUrl("api/user-search/groups");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) { 
-                Content = new ObjectContent<UserOrGroupPrincipalSearchRequest>(request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -149,25 +125,16 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
         /// <summary>
         /// Gets the group memberships for the calling user.
         /// </summary>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   A task that will return the matching groups.
         /// </returns>
-        public async Task<IEnumerable<UserOrGroupPrincipal>> GetGroupMembershipsAsync(
-           TContext? context = default,
-           CancellationToken cancellationToken = default
-        ) {
+        public async Task<IEnumerable<UserOrGroupPrincipal>> GetGroupMembershipsAsync(CancellationToken cancellationToken = default) {
             var url = GetAbsoluteUrl("api/user-search/me/groups");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {

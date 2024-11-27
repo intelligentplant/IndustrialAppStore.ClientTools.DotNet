@@ -1,5 +1,5 @@
-﻿# Exclude static lib files
-wwwroot/lib/*
+﻿# Ignore libraries restored via LibMan
+wwwroot/lib
 
 # Allow specific publish profiles that do not include any credentials
 !Properties/PublishProfiles/IISWindowsAuth.pubxml

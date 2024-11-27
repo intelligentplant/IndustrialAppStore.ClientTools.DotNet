@@ -1,35 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net.Http;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Formatting;
-using System.Threading;
-using System.Threading.Tasks;
-using IntelligentPlant.DataCore.Client.Queries;
+
 using IntelligentPlant.DataCore.Client.Model;
 using IntelligentPlant.DataCore.Client.Model.Queries;
 using IntelligentPlant.DataCore.Client.Model.Scripting;
 using IntelligentPlant.DataCore.Client.Model.Scripting.Templates;
+using IntelligentPlant.DataCore.Client.Queries;
 
 namespace IntelligentPlant.DataCore.Client.Clients {
 
     /// <summary>
     /// Client for performing Data Core data source queries.
     /// </summary>
-    /// <typeparam name="TContext">
-    ///   The context type that is passed to API calls to allow authentication headers to be added 
-    ///   to outgoing requests.
-    /// </typeparam>
-    /// <typeparam name="TOptions">
-    ///   The HTTP client options type.
-    /// </typeparam>
-    public class DataSourcesClient<TContext, TOptions> : ClientBase<TOptions> where TOptions : DataCoreHttpClientOptions {
+    public class DataSourcesClient : ClientBase {
 
         #region [ Constructor ]
 
         /// <summary>
-        /// Creates a new <see cref="DataSourcesClient{TContext, TOptions}"/> object.
+        /// Creates a new <see cref="DataSourcesClient"/> object.
         /// </summary>
         /// <param name="httpClient">
         ///   The HTTP client to use.
@@ -43,7 +31,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public DataSourcesClient(HttpClient httpClient, TOptions options) : base(httpClient, options) { }
+        internal DataSourcesClient(HttpClient httpClient, DataCoreHttpClientOptions options) : base(httpClient, options) { }
 
         #endregion
 
@@ -52,25 +40,16 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <summary>
         /// Gets information about running data sources.
         /// </summary>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   A task that will return information about the running data sources.
         /// </returns>
-        public async Task<IEnumerable<DataSourceInfo>> GetDataSourcesAsync(
-            TContext? context = default, 
-            CancellationToken cancellationToken = default
-        ) {
+        public async Task<IEnumerable<DataSourceInfo>> GetDataSourcesAsync(CancellationToken cancellationToken = default) {
             var url = GetAbsoluteUrl("api/data/datasources");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
 
             try {
                 using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
@@ -90,12 +69,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="dataSourceName">
         ///   The data source name.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -104,7 +77,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<DataSourceInfo> GetDataSourceAsync(
             string dataSourceName,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (string.IsNullOrWhiteSpace(dataSourceName)) {
@@ -113,7 +85,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/data/datasources/{Uri.EscapeDataString(dataSourceName)}");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
 
             try {
                 using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
@@ -133,12 +105,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -147,7 +113,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ComponentRoles> IsAuthorizedAsync(
             IsAuthorizedOnDataSourceRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -163,8 +128,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/security/data-source/{Uri.EscapeDataString(request.DataSourceName)}/is-in-role");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<IEnumerable<string>>(roleNames, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(roleNames)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -187,12 +152,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The search request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -201,7 +160,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<TagSearchResult>> FindTagsAsync(
             FindTagsRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -212,8 +170,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/data/tags/{Uri.EscapeDataString(request.DataSourceName)}");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(typeof(TagSearchFilter), request.Filter, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request.Filter)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -226,6 +184,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             }
         }
 
+
+
+
         #endregion
 
         #region [ Read Snapshot Tag Values ]
@@ -236,12 +197,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The snapshot request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -250,7 +205,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IDictionary<string, SnapshotTagValueDictionary>> ReadSnapshotTagValuesAsync(
             ReadSnapshotTagValuesRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -261,8 +215,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl("api/data/v2/snapshot");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -285,12 +239,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The raw data request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -299,7 +247,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadRawTagValuesAsync(
             ReadRawTagValuesRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -310,8 +257,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl("api/data/v2/raw");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -332,12 +279,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The plot data request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -346,7 +287,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadPlotTagValuesAsync(
             ReadPlotTagValuesRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -357,8 +297,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl("api/data/v2/plot");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -378,12 +318,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The processed data request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -392,7 +326,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadProcessedTagValuesAsync(
             ReadProcessedTagValuesRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -403,8 +336,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl("api/data/v2/processed");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -424,12 +357,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The values-at-times data request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -437,8 +364,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ///   The historical tag values, indexed by data source name and then tag name.
         /// </returns>
         public async Task<IDictionary<string, HistoricalTagValuesDictionary>> ReadTagValuesAtTimesAsync(
-            ReadTagValuesAtTimesRequest request, 
-            TContext? context = default, 
+            ReadTagValuesAtTimesRequest request,
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -449,8 +375,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl("api/data/v2/values-at-times");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.GetType(), request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -473,12 +399,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The write request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -488,7 +408,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<TagValueUpdateResponse>> WriteSnapshotTagValuesAsync(
             WriteTagValuesRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -499,7 +418,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/data/v2/snapshot/{Uri.EscapeDataString(request.DataSourceName)}");
             var httpRequest = new HttpRequestMessage(HttpMethod.Put, url) {
                 Content = new ObjectContent<IEnumerable<TagValue>>(request.Values, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -522,12 +441,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The write request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -537,7 +450,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<TagValueUpdateResponse>> WriteHistoricalTagValuesAsync(
             WriteTagValuesRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -548,7 +460,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/data/v2/history/{Uri.EscapeDataString(request.DataSourceName)}");
             var httpRequest = new HttpRequestMessage(HttpMethod.Put, url) {
                 Content = new ObjectContent<IEnumerable<TagValue>>(request.Values, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -571,12 +483,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The read request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -586,7 +492,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<AnnotationCollection>> ReadAnnotationsAsync(
             ReadAnnotationsRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -597,7 +502,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl("api/data/annotations");
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
                 Content = new ObjectContent<ReadAnnotationsRequest>(request, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -620,12 +525,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -634,7 +533,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<Annotation> CreateAnnotationAsync(
             CreateAnnotationRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -645,7 +543,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/data/annotations/{Uri.EscapeDataString(request.DataSourceName)}");
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
                 Content = new ObjectContent<Annotation>(request.Annotation, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -665,12 +563,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -679,7 +571,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task UpdateAnnotationAsync(
             UpdateAnnotationRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -690,7 +581,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/data/annotations/{Uri.EscapeDataString(request.DataSourceName)}");
             var httpRequest = new HttpRequestMessage(HttpMethod.Put, url) {
                 Content = new ObjectContent<AnnotationUpdate>(request.Annotation, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -710,12 +601,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -724,7 +609,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task DeleteAnnotationAsync(
             DeleteAnnotationRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -733,7 +617,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             Validator.ValidateObject(request, new ValidationContext(request), true);
 
             var url = GetAbsoluteUrl($"api/data/annotations/{Uri.EscapeDataString(request.DataSourceName)}?id={Uri.EscapeDataString(request.Annotation.Id)}&tagName={Uri.EscapeDataString(request.Annotation.TagName)}&utcAnnotationTime={Uri.EscapeDataString(request.Annotation.UtcAnnotationTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"))}");
-            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, url).AddStateProperty(context);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, url);
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -756,12 +640,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -770,7 +648,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<ScriptEngine>> GetScriptEnginesAsync(
             GetDataSourceScriptEnginesRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -780,7 +657,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/script-engines");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
 
             try {
                 using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -800,12 +677,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -814,7 +685,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<ScriptTemplate>> FindScriptTagTemplatesAsync(
             FindScriptTagTemplatesRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -824,7 +694,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/script-engines/{Uri.EscapeDataString(request.ScriptEngineId)}/templates");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
 
             try {
                 using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -844,12 +714,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -858,7 +722,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTemplateWithParameterDefinitions> GetScriptTagTemplateAsync(
             GetScriptTagTemplateRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -868,7 +731,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/script-engines/{Uri.EscapeDataString(request.ScriptEngineId)}/templates/{Uri.EscapeDataString(request.TemplateId)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
 
             try {
                 using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -888,12 +751,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -902,7 +759,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<IEnumerable<ScriptTagDefinition>> FindScriptTagsAsync(
             FindTagsRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -913,8 +769,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/search");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.Filter.GetType(), request.Filter, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request.Filter)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -934,12 +790,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -947,8 +797,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ///   A task that will return the matching script tags.
         /// </returns>
         public async Task<IEnumerable<ScriptTagDefinition>> GetScriptTagsAsync(
-            GetTagsRequest request,
-            TContext? context = default, 
+            GetTagsRequest request, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -959,13 +808,14 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.TagNamesOrIds.GetType(), request.TagNamesOrIds, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request.TagNamesOrIds)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<ScriptTagDefinition>>(cancellationToken).ConfigureAwait(false);
+                    var result = await httpResponse.Content.ReadAsAsync<IDictionary<string, ScriptTagDefinition>>(cancellationToken).ConfigureAwait(false);
+                    return result.Values.ToArray();
                 }
             }
             finally {
@@ -980,12 +830,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -994,7 +838,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTagDefinition> GetScriptTagAsync(
             GetTagRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1004,7 +847,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/{Uri.EscapeDataString(request.TagNameOrId)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -1024,12 +867,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1038,7 +875,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTagDefinition> CreateScriptTagAsync(
             CreateScriptTagRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1049,8 +885,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/create");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.Settings.GetType(), request.Settings, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request.Settings)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -1070,12 +906,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1084,7 +914,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTagDefinition> CreateScriptTagFromTemplateAsync(
             CreateTemplatedScriptTagRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1095,8 +924,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/create-from-template");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent(request.Settings.GetType(), request.Settings, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request.Settings)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -1116,12 +945,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1130,7 +953,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTagDefinition> UpdateScriptTagAsync(
             UpdateScriptTagRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1141,8 +963,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/{Uri.EscapeDataString(request.ScriptTagId)}");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Put, url) {
-                Content = new ObjectContent(request.Settings.GetType(), request.Settings, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request.Settings)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -1162,12 +984,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1176,7 +992,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<ScriptTagDefinition> UpdateScriptTagFromTemplateAsync(
             UpdateTemplatedScriptTagRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1187,8 +1002,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/update-from-template/{Uri.EscapeDataString(request.ScriptTagId)}");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Put, url) {
-                Content = new ObjectContent(request.Settings.GetType(), request.Settings, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(request.Settings)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -1208,12 +1023,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1222,7 +1031,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         public async Task<bool> DeleteScriptTagAsync(
             DeleteScriptTagRequest request,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -1232,7 +1040,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/configuration/scripting/tags/{Uri.EscapeDataString(request.DataSourceName)}/{Uri.EscapeDataString(request.ScriptTagId)}");
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, url).AddStateProperty(context);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, url);
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -1264,12 +1072,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="parameters">
         ///   The function parameters.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -1280,7 +1082,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             string dataSourceName, 
             string functionName, 
             IDictionary<string, string>? parameters = null,
-            TContext? context = default, 
             CancellationToken cancellationToken = default
         ) {
             if (string.IsNullOrWhiteSpace(dataSourceName)) {
@@ -1294,11 +1095,10 @@ namespace IntelligentPlant.DataCore.Client.Clients {
                     : new Dictionary<string, string>(parameters)
             };
 
-            return await CustomFunctionsClient<TContext, TOptions>.RunCustomFunctionAsync<T>(
+            return await CustomFunctionsClient.RunCustomFunctionAsync<T>(
                 HttpClient,
                 GetAbsoluteUrl("api/rpc")!,
-                request, 
-                context, 
+                request,
                 cancellationToken
             ).ConfigureAwait(false);
         }

@@ -1,8 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <Description>ASP.NET Core authentication handler for Intelligent Plant's Industrial App Store.</Description>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IntelligentPlant.IndustrialAppStore.DependencyInjection\IntelligentPlant.IndustrialAppStore.DependencyInjection.csproj" />
     <ProjectReference Include="..\IntelligentPlant.IndustrialAppStore.HttpClient\IntelligentPlant.IndustrialAppStore.HttpClient.csproj" />
     <ProjectReference Include="..\IntelligentPlant.IndustrialAppStore.AspNetCore\IntelligentPlant.IndustrialAppStore.AspNetCore.csproj" />
   </ItemGroup>
@@ -27,6 +36,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PACKAGE_README.md" Pack="true" PackagePath=".\README.md" />
   </ItemGroup>
   
 </Project>

@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace IntelligentPlant.IndustrialAppStore.Authentication {
+﻿namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
     /// <summary>
     /// Describes OAuth tokens associated with an Industrial App Store authentication session.
     /// </summary>
-    public struct OAuthTokens {
+    public readonly struct OAuthTokens {
 
         /// <summary>
         /// The type of the <see cref="AccessToken"/>.

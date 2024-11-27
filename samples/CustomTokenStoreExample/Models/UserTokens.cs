@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExampleMvcApplication.Models {
@@ -21,7 +20,7 @@ namespace ExampleMvcApplication.Models {
 
         public DateTimeOffset? ExpiryTime { get; set; }
 
-        public string RefreshToken { get; set; }
+        public string? RefreshToken { get; set; }
 
     }
 }

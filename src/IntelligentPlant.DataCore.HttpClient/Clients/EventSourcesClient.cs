@@ -1,32 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Threading;
-using System.Threading.Tasks;
-using IntelligentPlant.DataCore.Client.Queries;
+﻿using System.ComponentModel.DataAnnotations;
+
 using IntelligentPlant.DataCore.Client.Model;
 using IntelligentPlant.DataCore.Client.Model.Queries;
+using IntelligentPlant.DataCore.Client.Queries;
 
 namespace IntelligentPlant.DataCore.Client.Clients {
     /// <summary>
     /// Client for performing Data Core event source queries.
     /// </summary>
-    /// <typeparam name="TContext">
-    ///   The context type that is passed to API calls to allow authentication headers to be added 
-    ///   to outgoing requests.
-    /// </typeparam>
-    /// <typeparam name="TOptions">
-    ///   The HTTP client options type.
-    /// </typeparam>
-    public class EventSourcesClient<TContext, TOptions> : ClientBase<TOptions> where TOptions : DataCoreHttpClientOptions {
+    public class EventSourcesClient : ClientBase {
 
         #region [ Constructor ]
 
         /// <summary>
-        /// Creates a new <see cref="EventSourcesClient{TContext, TOptions}"/> object.
+        /// Creates a new <see cref="EventSourcesClient"/> object.
         /// </summary>
         /// <param name="httpClient">
         ///   The HTTP client to use.
@@ -40,7 +27,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="options"/> is <see langword="null"/>.
         /// </exception>
-        public EventSourcesClient(HttpClient httpClient, TOptions options) : base(httpClient, options) { }
+        internal EventSourcesClient(HttpClient httpClient, DataCoreHttpClientOptions options) : base(httpClient, options) { }
 
         #endregion
 
@@ -49,25 +36,16 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <summary>
         /// Gets information about running event sources.
         /// </summary>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
         /// <returns>
         ///   A task that will return information about the running event sources.
         /// </returns>
-        public async Task<IEnumerable<ComponentInfo>> GetEventSourcesAsync(
-            TContext? context = default, 
-            CancellationToken cancellationToken = default
-        ) {
+        public async Task<IEnumerable<ComponentInfo>> GetEventSourcesAsync(CancellationToken cancellationToken = default) {
             var url = GetAbsoluteUrl("api/data/eventsources");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
 
             try {
                 using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
@@ -87,12 +65,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="eventSourceName">
         ///   The event source name.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -100,8 +72,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ///   A task that will return information about the event source.
         /// </returns>
         public async Task<ComponentInfo> GetEventSourceAsync(
-            string eventSourceName, 
-            TContext? context = default, 
+            string eventSourceName,
             CancellationToken cancellationToken = default
         ) {
             if (string.IsNullOrWhiteSpace(eventSourceName)) {
@@ -110,7 +81,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
 
             var url = GetAbsoluteUrl($"api/data/eventsources/{Uri.EscapeDataString(eventSourceName)}");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, url).AddStateProperty(context);
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
 
             try {
                 using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
@@ -130,12 +101,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="request">
         ///   The request.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, this will be 
-        ///   passed to the handler's callback when requesting the <c>Authorize</c> header value 
-        ///   for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -143,8 +108,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         ///   A task that will return the authorization check results.
         /// </returns>
         public async Task<ComponentRoles> IsAuthorizedAsync(
-            IsAuthorizedOnEventSourceRequest request, 
-            TContext? context = default, 
+            IsAuthorizedOnEventSourceRequest request,
             CancellationToken cancellationToken = default
         ) {
             if (request == null) {
@@ -160,8 +124,8 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             var url = GetAbsoluteUrl($"api/security/event-source/{Uri.EscapeDataString(request.EventSourceName)}/is-in-role");
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
-                Content = new ObjectContent<IEnumerable<string>>(roleNames, new JsonMediaTypeFormatter())
-            }.AddStateProperty(context);
+                Content = CreateJsonContent(roleNames)
+            };
 
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
@@ -193,12 +157,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <param name="parameters">
         ///   The function parameters.
         /// </param>
-        /// <param name="context">
-        ///   The context for the operation. If the request pipeline contains a handler created 
-        ///   via <see cref="DataCoreHttpClient.CreateAuthenticationMessageHandler"/>, 
-        ///   this will be passed to the handler's callback when requesting the <c>Authorize</c> 
-        ///   header value for the outgoing request.
-        /// </param>
         /// <param name="cancellationToken">
         ///   The cancellation token for the operation.
         /// </param>
@@ -208,8 +166,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         public async Task<T> RunCustomFunctionAsync<T>(
             string eventSourceName, 
             string functionName, 
-            IDictionary<string, string>? parameters = null, 
-            TContext? context = default, 
+            IDictionary<string, string>? parameters = null,
             CancellationToken cancellationToken = default
         ) {
             if (string.IsNullOrWhiteSpace(eventSourceName)) {
@@ -223,11 +180,10 @@ namespace IntelligentPlant.DataCore.Client.Clients {
                     : new Dictionary<string, string>(parameters)
             };
 
-            return await CustomFunctionsClient<TContext, TOptions>.RunCustomFunctionAsync<T>(
+            return await CustomFunctionsClient.RunCustomFunctionAsync<T>(
                 HttpClient,
                 GetAbsoluteUrl("api/rpc")!,
                 request,
-                context,
                 cancellationToken
             ).ConfigureAwait(false);
         }

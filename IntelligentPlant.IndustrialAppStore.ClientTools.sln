@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{49E8C063-F41F-451F-81BF-C4960B9A0168}"
-	ProjectSection(SolutionItems) = preProject
-		src\Directory.Build.props = src\Directory.Build.props
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{65FE3E10-29B7-4A78-9ED8-C8384AE9D420}"
 	ProjectSection(SolutionItems) = preProject
@@ -33,13 +30,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{AD574C
 		build.sh = build.sh
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8967B5AD-F86A-4109-8DA1-881E0070280D}"
 	ProjectSection(SolutionItems) = preProject
-		build\Dependencies.props = build\Dependencies.props
 		build\version.json = build\version.json
 	EndProjectSection
 	ProjectSection(FolderGlobals) = preProject
@@ -61,7 +58,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data-core-api-client", "dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomTokenStoreExample", "samples\CustomTokenStoreExample\CustomTokenStoreExample.csproj", "{A6FD636F-5B3B-4DEB-888F-E28AF37A3C46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntelligentPlant.IndustrialAppStore.AspNetCore", "src\IntelligentPlant.IndustrialAppStore.AspNetCore\IntelligentPlant.IndustrialAppStore.AspNetCore.csproj", "{CBF71748-0368-4A1F-88AE-08216DF55397}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelligentPlant.IndustrialAppStore.AspNetCore", "src\IntelligentPlant.IndustrialAppStore.AspNetCore\IntelligentPlant.IndustrialAppStore.AspNetCore.csproj", "{CBF71748-0368-4A1F-88AE-08216DF55397}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelligentPlant.IndustrialAppStore.DependencyInjection", "src\IntelligentPlant.IndustrialAppStore.DependencyInjection\IntelligentPlant.IndustrialAppStore.DependencyInjection.csproj", "{8DFA78B8-1CE4-4764-B4EB-765EFEB95CD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleCliApplication", "samples\ExampleCliApplication\ExampleCliApplication.csproj", "{D2CB5AD0-64F8-4691-9BD3-A8E0719AE046}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelligentPlant.IndustrialAppStore.CommandLine", "src\IntelligentPlant.IndustrialAppStore.CommandLine\IntelligentPlant.IndustrialAppStore.CommandLine.csproj", "{C8844839-3EA9-4CDD-AF2C-09B0B36AF60D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +100,18 @@ Global
 		{CBF71748-0368-4A1F-88AE-08216DF55397}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBF71748-0368-4A1F-88AE-08216DF55397}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBF71748-0368-4A1F-88AE-08216DF55397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DFA78B8-1CE4-4764-B4EB-765EFEB95CD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DFA78B8-1CE4-4764-B4EB-765EFEB95CD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DFA78B8-1CE4-4764-B4EB-765EFEB95CD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DFA78B8-1CE4-4764-B4EB-765EFEB95CD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2CB5AD0-64F8-4691-9BD3-A8E0719AE046}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2CB5AD0-64F8-4691-9BD3-A8E0719AE046}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2CB5AD0-64F8-4691-9BD3-A8E0719AE046}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2CB5AD0-64F8-4691-9BD3-A8E0719AE046}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8844839-3EA9-4CDD-AF2C-09B0B36AF60D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8844839-3EA9-4CDD-AF2C-09B0B36AF60D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8844839-3EA9-4CDD-AF2C-09B0B36AF60D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8844839-3EA9-4CDD-AF2C-09B0B36AF60D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,6 +125,9 @@ Global
 		{B394A8BF-92A8-46B8-B703-C8D398DAF61E} = {34009963-21E6-4DBE-ADF8-FE005C4FC279}
 		{A6FD636F-5B3B-4DEB-888F-E28AF37A3C46} = {65FE3E10-29B7-4A78-9ED8-C8384AE9D420}
 		{CBF71748-0368-4A1F-88AE-08216DF55397} = {49E8C063-F41F-451F-81BF-C4960B9A0168}
+		{8DFA78B8-1CE4-4764-B4EB-765EFEB95CD7} = {49E8C063-F41F-451F-81BF-C4960B9A0168}
+		{D2CB5AD0-64F8-4691-9BD3-A8E0719AE046} = {65FE3E10-29B7-4A78-9ED8-C8384AE9D420}
+		{C8844839-3EA9-4CDD-AF2C-09B0B36AF60D} = {49E8C063-F41F-451F-81BF-C4960B9A0168}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D12472DA-7354-4A19-8F60-4F9D42C71241}

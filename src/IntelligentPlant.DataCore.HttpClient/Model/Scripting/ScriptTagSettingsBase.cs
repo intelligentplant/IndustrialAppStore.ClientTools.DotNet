@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -47,6 +45,12 @@ namespace IntelligentPlant.DataCore.Client.Model.Scripting {
         /// </summary>
         [Required]
         public ScriptTagValueScriptSettings ValueScript { get; set; } = default!;
+
+        /// <summary>
+        /// An optional delay that will be applied prior to beginning recalculation of the script 
+        /// tag.
+        /// </summary>
+        public TimeSpan? EvaluationDelay { get; set; }
 
         #region [ Fields/properties to assist with validation ]
 

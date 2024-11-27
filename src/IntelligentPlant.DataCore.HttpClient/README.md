@@ -10,9 +10,9 @@ Install the [IntelligentPlant.DataCore.HttpClient](https://www.nuget.org/package
 
 # Getting Started
 
-The abstract [DataCoreHttpClient<TContext, TOptions>](./DataCoreHttpClient.cs) class is used to perform Data Core API calls. The class itself has a set of properties (e.g. `DataSources`, `EventSources`) that expose API methods for different feature areas. Additional concrete subclasses (`DataCoreHttpClient<TContext>` and `DataCoreHttpClient`) are available to simplify configuration depending on the type of authentication used by the app.
+The [DataCoreHttpClient](./DataCoreHttpClient.cs) class is used to perform Data Core API calls. The class itself has a set of properties (e.g. `DataSources`, `EventSources`) that expose API methods for different feature areas.
 
-Note that, if you are writing an app that interfaces with the Industrial App Store, you should use the client class from the [IntelligentPlant.IndustrialAppStore.Authentication](/src/IntelligentPlant.IndustrialAppStore.Authentication/IndustrialAppStoreHttpClient.cs) or [IntelligentPlant.IndustrialAppStore.HttpClient](/src/IntelligentPlant.IndustrialAppStore.HttpClient/IndustrialAppStoreHttpClientT.cs) library instead. Please refer to the documentation for those libraries for details of how to configure their respective clients.
+Note that, if you are writing an app that interfaces with the Industrial App Store, you should use the client class from the [IntelligentPlant.IndustrialAppStore.HttpClient](/src/IntelligentPlant.IndustrialAppStore.HttpClient/IndustrialAppStoreHttpClient.cs) library instead.
 
 
 ## Creating a Client
@@ -25,7 +25,6 @@ _This section describes creating clients for querying standalone Data Core API i
 To create a Data Core API client for querying a standalone Data Core API instance using Windows authentication, use the `DataCoreHttpClient` class, ensuring that the `HttpClient` you provide has the appropriate credentials configured:
 
 ```csharp
-// In .NET Core 2.1 or later, use SocketsHttpHandler instead of HttpClientHandler.
 var handler = new HttpClientHandler() {
     Credentials = new NetworkCredential("username", "password")
 };
@@ -66,57 +65,9 @@ var dataSources = await client.DataSources.GetDataSourcesAsync();
 
 ### Dynamic Authentication Header
 
-The third option when creating a client is to dynamically add an authentication header to outgoing requests based on the `context` passed to an API method call. We do this by adding a [DelegatingHandler](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.delegatinghandler) to the request pipeline for the `HttpClient` that we pass to the Data Core client constructor. The handler will receive the `context` parameter passed to the API method call.
+The third option when creating a client is to dynamically add an authentication header to outgoing requests. This can be done by adding a [DelegatingHandler](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.delegatinghandler) to the request pipeline for the `HttpClient` that we pass to the Data Core client constructor. The handler can be created with a reference to a service type that can provide the necessary context.
 
-In this example, we will use the `ClaimsPrincipal` class as our context, and attach a different authorization header to requests based on the group memberships of the principal.
-
-```csharp
-// Our delegate that will return an authentication header based on a ClaimsPrincipal instance.
-AuthenticationCallback<ClaimsPrincipal> authCallback = async (req, ctx, ct) => {
-    if (ctx == null) {
-        return null;
-    }
-
-    if (ctx.IsInRole("Administrators")) {
-        return new AuthenticationHeaderValue(
-            "Basic",
-            Convert.ToBase64String(Encoding.ASCII.GetBytes("admin:password_1"))
-        );
-    }
-
-    if (ctx.IsInRole("Users")) {
-        return new AuthenticationHeaderValue(
-            "Basic",
-            Convert.ToBase64String(Encoding.ASCII.GetBytes("user:password_2"))
-        );
-    }
-
-    return null;
-};
-
-// We'll use the Microsoft.Extensions.DependencyInjection library to build our client.
-var services = new ServiceCollection();
-
-services
-    .AddHttpClient<DataCoreHttpClient<ClaimsPrincipal>>()
-    .AddHttpMessageHandler(() => DataCoreHttpClient.CreateAuthenticationMessageHandler(authCallback));
-
-services.AddSingleton(new DataCoreHttpClientOptions() {
-    // Remember the trailing / at the end of the URL!
-    DataCoreUrl = new Uri("https://path/to/data/core/")
-});
-
-var serviceProvider = services.BuildServiceProvider();
-
-// Create our client using the service provider.
-var client = serviceProvider.GetService<DataCoreHttpClient<ClaimsPrincipal>>();
-```
-
-When calling API methods using clients created in this way, you just pass in the `ClaimsPrincipal` associated with the call, and the callback will return the authentication header to be added to the outgoing HTTP request. For example:
-
-```csharp
-var dataSources = await client.DataSources.GetDataSourcesAsync(WindowsPrincipal.Current);
-```
+This is the approach used when creating API clients in [ASP.NET Core applications](../IntelligentPlant.IndustrialAppStore.Authentication/Http/TokenStoreAuthenticationHandler.cs).
 
 
 # Calling API Methods

@@ -6,9 +6,6 @@
   </PropertyGroup>
   <Import Project="$(ParentProject)" Condition=" '$(ParentProject)' != '' " /> 
   
-  <!-- Import common NuGet package versions -->
-  <Import Project=".\build\Dependencies.props" Condition="Exists('.\build\Dependencies.props')" />
-
   <PropertyGroup>
     <Authors>Intelligent Plant</Authors>
     <Company>Intelligent Plant</Company>
@@ -27,7 +24,7 @@
     building via build.ps1 or build.sh. It is defined here to allow Visual Studio to build  
     the solution with the correct version number.
     -->
-    <Version>2.2.2</Version>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <Choose>

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace IntelligentPlant.DataCore.Client.Model {
+﻿namespace IntelligentPlant.DataCore.Client.Model {
 
     /// <summary>
     /// Describes an entry in a route taken for an item such as an <see cref="IEventMessage"/> from its source to its current location.

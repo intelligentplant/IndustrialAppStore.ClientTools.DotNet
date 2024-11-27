@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Net.Http;
+﻿using System.Globalization;
 using System.Net.Http.Headers;
-using System.Threading;
-using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
 
@@ -30,7 +25,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <summary>
         /// The system clock.
         /// </summary>
-        protected ISystemClock Clock { get; }
+        private readonly TimeProvider _timeProvider;
 
         /// <summary>
         /// Flags if <see cref="ITokenStore.InitAsync"/> has been called.
@@ -60,17 +55,17 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <param name="httpClient">
         ///   The backchannel HTTP client to use.
         /// </param>
-        /// <param name="clock">
-        ///   The system clock.
+        /// <param name="timeProvider">
+        ///   The time provider.
         /// </param>
         protected TokenStore(
-            IndustrialAppStoreAuthenticationOptions options,
+            IOptions<IndustrialAppStoreAuthenticationOptions> options,
             HttpClient httpClient,
-            ISystemClock clock
+            TimeProvider timeProvider
         ) {
-            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _options = options.Value;
             _backchannelHttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            Clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
         }
 
 
@@ -154,7 +149,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 _options.ClientSecret!, 
                 _options.GetTokenEndpoint(), 
                 _backchannelHttpClient, 
-                Clock
+                _timeProvider
             );
             await SaveTokensAsync(tokens);
 
@@ -189,8 +184,8 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <param name="httpClient">
         ///   The HTTP client to use.
         /// </param>
-        /// <param name="clock">
-        ///   The system clock to use when determining the expiry time for the new access token.
+        /// <param name="timeProvider">
+        ///   The time provider to use when determining the expiry time for the new access token.
         /// </param>
         /// <returns>
         ///   The OAuth token response.
@@ -208,7 +203,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   <paramref name="httpClient"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///   <paramref name="clock"/> is <see langword="null"/>.
+        ///   <paramref name="timeProvider"/> is <see langword="null"/>.
         /// </exception>
         public static async Task<OAuthTokens> UseRefreshTokenAsync(
             string refreshToken,
@@ -216,7 +211,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
             string clientSecret,
             string tokenEndpoint,
             HttpClient httpClient,
-            ISystemClock clock
+            TimeProvider timeProvider
         ) {
             if (refreshToken == null) {
                 throw new ArgumentNullException(nameof(refreshToken));
@@ -230,8 +225,8 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
             if (httpClient == null) {
                 throw new ArgumentNullException(nameof(httpClient));
             }
-            if (clock == null) {
-                throw new ArgumentNullException(nameof(clock));
+            if (timeProvider == null) {
+                throw new ArgumentNullException(nameof(timeProvider));
             }
 
             var tokenRequestParameters = new Dictionary<string, string>() {
@@ -261,7 +256,7 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 expiresIn = TimeSpan.FromSeconds(value);
             }
 
-            var tokens = CreateOAuthTokens(tokensResponse.TokenType!, tokensResponse.AccessToken!, expiresIn, tokensResponse.RefreshToken, clock);
+            var tokens = CreateOAuthTokens(tokensResponse.TokenType!, tokensResponse.AccessToken!, expiresIn, tokensResponse.RefreshToken, timeProvider);
             return tokens;
         }
 
@@ -281,17 +276,17 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <param name="refreshToken">
         ///   The refresh token.
         /// </param>
-        /// <param name="clock">
+        /// <param name="timeProvider">
         ///   The system clock.
         /// </param>
         /// <returns>
         ///   A new <see cref="OAuthTokens"/> instance.
         /// </returns>
-        internal static OAuthTokens CreateOAuthTokens(string tokenType, string accessToken, TimeSpan? expiresIn, string? refreshToken, ISystemClock clock) {
+        internal static OAuthTokens CreateOAuthTokens(string tokenType, string accessToken, TimeSpan? expiresIn, string? refreshToken, TimeProvider timeProvider) {
             DateTimeOffset? utcExpiresAt = null;
 
             if (expiresIn != null) {
-                utcExpiresAt = clock.UtcNow.Add(expiresIn.Value);
+                utcExpiresAt = timeProvider.GetUtcNow().Add(expiresIn.Value);
             }
 
             return new OAuthTokens(tokenType, accessToken, refreshToken, utcExpiresAt);

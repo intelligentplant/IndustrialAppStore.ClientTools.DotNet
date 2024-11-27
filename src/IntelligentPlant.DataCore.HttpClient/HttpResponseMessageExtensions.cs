@@ -1,8 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace IntelligentPlant.DataCore.Client {
+﻿namespace IntelligentPlant.DataCore.Client {
 
     /// <summary>
     /// Extensions for <see cref="HttpResponseMessage"/>.

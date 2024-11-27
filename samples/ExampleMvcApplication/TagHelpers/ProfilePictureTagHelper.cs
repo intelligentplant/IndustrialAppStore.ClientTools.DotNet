@@ -1,4 +1,5 @@
 ﻿using System.Text.Encodings.Web;
+
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
@@ -17,7 +18,7 @@ namespace ExampleMvcApplication.TagHelpers {
         /// <summary>
         /// The URL of the user's profile picture.
         /// </summary>
-        public string Url { get; set; }
+        public string? Url { get; set; }
 
 
         /// <summary>

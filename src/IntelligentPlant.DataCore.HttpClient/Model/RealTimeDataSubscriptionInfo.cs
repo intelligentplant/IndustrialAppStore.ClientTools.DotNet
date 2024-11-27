@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace IntelligentPlant.DataCore.Client.Model {
+﻿namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     /// Describes a Data Core real-time subscription.
     /// </summary>

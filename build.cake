@@ -41,8 +41,20 @@ const string VersionFile = "./build/version.json";
 //   The build counter. This is used when generating version numbers for the build.
 //
 // --build-metadata=<METADATA>
-//   Additional build metadata that will be included in the information version number generated 
+//   Additional build metadata that will be included in the informational version number generated 
 //   for compiled assemblies.
+//
+// --container-registry=<REGISTRY>
+//   The container registry to use when the PublishContainer target is specified.
+//     Default: Local Docker or Podman daemon
+//
+// --container-os=<OS>
+//   The container operating system to use when the PublishContainer target is specified.
+//     Default: linux
+//
+// --container-arch=<ARCHITECTURE>
+//   The container processor architecture to use when the PublishContainer target is specified.
+//     Default: x64
 //
 // --property=<PROPERTY>
 //   Specifies an additional property to pass to MSBuild during Build and Pack targets. The value
@@ -61,7 +73,7 @@ const string VersionFile = "./build/version.json";
 // 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#load nuget:?package=Jaahas.Cake.Extensions&version=1.5.0
+#load nuget:?package=Jaahas.Cake.Extensions&version=2.1.0
 
 // Bootstrap build context and tasks.
 Bootstrap(DefaultSolutionFile, VersionFile);

@@ -1,64 +1,107 @@
-﻿@inject IntelligentPlant.IndustrialAppStore.Authentication.IndustrialAppStoreAuthenticationOptions AuthenticationOptions
+﻿@inject Microsoft.Extensions.Options.IOptions<IntelligentPlant.IndustrialAppStore.Authentication.IndustrialAppStoreAuthenticationOptions> AuthenticationOptions
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Example IAS Application</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
-    @RenderSection("Styles", required: false)
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"] - Example IAS Application</title>
+  <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="~/css/site.css" />
+  @RenderSection("Styles", required: false)
+  <script defer src="~/lib/font-awesome/js/all.min.js" data-auto-add-css="false"></script>
+  <link rel="stylesheet" href="~/lib/font-awesome/css/svg-with-js.min.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 fixed-top">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Example IAS Application</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
+  <header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+      <div class="container-fluid">
+        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Example IAS Application</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
+          @if (User?.Identity?.IsAuthenticated ?? false)
+          {
+            <ul class="navbar-nav d-flex flex-grow-1">
+              <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                  <i class="fa-solid fa-house fa-fw"></i>
+                  Home
+                </a>
+              </li>
+            </ul>
+          }
+          <ul class="navbar-nav d-flex">
+            <li class="nav-item dropdown">
+              <button class="btn btn-link nav-link dropdown-toggle" id="theme-toggle" type="button" aria-expanded="false" data-bs-toggle="dropdown" title="Select theme">
+                <i class="fa-solid fa-circle-half-stroke fa-fw" data-theme-toggle-icon></i>
+                <span class="d-sm-inline d-md-none">Theme</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="theme-toggle">
+                <li>
+                  <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" title="Light mode">
+                    <i class="fa-solid fa-sun fa-fw me-2"></i>
+                    Light
+                    <i class="fa-solid fa-check fa-fw ms-auto d-none" data-active-indicator></i>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" title="Dark mode">
+                    <i class="fa-solid fa-moon fa-fw me-2"></i>
+                    Dark
+                    <i class="fa-solid fa-check fa-fw ms-auto d-none" data-active-indicator></i>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" title="Use system theme">
+                    <i class="fa-solid fa-circle-half-stroke fa-fw me-2"></i>
+                    Auto
+                    <i class="fa-solid fa-check fa-fw ms-auto d-none" data-active-indicator></i>
+                  </button>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          @if (User?.Identity?.IsAuthenticated ?? false) 
+          {
+            <ul class="navbar-nav d-flex">
+              <li action="nav-item dropdown">
+                <button class="btn btn-link nav-link dropdown-toggle" id="user-menu-toggle" type="button" aria-expanded="false" data-bs-toggle="dropdown" title="User options">
+                  <profile-picture url="@User.GetProfilePictureUrl()"></profile-picture>
+                  @User.Identity.Name
                 </button>
-                <div class="navbar-collapse collapse">
-                  @if (User.Identity.IsAuthenticated)
-                  {
-                    <ul class="navbar-nav me-auto">
-                      <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                      </li>
-                    </ul>
-                    <div class="navbar-text">
-                      <div class="dropdown user-menu">
-                        <a class="dropdown-toggle" href="#" role="button" id="account-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <profile-picture url="@User.GetProfilePictureUrl()"></profile-picture>
-                          @User.Identity.Name
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-menu-toggle">
+                    <li>
+                        <a class="dropdown-item" href="https://appstore.intelligentplant.com" target="_blank" title="Visit the Industrial App Store (new window)">
+                          Visit the Industrial App Store
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="account-menu">
-                          <a class="dropdown-item" href="https://appstore.intelligentplant.com" target="_blank" title="Visit the Industrial App Store (new window)">
-                            Visit the Industrial App Store
-                          </a>
-                          @if (!AuthenticationOptions.UseExternalAuthentication) {
-                          <div class="dropdown-divider"></div>
-                          <a class="dropdown-item" asp-controller="Account" asp-action="Logout" title="Sign out of the app">
-                            Sign Out
-                          </a>
-                          }
-                        </div>
-                      </div>
-                    </div>
+                    </li>
+                  @if (!AuthenticationOptions.Value.UseExternalAuthentication) {
+                    <li class="dropdown-divider"></li>
+                    <li>
+                      <a class="dropdown-item" asp-controller="Account" asp-action="Logout" title="Sign out of the app">
+                        Sign Out
+                      </a>
+                    </li>
                   }
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container-fluid">
-        <main role="main" class="p-3 pt-4 mt-5">
-            @RenderBody()
-        </main>
-    </div>
+                </ul>
+              </li>
+            </ul>
+          }
+        </div>
+      </div>
+    </nav>
+  </header>
 
-    <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @RenderSection("Scripts", required: false)
+  <div class="container-fluid">
+    <main role="main">
+      @RenderBody()
+    </main>
+  </div>
+
+  <script src="~/lib/jquery/jquery.min.js"></script>
+  <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="~/js/site.js" asp-append-version="true"></script>
+  @RenderSection("Scripts", required: false)
 </body>
 </html>
