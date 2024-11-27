@@ -60,7 +60,7 @@ await sessionManager.SignInAsync((request, ct) => {
 });
 ```
 
-Authentication tokens are encrypted and persisted to the `TokenPath` folder specified in the app settings (assuming that it is set). If the session manager already has a valid authentication session, the `SignInAsync` method will not prompt the user to log in again.
+Authentication tokens are encrypted and persisted to the `AppDataPath` folder specified in the app settings (assuming that it is set). If the session manager already has a valid authentication session, the `SignInAsync` method will not prompt the user to log in again.
 
 
 ## Logging out of the Industrial App Store

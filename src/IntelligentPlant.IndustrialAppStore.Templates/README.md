@@ -1,6 +1,6 @@
 ﻿# IntelligentPlant.IndustrialAppStore.Templates
 
-This project defines [Industrial App Store](https://appstore.intelligentplant.com) templates for Visual Studio 2022, Visual Studio 2019, and the [dotnet new](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new) command.
+This project defines [Industrial App Store](https://appstore.intelligentplant.com) templates for Microsoft Visual Studio and the [dotnet new](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new) command.
 
 > Templates installed using the `dotnet new` command can be used in Visual Studio 2022 and Visual Studio 2019 (v16.9 or later).
 
@@ -10,6 +10,20 @@ This project defines [Industrial App Store](https://appstore.intelligentplant.co
 1. Run the following command from the command line: `dotnet new install IntelligentPlant.IndustrialAppStore.Templates`
 2. Open Visual Studio, create a new project, and search for "Industrial App Store" in the project templates list.
 3. Follow the instructions in your project's `README.md` file to register your app with the Industrial App Store.
+
+
+# Available Templates
+
+The following templates are available:
+
+| Name | ID | Template Type | Description |
+|------|----|---------------|-------------|
+| Industrial App Store Web App (MVC) | `iasmvc` | Project | Creates a new ASP.NET Core MVC web application that is pre-configured to use the [IntelligentPlant.IndustrialAppStore.AspNetCore](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.AspNetCore) package. |
+| Industrial App Store Command-Line App | `iascli` | Project | Creates a new .NET Core console application that is pre-configured to use the [IntelligentPlant.IndustrialAppStore.CommandLine](https://www.nuget.org/packages/IntelligentPlant.IndustrialAppStore.CommandLine) package. |
+
+All project templates create fully-functional apps that are pre-configured to use the Industrial App Store for authentication and data access.
+
+After creating a project using a template, refer to the project's `README.md` file for further information on how the app registration should be configured in the Industrial App Store.
 
 
 # Installing Templates
@@ -36,7 +50,7 @@ Alternatively, you can install the templates from source by checking out this re
 dotnet new install .\
 ```
 
-Note that, when installing the templates from source, the reference to the `IntelligentPlant.IndustrialAppStore.Authentication` NuGet package in projects generated using templates will specify an incorrect version. You will have to update generated projects to use the correct package version, or replace the package reference with a project reference to the `IntelligentPlant.IndustrialAppStore.Authentication` project in this repository.
+Note that, when installing the templates from source, references to NuGet packages defined in this repository in projects generated using templates will specify an incorrect version. You will have to update generated projects to use the correct package version, or replace the package reference with an equivalent protect reference.
 
 
 # Creating an App using Visual Studio
@@ -51,7 +65,7 @@ After selecting the template, you will be prompted to select a project location 
 
 ![Visual Studio template parameters window](./img/template_parameters.png)
 
-The template will create a new ASP.NET Core MVC application that is pre-configured to use the Industrial App Store for authentication. The `README.md` file for the new project provides additional instructions for completing the setup.
+The template will create a new application that is pre-configured to use the Industrial App Store for authentication. The `README.md` file for the new project provides additional instructions for completing the setup.
 
 
 # Creating an App using `dotnet new`
@@ -78,18 +92,9 @@ dotnet new iasmvc --app-name "My First App" --client-id "abcdef0123456789"
 ```
 
 ```
-# Creates a project that targets .NET 6 (not compatible with Visual Studio 2019!)
+# Creates a project that targets .NET 8
 
-dotnet new iasmvc --Framework net6.0
+dotnet new iasmvc --Framework net8.0
 ```
 
 Note that it is not possible to specify the client secret when creating the project; the `README.md` file created by the template in the project folder contains instructions for setting the client secret.
-
-
-# Writing an On-Premises App
-
-The `README.md` file created by the template in the project folder contains instructions for writing an app that can use an on-premises Data Core API instance instead of (or in addition to) the Industrial App Store, as well as highlighting differences in behaviour between Industrial App Store and on-premises apps. 
-
-You can view the templated version of the templates `README.md` file [here](./templates/iasmvc/README.md). Note that the templated version of the file contains placeholders that are replaced by Visual Studio or `dotnet new` when you create a project from the template!
-
-> If you want to develop an on-premises app (or an app that can be deployed both on-premises and through the Industrial App Store), please [contact Intelligent Plant](https://www.intelligentplant.com/contact-us) to request an on-premises Data Core API installation.
