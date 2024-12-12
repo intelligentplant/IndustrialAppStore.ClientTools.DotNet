@@ -31,6 +31,10 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication.Options {
                 options.LoginPath = iasOptions.LoginPath;
             }
 
+            if (iasOptions.CookieExpiry.HasValue) {
+                options.ExpireTimeSpan = iasOptions.CookieExpiry.Value;
+            }
+
             var cookieEvents = iasOptions.CookieAuthenticationEvents ?? new CookieAuthenticationEvents();
 
             options.Events = new CookieAuthenticationEvents() {

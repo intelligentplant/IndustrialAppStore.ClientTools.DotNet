@@ -97,6 +97,15 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         public bool ShowConsentPrompt { get; set; }
 
         /// <summary>
+        /// The expiry time for the cookie used to store the user's session.
+        /// </summary>
+        /// <remarks>
+        ///  If <see langword="null"/>, the cookie will use the default expiry period for an 
+        ///  ASP.NET Core authentication cookie.
+        /// </remarks>
+        public TimeSpan? CookieExpiry { get; set; }
+
+        /// <summary>
         /// Additional event handlers for cookie authentication events raised by the application.
         /// </summary>
         /// <remarks>
