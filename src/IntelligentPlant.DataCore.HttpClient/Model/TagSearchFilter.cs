@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 
 namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
@@ -20,20 +19,26 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets or sets the tag name filter to use.
         /// </summary>
-        [MaxLength(200)]
+        [MaxLength(255)]
         public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the tag description filter to use.
         /// </summary>
-        [MaxLength(200)]
+        [MaxLength(100)]
         public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the tag unit filter to use.
         /// </summary>
-        [MaxLength(200)]
+        [MaxLength(100)]
         public string? Unit { get; set; }
+
+        /// <summary>
+        /// The label filter to use.
+        /// </summary>
+        [MaxLength(100)]
+        public string? Label { get; set; }
 
         /// <summary>
         /// Gets or sets the additional tag property filters to use.
@@ -112,23 +117,29 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// A collection of validation errors.
         /// </returns>
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+            const int maximumAdditionalFilterCount = 5;
             const int minimumAdditionalFilterLength = 1;
-            const int maximumAdditionalFilterLength = 200;
+            const int maximumAdditionalFilterNameLength = 100;
+            const int maximumAdditionalFilterValueLength = 100;
 
-            if (Other?.Count > 0) {
+            if (Other != null) {
+                if (Other.Count > maximumAdditionalFilterCount) {
+                    yield return new ValidationResult($"Maximum number of additional filters is {maximumAdditionalFilterCount}.", new[] { nameof(Other) });
+                }
+
                 foreach (var item in Other) {
-                    if (item.Key.Length == 0) {
-                        yield return new ValidationResult(String.Format(CultureInfo.CurrentCulture, "Minimum length of an additional filter name is {0}.", minimumAdditionalFilterLength), new[] { nameof(Other) });
+                    if (item.Key.Length < minimumAdditionalFilterLength) {
+                        yield return new ValidationResult($"Minimum length of an additional filter name is {minimumAdditionalFilterLength}.", new[] { nameof(Other) });
                     }
-                    if (item.Key.Length > 200) {
-                        yield return new ValidationResult(String.Format(CultureInfo.CurrentCulture, "Maximum length of an additional filter name is {0}.", maximumAdditionalFilterLength), new[] { nameof(Other) });
+                    if (item.Key.Length > maximumAdditionalFilterNameLength) {
+                        yield return new ValidationResult($"Maximum length of an additional filter name is {maximumAdditionalFilterNameLength}.", new[] { nameof(Other) });
                     }
 
-                    if (item.Value == null || item.Value.Length == 0) {
-                        yield return new ValidationResult(String.Format(CultureInfo.CurrentCulture, "Minimum length of an additional filter value is {0}.", minimumAdditionalFilterLength), new[] { nameof(Other) });
+                    if (item.Value == null || item.Value.Length < minimumAdditionalFilterLength) {
+                        yield return new ValidationResult($"Minimum length of an additional filter value is {minimumAdditionalFilterLength}.", new[] { nameof(Other) });
                     }
-                    if (item.Value?.Length > 200) {
-                        yield return new ValidationResult(String.Format(CultureInfo.CurrentCulture, "Maximum length of an additional filter value is {0}.", maximumAdditionalFilterLength), new[] { nameof(Other) });
+                    if (item.Value?.Length > maximumAdditionalFilterValueLength) {
+                        yield return new ValidationResult($"Maximum length of an additional filter value is {maximumAdditionalFilterValueLength}.", new[] { nameof(Other) });
                     }
                 }
             }

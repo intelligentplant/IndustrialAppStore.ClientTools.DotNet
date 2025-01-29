@@ -29,7 +29,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         public double NumericValue { get; private set; }
 
         /// <summary>
-        /// Gets the text value for the tag.
+        /// Gets the display value for the tag.
         /// </summary>
         /// <remarks>
         /// For digital tags, this field returns the name of the digital state.
@@ -70,6 +70,11 @@ namespace IntelligentPlant.DataCore.Client.Model {
             get { return !string.IsNullOrWhiteSpace(Error); }
         }
 
+        /// <summary>
+        /// Custom tag value properties.
+        /// </summary>
+        public IDictionary<string, object> Properties { get; }
+
 
         /// <summary>
         /// Creates a new <see cref="TagValue"/> object.
@@ -83,7 +88,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="notes">Additional notes about the value.</param>
         /// <param name="error">An error message associated with the value.</param>
         [JsonConstructor]
-        public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string? textValue, TagValueStatus status, string? unit, string? notes, string? error) {
+        public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string? textValue, TagValueStatus status, string? unit, string? notes, string? error, IDictionary<string, object>? properties = null) {
             TagName = tagName;
             UtcSampleTime = utcSampleTime;
             NumericValue = numericValue;
@@ -92,6 +97,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
             Unit = unit;
             Notes = notes;
             Error = error;
+            Properties = properties ?? new Dictionary<string, object>();
         }
 
 
@@ -105,7 +111,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="status">The quality status for the value.</param>
         /// <param name="unit">The unit of measure for the tag value.</param>
         /// <param name="notes">Additional notes about the value.</param>
-        public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string? textValue, TagValueStatus status, string? unit, string? notes) : this(tagName, utcSampleTime, numericValue, textValue, status, unit, notes, null) { }
+        public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string? textValue, TagValueStatus status, string? unit, string? notes) : this(tagName, utcSampleTime, numericValue, textValue, status, unit, notes, null, null) { }
 
 
 
