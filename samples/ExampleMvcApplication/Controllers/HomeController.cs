@@ -18,7 +18,10 @@ namespace ExampleMvcApplication.Controllers {
             [FromServices] IndustrialAppStoreHttpClient iasClient,
             CancellationToken cancellationToken = default
         ) {
-            var dataSources = await iasClient.DataSources.GetDataSourcesAsync(cancellationToken);
+            var dataSources = await iasClient.DataSources.GetDataSourcesAsync(
+                features: DataSourceDriverFeatures.ReadTagValues, 
+                roles: DataCoreRoles.Read, 
+                cancellationToken: cancellationToken);
 
             var selectItems = new List<SelectListItem>() { 
                 new SelectListItem() {
