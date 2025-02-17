@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Formatting;
+using System.Text;
 
 using IntelligentPlant.DataCore.Client.Model;
 using IntelligentPlant.DataCore.Client.Model.Queries;
@@ -46,8 +47,58 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <returns>
         ///   A task that will return information about the running data sources.
         /// </returns>
-        public async Task<IEnumerable<DataSourceInfo>> GetDataSourcesAsync(CancellationToken cancellationToken = default) {
-            var url = GetAbsoluteUrl("api/data/datasources");
+        public Task<IEnumerable<DataSourceInfo>> GetDataSourcesAsync(CancellationToken cancellationToken) => GetDataSourcesAsync(null, null, cancellationToken);
+
+
+        /// <summary>
+        /// Gets information about running data sources that match the provided constraints.
+        /// </summary>
+        /// <param name="features">
+        ///   The features that a data source must support to be included in the query results. If 
+        ///   multiple features are specified, a data source must support all of them to be 
+        ///   included in the query results.
+        /// </param>
+        /// <param name="roles">
+        ///   A comma-delimited list of roles that the calling user must have on the data source 
+        ///   for it to be included in the query results. If multiple roles are specified, the 
+        ///   user must have at least one of them to be included in the query results. Well-known 
+        ///   roles are defined as costants on the <see cref="DataCoreRoles"/> type. Use 
+        ///   <see cref="DataCoreRoles.Concat"/> to build a list of roles. 
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that will return information about the running data sources that match the 
+        ///   provided constraints.
+        /// </returns>
+        public async Task<IEnumerable<DataSourceInfo>> GetDataSourcesAsync(
+            DataSourceDriverFeatures? features = null,
+            string? roles = null,
+            CancellationToken cancellationToken = default
+        ) {
+            Uri url;
+
+            if (!features.HasValue && string.IsNullOrWhiteSpace(roles)) {
+                url = GetAbsoluteUrl("api/data/datasources")!;
+            }
+            else {
+                var sb = new StringBuilder("api/data/datasources");
+                var hasQuery = false;
+
+                if (features.HasValue) { 
+                    hasQuery = true;
+                    sb.Append('?');
+                    sb.Append($"features={Uri.EscapeDataString(features.Value.ToString())}");
+                }
+
+                if (!string.IsNullOrWhiteSpace(roles)) {
+                    sb.Append(hasQuery ? '&' : '?');
+                    sb.Append($"roles={Uri.EscapeDataString(roles)}");
+                }
+
+                url = GetAbsoluteUrl(sb.ToString())!;
+            }
 
             var request = new HttpRequestMessage(HttpMethod.Get, url);
 
