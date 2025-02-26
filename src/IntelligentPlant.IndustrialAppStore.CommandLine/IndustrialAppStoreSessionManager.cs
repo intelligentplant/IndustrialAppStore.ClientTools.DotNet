@@ -202,7 +202,14 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
                 return null;
             }
 
-            if (!tokens.UtcExpiresAt.HasValue || tokens.UtcExpiresAt.Value > _timeProvider.GetUtcNow()) {
+            // If we have a refresh token, we will assume that the access token has expired 30
+            // seconds before it actually does. This is designed to prevent last-minute expiry
+            // issues caused by e.g. clocks being slightly out of sync.
+            var tokenExpiryComparisonTime = string.IsNullOrWhiteSpace(tokens.RefreshToken) 
+                ? _timeProvider.GetUtcNow() 
+                : _timeProvider.GetUtcNow().AddSeconds(30);
+
+            if (!tokens.UtcExpiresAt.HasValue || tokens.UtcExpiresAt.Value > tokenExpiryComparisonTime) {
                 return tokens.AccessToken;
             }
 

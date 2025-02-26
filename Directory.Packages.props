@@ -6,16 +6,16 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="IntelligentPlant.ProblemDetails.Core" Version="4.0.0" />
-    <PackageVersion Include="IntelligentPlant.Relativity" Version="2.0.0" />
-    <PackageVersion Include="Jaahas.HttpRequestTransformer" Version="2.2.0" />
+    <PackageVersion Include="IntelligentPlant.Relativity" Version="3.0.0" />
+    <PackageVersion Include="Jaahas.HttpRequestTransformer" Version="3.0.1" />
     <PackageVersion Include="Jaahas.OpenTelemetry.Extensions" Version="2.3.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.DataProtection" Version="8.0.11" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.11" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.DataProtection" Version="8.0.13" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.13" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.13" />
     <PackageVersion Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
     <PackageVersion Include="Microsoft.Bcl.TimeProvider" Version="8.0.1" />
     <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.13" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />

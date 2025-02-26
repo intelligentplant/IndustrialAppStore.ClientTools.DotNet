@@ -50,8 +50,8 @@ namespace ExampleMvcApplication.Services {
             // Decrypt access token and refresh token.
             return new OAuthTokens(
                 dbTokens.TokenType, 
-                dbTokens.AccessToken = UnprotectToken(dbTokens.AccessToken)!, 
-                dbTokens.RefreshToken = UnprotectToken(dbTokens.RefreshToken), 
+                UnprotectToken(dbTokens.AccessToken)!, 
+                UnprotectToken(dbTokens.RefreshToken), 
                 dbTokens.ExpiryTime
             );
         }
