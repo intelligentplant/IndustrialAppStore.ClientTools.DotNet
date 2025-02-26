@@ -131,7 +131,14 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 return oauthTokens;
             }
 
-            if (oauthTokens.Value.UtcExpiresAt.Value > DateTime.UtcNow) {
+            // If we have a refresh token, we will assume that the access token has expired 30
+            // seconds before it actually does. This is designed to prevent last-minute expiry
+            // issues caused by e.g. clocks being slightly out of sync.
+            var tokenExpiryComparisonTime = string.IsNullOrWhiteSpace(oauthTokens.Value.RefreshToken)
+                ? _timeProvider.GetUtcNow()
+                : _timeProvider.GetUtcNow().AddSeconds(30);
+
+            if (oauthTokens.Value.UtcExpiresAt.Value > tokenExpiryComparisonTime) {
                 // Access token is still valid.
                 return oauthTokens;
             }
