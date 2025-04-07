@@ -55,11 +55,16 @@ namespace IntelligentPlant.DataCore.Client.Model {
 
         }
 
+        /// <summary>
+        /// The labels for the tag.
+        /// </summary>
+        public ICollection<string>? Labels { get; set; }
+
 
         /// <summary>
         /// Creates a new <see cref="TagSearchResult"/> object.
         /// </summary>
-        public TagSearchResult() : this(null) {}
+        public TagSearchResult() : this(null) { }
 
 
         /// <summary>
@@ -76,6 +81,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
             UnitOfMeasure = other.UnitOfMeasure;
             Properties = other.Properties;
             DigitalStates = other.DigitalStates;
+            Labels = other.Labels;
         }
 
 
