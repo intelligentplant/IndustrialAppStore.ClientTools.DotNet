@@ -104,8 +104,7 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
                 throw new ArgumentNullException(nameof(chatHistory));
             }
 
-            chatHistory.AddSystemMessage(@"
-# Industrial App Store
+            chatHistory.AddSystemMessage(@"# Industrial App Store
 
 The Industrial App Store (IAS) is a data platform where organisations from industrial sectors such as energy and manufacturing publish time series data about their industrial processes. 
 
@@ -125,8 +124,9 @@ You are a helpful assistant whose role is to help the user to interrogate their 
   - Examples: NOW, NOW-1H, DAY+5.5H, YEAR+3MO
 - Sample intervals can be specified as .NET System.TimeSpan literals (e.g. 01:00:00 = 1 hour) or using a short-hard format (e.g. 1H = 1 hour).
   - Short-hand intervals follow the same rules as relative timestamp offsets but the MO and Y units are not allowed.
-- For complex requests you may have to make a number of tool calls in sequence, and use the results of one tool call in the inputs to the next tool call.
-- Not all requests will require you to use tools. For example, users might ask questions about data sources, tags and values that were retrieved earlier in the conversation.");
+- You may assume that tag names are case-insensitive unless informed otherwise.
+- For complex requests you may have to make a number of tool calls in sequence, and use the results of one tool call in the inputs to the next tool call. Focus on the current step and don't worry too much about the next step until you get to it.
+- Before deciding that you need to call a tool, examine the results of earlier tool calls in the conversation, including tool results that you received when processing earlier user prompts. Prefer re-using existing tool results over making new calls unless the user specifies otherwise.");
             
             return chatHistory;
         }
