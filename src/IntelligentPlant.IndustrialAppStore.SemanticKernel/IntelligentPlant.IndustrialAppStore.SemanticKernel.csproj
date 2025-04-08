@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
+    <Description>Types and extensions for registering Industrial App Store API plugins with Microsoft.SemanticKernel.</Description>
+    <LangVersion>11.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Bcl.TimeProvider" />
+    <PackageReference Include="Microsoft.SemanticKernel.Core" />
+    <PackageReference Include="PolySharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IntelligentPlant.IndustrialAppStore.DependencyInjection\IntelligentPlant.IndustrialAppStore.DependencyInjection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath=".\README.md" />
+  </ItemGroup>
+
+</Project>
