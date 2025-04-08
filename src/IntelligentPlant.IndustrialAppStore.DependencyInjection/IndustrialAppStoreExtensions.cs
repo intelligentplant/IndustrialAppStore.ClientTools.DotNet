@@ -260,5 +260,38 @@ namespace Microsoft.Extensions.DependencyInjection {
             return builder.AddAccessTokenProvider(AccessTokenProvider.CreateStaticAccessTokenFactory(accessToken));
         }
 
+
+        /// <summary>
+        /// Adds additional services to the <see cref="IIndustrialAppStoreBuilder"/>.
+        /// </summary>
+        /// <param name="builder">
+        ///   The builder.
+        /// </param>
+        /// <param name="configure">
+        ///   The callback that will be used to configure the additional services.
+        /// </param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="configure"/> is <see langword="null"/>.
+        /// </exception>
+        /// <remarks>
+        ///   Calling <see cref="AddServices"/> is equivalent to adding services directly to <see cref="IIndustrialAppStoreBuilder.Services"/>, 
+        ///   but allows this to be done in a fluent manner.
+        /// </remarks>
+        public static IIndustrialAppStoreBuilder AddServices(this IIndustrialAppStoreBuilder builder, Action<IServiceCollection> configure) {
+            if (builder == null) {
+                throw new ArgumentNullException(nameof(builder));
+            }
+            if (configure == null) {
+                throw new ArgumentNullException(nameof(configure));
+            }
+
+            configure.Invoke(builder.Services);
+            return builder;
+        }
+
     }
 }
