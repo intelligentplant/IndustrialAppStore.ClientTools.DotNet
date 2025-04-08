@@ -151,6 +151,9 @@
   <data name="Error_PositiveSampleIntervalIsRequired" xml:space="preserve">
     <value>A positive sample interval is required.</value>
   </data>
+  <data name="Error_PropertyNameIsRequired" xml:space="preserve">
+    <value>A property name is required.</value>
+  </data>
   <data name="Error_ScriptEngineIdIsRequired" xml:space="preserve">
     <value>A script engine ID is required.</value>
   </data>
@@ -265,5 +268,8 @@
   </data>
   <data name="Error_WriteValuesCannotContainNullItems" xml:space="preserve">
     <value>A collection of values to write cannot contain null items.</value>
+  </data>
+  <data name="TagValue_DisplayValue_Error" xml:space="preserve">
+    <value>&lt;ERROR&gt;</value>
   </data>
 </root>
