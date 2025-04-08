@@ -87,6 +87,9 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="unit">The unit of measure for the tag value.</param>
         /// <param name="notes">Additional notes about the value.</param>
         /// <param name="error">An error message associated with the value.</param>
+        /// <param name="properties">
+        ///   Custom tag value properties.
+        /// </param>
         [JsonConstructor]
         public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string? textValue, TagValueStatus status, string? unit, string? notes, string? error, IDictionary<string, object>? properties = null) {
             TagName = tagName;
