@@ -151,6 +151,15 @@ namespace IntelligentPlant.DataCore.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A property name is required..
+        /// </summary>
+        internal static string Error_PropertyNameIsRequired {
+            get {
+                return ResourceManager.GetString("Error_PropertyNameIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A script engine ID is required..
         /// </summary>
         internal static string Error_ScriptEngineIdIsRequired {
@@ -444,6 +453,15 @@ namespace IntelligentPlant.DataCore.Client {
         internal static string Error_WriteValuesCannotContainNullItems {
             get {
                 return ResourceManager.GetString("Error_WriteValuesCannotContainNullItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;ERROR&gt;.
+        /// </summary>
+        internal static string TagValue_DisplayValue_Error {
+            get {
+                return ResourceManager.GetString("TagValue_DisplayValue_Error", resourceCulture);
             }
         }
     }
