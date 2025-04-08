@@ -1874,7 +1874,11 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteSnapshotTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, x.Value, null, status, null))!,
+                values?.OrderBy(x => x.Key).Select(x => new TagValueBuilder(tagName)
+                    .WithTimestamp(x.Key)
+                    .WithNumericValue(x.Value)
+                    .WithStatus(status)
+                    .Build())!,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -1929,7 +1933,11 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteSnapshotTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null))!,
+                values?.OrderBy(x => x.Key).Select(x => new TagValueBuilder(tagName)
+                    .WithTimestamp(x.Key)
+                    .WithDisplayValue(x.Value)
+                    .WithStatus(status)
+                    .Build())!,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -1989,14 +1997,11 @@ namespace IntelligentPlant.DataCore.Client {
                 client,
                 dataSourceName,
                 new[] {
-                    new TagValue(
-                        tagName, 
-                        utcSampleTime, 
-                        value, 
-                        null, 
-                        status, 
-                        null
-                    )
+                    new TagValueBuilder(tagName)
+                        .WithTimestamp(utcSampleTime)
+                        .WithNumericValue(value)
+                        .WithStatus(status)
+                        .Build()
                 },
                 cancellationToken
             ).ConfigureAwait(false);
@@ -2057,14 +2062,11 @@ namespace IntelligentPlant.DataCore.Client {
                 client,
                 dataSourceName,
                 new[] {
-                    new TagValue(
-                        tagName,
-                        utcSampleTime,
-                        double.NaN,
-                        value,
-                        status,
-                        null
-                    )
+                    new TagValueBuilder(tagName)
+                        .WithTimestamp(utcSampleTime)
+                        .WithDisplayValue(value)
+                        .WithStatus(status)
+                        .Build()
                 },
                 cancellationToken
             ).ConfigureAwait(false);
@@ -2161,7 +2163,11 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteHistoricalTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, x.Value, null, status, null))!,
+                values?.OrderBy(x => x.Key).Select(x => new TagValueBuilder(tagName)
+                    .WithTimestamp(x.Key)
+                    .WithNumericValue(x.Value)
+                    .WithStatus(status)
+                    .Build())!,
                 cancellationToken
             ).ConfigureAwait(false);
 
@@ -2217,7 +2223,11 @@ namespace IntelligentPlant.DataCore.Client {
             var result = await WriteHistoricalTagValuesAsync(
                 client,
                 dataSourceName,
-                values?.OrderBy(x => x.Key).Select(x => new TagValue(tagName, x.Key, double.NaN, x.Value, status, null))!,
+                values?.OrderBy(x => x.Key).Select(x => new TagValueBuilder(tagName)
+                    .WithTimestamp(x.Key)
+                    .WithDisplayValue(x.Value)
+                    .WithStatus(status)
+                    .Build())!,
                 cancellationToken
             ).ConfigureAwait(false);
 
