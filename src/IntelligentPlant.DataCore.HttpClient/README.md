@@ -67,7 +67,7 @@ var dataSources = await client.DataSources.GetDataSourcesAsync();
 
 The third option when creating a client is to dynamically add an authentication header to outgoing requests. This can be done by adding a [DelegatingHandler](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.delegatinghandler) to the request pipeline for the `HttpClient` that we pass to the Data Core client constructor. The handler can be created with a reference to a service type that can provide the necessary context.
 
-This is the approach used when creating API clients in [ASP.NET Core applications](../IntelligentPlant.IndustrialAppStore.Authentication/Http/TokenStoreAuthenticationHandler.cs).
+This is the approach used when creating API clients in [ASP.NET Core applications](../IntelligentPlant.IndustrialAppStore.Authentication).
 
 
 # Calling API Methods
