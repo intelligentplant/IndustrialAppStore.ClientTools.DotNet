@@ -12,7 +12,6 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
     /// <summary>
     /// Extensions for configuring Semantic Kernel services for use with the Industrial App Store.
     /// </summary>
-    [Experimental(DiagnosticCodes.ExperimentalSemanticKernelExtensions)]
     public static class IndustrialAppStoreBuilderSemanticKernelExtensions {
 
         /// <summary>
@@ -32,6 +31,7 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        [Experimental(DiagnosticCodes.ExperimentalSemanticKernelExtensions)]
         public static IIndustrialAppStoreBuilder AddSemanticKernelServices(this IIndustrialAppStoreBuilder builder, Action<IServiceProvider, KernelPluginCollection>? configurePlugins = null) {
             if (builder == null) {
                 throw new ArgumentNullException(nameof(builder));
@@ -70,6 +70,7 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="serviceProvider"/> is <see langword="null"/>.
         /// </exception>
+        [Experimental(DiagnosticCodes.ExperimentalSemanticKernelExtensions)]
         public static KernelPluginCollection AddIndustrialAppStorePlugins(this KernelPluginCollection plugins, IServiceProvider serviceProvider) {
             if (plugins == null) {
                 throw new ArgumentNullException(nameof(plugins));
@@ -97,6 +98,7 @@ namespace IntelligentPlant.IndustrialAppStore.DependencyInjection {
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="chatHistory"/> is <see langword="null"/>.
         /// </exception>
+        [Experimental(DiagnosticCodes.ExperimentalSemanticKernelExtensions)]
         public static ChatHistory AddIndustrialAppStoreSystemPrompt(this ChatHistory chatHistory) {
             if (chatHistory == null) {
                 throw new ArgumentNullException(nameof(chatHistory));
