@@ -336,7 +336,7 @@
         ///   </item>
         ///   <item>
         ///     <term>Display Value</term>
-        ///     <description><c>"&lt;ERROR&gt;"</c></description>
+        ///     <description><see cref="Resources.TagValue_DisplayValue_Error"/></description>
         ///   </item>
         ///   <item>
         ///     <term>Status</term>
