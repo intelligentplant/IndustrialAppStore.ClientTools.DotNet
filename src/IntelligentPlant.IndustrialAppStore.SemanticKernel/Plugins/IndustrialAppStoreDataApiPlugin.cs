@@ -43,12 +43,20 @@ namespace IntelligentPlant.IndustrialAppStore.SemanticKernel.Plugins {
         [KernelFunction("find_tags")]
         [Description("Searches an Industrial App Store data source for tags (i.e. instruments or sensors) with names matching the provided filter on the data source with the specified identifier. The * character can be used in the name filter as a wildcard. The page parameter specifies the result page to return.")]
         public async Task<IEnumerable<IasTagDescriptor>> FindTagsAsync(FindTagsRequest request, CancellationToken cancellationToken) {
-            var result = await _iasClient.DataSources.FindTagsAsync(request.DataSourceId, nameFilter: request.Name, page: request.Page, cancellationToken: cancellationToken);
+            var result = await _iasClient.DataSources.FindTagsAsync(new DataCore.Client.Queries.FindTagsRequest() {
+                DataSourceName = request.DataSourceId,
+                Filter = new DataCore.Client.Model.TagSearchFilter(request.Name, request.Description, request.Units) { 
+                    Label = request.Labels,
+                    PageSize = request.PageSize,
+                    Page = request.Page
+                }
+            }, cancellationToken);
 
             return result.Select(x => new IasTagDescriptor() {
                 Name = x.Name,
                 Description = x.Description,
                 Units = x.UnitOfMeasure,
+                Labels = x.Labels?.ToArray(),
                 States = x.DigitalStates?.Count > 0
                     ? x.DigitalStates.Select(s => new IasTagDiscreteState() { Name = s.Name, Value = s.Value }).ToArray()
                     : null
