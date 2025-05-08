@@ -1,4 +1,8 @@
-﻿namespace IntelligentPlant.DataCore.Client.Clients {
+﻿using System.Net.Http.Formatting;
+using System.Net.Http.Json;
+using System.Text.Json;
+
+namespace IntelligentPlant.DataCore.Client.Clients {
 
     /// <summary>
     /// Base class for <see cref="DataCoreHttpClient"/> sub-client types.
@@ -164,7 +168,36 @@
         /// <returns>
         ///   A new <see cref="HttpContent"/> object.
         /// </returns>
-        protected internal static HttpContent CreateJsonContent<T>(T value) => DataCoreHttpClient.CreateJsonContent(value);
+        protected internal HttpContent CreateJsonContent<T>(T value) { 
+            if (Options.JsonSerializer == JsonSerializerType.SystemTextJson) {
+                return JsonContent.Create(value, options: Options.JsonSerializerOptions);
+            }
+
+            return new ObjectContent(typeof(T), value, new JsonMediaTypeFormatter());
+        }
+
+
+        /// <summary>
+        /// Reads the JSON content from the response and deserializes it to the specified type.
+        /// </summary>
+        /// <typeparam name="T">
+        ///   The type to deserialize the JSON content to.
+        /// </typeparam>
+        /// <param name="response">
+        ///   The HTTP response message.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   A task that returns the deserialized value.
+        /// </returns>
+        protected internal async Task<T> ReadFromJsonAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken) {
+            if (Options.JsonSerializer == JsonSerializerType.SystemTextJson) {
+                return (await response.Content.ReadFromJsonAsync<T>(Options.JsonSerializerOptions, cancellationToken).ConfigureAwait(false))!;
+            }
+            return await response.Content.ReadAsAsync<T>(cancellationToken).ConfigureAwait(false);
+        }
 
     }
 }
