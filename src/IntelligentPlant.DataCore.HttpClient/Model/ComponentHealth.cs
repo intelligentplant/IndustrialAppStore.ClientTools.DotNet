@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace IntelligentPlant.DataCore.Client.Model {
+﻿namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     /// Describes the health of a Data Core component.
     /// </summary>
@@ -22,7 +20,8 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// </summary>
         /// <param name="isHealthy">A flag indicating if the driver is in good health.</param>
         /// <param name="properties">A collection of properties that contributed towards the overall health status.</param>
-        [JsonConstructor]
+        [Newtonsoft.Json.JsonConstructor]
+        [System.Text.Json.Serialization.JsonConstructor]
         internal ComponentHealth(bool isHealthy, IEnumerable<ComponentHealthProperty> properties) {
             IsHealthy = isHealthy;
             Properties = properties?.ToArray() ?? System.Array.Empty<ComponentHealthProperty>();

@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace IntelligentPlant.DataCore.Client.Model {
+﻿namespace IntelligentPlant.DataCore.Client.Model {
 
     /// <summary>
     /// Describes the current status of a Data Core component.
@@ -80,7 +78,8 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="messages">A collection of messages associated with the current status.</param>
         /// <param name="properties">A collection of component-specific properties.</param>
         /// <param name="healthStatus">The component's health status.</param>
-        [JsonConstructor]
+        [Newtonsoft.Json.JsonConstructor]
+        [System.Text.Json.Serialization.JsonConstructor]
         public ComponentStatus(ComponentRuntimeState runningStatus, bool isDebugMode, DateTime utcStartupTime, IEnumerable<LogMessage>? messages, IEnumerable<NamedValue<string>>? properties, ComponentHealth? healthStatus) {
             RunningStatus = runningStatus;
             UtcStartupTime = utcStartupTime.ToUniversalTime();

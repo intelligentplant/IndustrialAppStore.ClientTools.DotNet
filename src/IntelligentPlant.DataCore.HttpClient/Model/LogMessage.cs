@@ -1,7 +1,5 @@
 ﻿using System.Globalization;
 
-using Newtonsoft.Json;
-
 namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     /// Class describing a general-purpose log message.
@@ -42,7 +40,8 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// </summary>
         /// <param name="utcTimestamp">The timestamp.</param>
         /// <param name="message">The message.</param>
-        [JsonConstructor]
+        [Newtonsoft.Json.JsonConstructor]
+        [System.Text.Json.Serialization.JsonConstructor]
         public LogMessage(DateTime utcTimestamp, string message) : this(message) {
             UtcTimestamp = utcTimestamp;
         }

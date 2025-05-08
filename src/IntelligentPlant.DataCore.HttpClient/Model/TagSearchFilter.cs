@@ -98,6 +98,8 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="name">The tag name filter.</param>
         /// <param name="description">The description filter.</param>
         /// <param name="unit">The tag unit filter.</param>
+        [Newtonsoft.Json.JsonConstructor]
+        [System.Text.Json.Serialization.JsonConstructor]
         public TagSearchFilter(string? name, string? description, string? unit) {
             Name = name;
             Description = description;

@@ -87,8 +87,8 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <returns>
         /// <see langword="true"/> if the two instances are equivalent, otherwise <see langword="false"/>.
         /// </returns>
-        public override bool Equals(object obj) {
-            return Equals(obj as Annotation);
+        public override bool Equals(object? obj) {
+            return obj is Annotation annotation && Equals(annotation);
         }
 
     }

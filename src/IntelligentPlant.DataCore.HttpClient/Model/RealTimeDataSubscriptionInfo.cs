@@ -39,6 +39,8 @@
         /// <param name="utcLastEmit">The UTC time that the subscription last emitted values at.</param>
         /// <param name="emitInterval">The emit interval for the subscription (i.e. how frequently it will push new values).</param>
         /// <param name="tagSubscriptions">The tag subscriptions.</param>
+        [Newtonsoft.Json.JsonConstructor]
+        [System.Text.Json.Serialization.JsonConstructor]
         public RealTimeDataSubscriptionInfo(DateTime utcCreationTime, DateTime utcLastValueReceived, DateTime utcLastEmit, TimeSpan emitInterval, IDictionary<string, IDictionary<string, int>> tagSubscriptions) {
             UtcCreationTime = utcCreationTime;
             UtcLastValueReceived = utcLastValueReceived;

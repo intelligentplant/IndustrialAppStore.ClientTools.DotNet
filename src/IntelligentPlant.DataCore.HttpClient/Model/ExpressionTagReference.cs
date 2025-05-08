@@ -72,8 +72,8 @@
         /// <returns>
         /// <see langword="true"/> if the objects are equal, otherwise <see langword="false"/>.
         /// </returns>
-        public override bool Equals(object obj) {
-            return Equals(obj as ExpressionTagReference);
+        public override bool Equals(object? obj) {
+            return obj is ExpressionTagReference reference && Equals(reference);
         }
 
     }
