@@ -2,6 +2,7 @@
     /// <summary>
     /// Describes the current runtime state of a Data Core component.
     /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
     public enum ComponentRuntimeState {
 
         /// <summary>
