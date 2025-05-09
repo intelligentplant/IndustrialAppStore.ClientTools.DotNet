@@ -170,7 +170,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         protected internal HttpContent CreateJsonContent<T>(T value) { 
             if (Options.JsonSerializer == JsonSerializerType.SystemTextJson) {
-                return JsonContent.Create(value, options: Options.JsonSerializerOptions);
+                return JsonContent.Create(value, options: Options.JsonOptions);
             }
 
             return new ObjectContent(typeof(T), value, new JsonMediaTypeFormatter());
@@ -194,7 +194,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// </returns>
         protected internal async Task<T> ReadFromJsonAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken) {
             if (Options.JsonSerializer == JsonSerializerType.SystemTextJson) {
-                return (await response.Content.ReadFromJsonAsync<T>(Options.JsonSerializerOptions, cancellationToken).ConfigureAwait(false))!;
+                return (await response.Content.ReadFromJsonAsync<T>(Options.JsonOptions, cancellationToken).ConfigureAwait(false))!;
             }
             return await response.Content.ReadAsAsync<T>(cancellationToken).ConfigureAwait(false);
         }

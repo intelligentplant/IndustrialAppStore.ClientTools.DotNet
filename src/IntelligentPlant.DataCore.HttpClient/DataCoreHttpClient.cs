@@ -106,7 +106,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// </returns>
         public HttpContent CreateJsonContent<T>(T value) {
             if (Options.JsonSerializer == JsonSerializerType.SystemTextJson) {
-                return JsonContent.Create(value, options: Options.JsonSerializerOptions);
+                return JsonContent.Create(value, options: Options.JsonOptions);
             }
 
             return new ObjectContent(typeof(T), value, new JsonMediaTypeFormatter());

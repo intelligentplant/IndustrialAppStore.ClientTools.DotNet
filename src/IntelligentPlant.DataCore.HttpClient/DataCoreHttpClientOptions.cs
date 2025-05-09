@@ -21,7 +21,7 @@ namespace IntelligentPlant.DataCore.Client {
         /// <summary>
         /// The JSON serializer options to use when using the System.Text.Json serializer.
         /// </summary>
-        public System.Text.Json.JsonSerializerOptions? JsonSerializerOptions { get; set; }
+        public System.Text.Json.JsonSerializerOptions? JsonOptions { get; set; }
 
     }
 
