@@ -46,7 +46,7 @@ namespace IntelligentPlant.IndustrialAppStore.Client.Clients {
             try {
                 using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
                     await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<UserOrGroupPrincipal>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<UserOrGroupPrincipal>(response, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
