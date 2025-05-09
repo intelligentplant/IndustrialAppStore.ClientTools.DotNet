@@ -1,9 +1,9 @@
 ﻿namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
-    /// Describes the roles a user has on a datasource.
+    /// Describes the roles a user has on a component such as a data source.
     /// </summary>
-    public class ComponentRoles : Dictionary<string, bool>
-    {
+    public class ComponentRoles : Dictionary<string, bool> {
+
         /// <summary>
         /// Creates a new <see cref="ComponentRoles"/> object that uses case-insensitive indexing.
         /// </summary>
@@ -15,5 +15,6 @@
         /// </summary>
         /// <param name="comparer">The comparer to use for indexing.</param>
         public ComponentRoles(IEqualityComparer<string> comparer) : base(comparer) { }
+
     }
 }

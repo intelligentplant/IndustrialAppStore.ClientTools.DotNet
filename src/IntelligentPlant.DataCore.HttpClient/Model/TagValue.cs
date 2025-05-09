@@ -1,8 +1,5 @@
 ﻿using System.Text;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
 namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     /// Describes a tag value.
@@ -17,7 +14,6 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <summary>
         /// Gets the UTC sample time.
         /// </summary>
-        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime UtcSampleTime { get; private set; }
 
         /// <summary>
@@ -90,7 +86,8 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="properties">
         ///   Custom tag value properties.
         /// </param>
-        [JsonConstructor]
+        [Newtonsoft.Json.JsonConstructor]
+        [System.Text.Json.Serialization.JsonConstructor]
         public TagValue(string tagName, DateTime utcSampleTime, double numericValue, string? textValue, TagValueStatus status, string? unit, string? notes, string? error, IDictionary<string, object>? properties = null) {
             TagName = tagName;
             UtcSampleTime = utcSampleTime;

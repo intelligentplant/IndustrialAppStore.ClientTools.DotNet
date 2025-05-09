@@ -105,7 +105,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
                     await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<IEnumerable<DataSourceInfo>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<DataSourceInfo>>(response, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -141,7 +141,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
                     await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<DataSourceInfo>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<DataSourceInfo>(response, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -185,7 +185,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ComponentRoles>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<ComponentRoles>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -227,7 +227,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<TagSearchResult>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<TagSearchResult>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -272,7 +272,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IDictionary<string, SnapshotTagValueDictionary>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IDictionary<string, SnapshotTagValueDictionary>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -314,7 +314,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IDictionary<string, HistoricalTagValuesDictionary>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IDictionary<string, HistoricalTagValuesDictionary>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -354,7 +354,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IDictionary<string, HistoricalTagValuesDictionary>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IDictionary<string, HistoricalTagValuesDictionary>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -393,7 +393,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IDictionary<string, HistoricalTagValuesDictionary>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IDictionary<string, HistoricalTagValuesDictionary>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -432,7 +432,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IDictionary<string, HistoricalTagValuesDictionary>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IDictionary<string, HistoricalTagValuesDictionary>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -474,7 +474,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<TagValueUpdateResponse>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<TagValueUpdateResponse>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -516,7 +516,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<TagValueUpdateResponse>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<TagValueUpdateResponse>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -558,7 +558,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<AnnotationCollection>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<AnnotationCollection>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -599,7 +599,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<Annotation>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<Annotation>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -713,7 +713,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<IEnumerable<ScriptEngine>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<ScriptEngine>>(response, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -750,7 +750,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<IEnumerable<ScriptTemplate>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<ScriptTemplate>>(response, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -787,7 +787,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<ScriptTemplateWithParameterDefinitions>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<ScriptTemplateWithParameterDefinitions>(response, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -826,7 +826,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<ScriptTagDefinition>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<ScriptTagDefinition>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -865,7 +865,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    var result = await httpResponse.Content.ReadAsAsync<IDictionary<string, ScriptTagDefinition>>(cancellationToken).ConfigureAwait(false);
+                    var result = await ReadFromJsonAsync<IDictionary<string, ScriptTagDefinition>>(httpResponse, cancellationToken).ConfigureAwait(false);
                     return result.Values.ToArray();
                 }
             }
@@ -903,7 +903,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ScriptTagDefinition>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<ScriptTagDefinition>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -942,7 +942,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ScriptTagDefinition>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<ScriptTagDefinition>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -981,7 +981,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ScriptTagDefinition>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<ScriptTagDefinition>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -1020,7 +1020,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ScriptTagDefinition>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<ScriptTagDefinition>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -1059,7 +1059,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ScriptTagDefinition>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<ScriptTagDefinition>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -1096,7 +1096,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<bool>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<bool>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -1138,6 +1138,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             if (string.IsNullOrWhiteSpace(dataSourceName)) {
                 throw new ArgumentException(Resources.Error_DataSourceNameIsRequired, nameof(dataSourceName));
             }
+
             var request = new CustomFunctionRequest() { 
                 ComponentName = dataSourceName,
                 MethodName = functionName,
@@ -1146,12 +1147,19 @@ namespace IntelligentPlant.DataCore.Client.Clients {
                     : new Dictionary<string, string>(parameters)
             };
 
-            return await CustomFunctionsClient.RunCustomFunctionAsync<T>(
-                HttpClient,
-                GetAbsoluteUrl("api/rpc")!,
-                request,
-                cancellationToken
-            ).ConfigureAwait(false);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, GetAbsoluteUrl("api/rpc")!) {
+                Content = CreateJsonContent(request)
+            };
+
+            try {
+                using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                    await response.ThrowOnErrorResponse().ConfigureAwait(false);
+                    return await ReadFromJsonAsync<T>(response, cancellationToken).ConfigureAwait(false);
+                }
+            }
+            finally {
+                httpRequest.Dispose();
+            }
         }
 
         #endregion

@@ -3,6 +3,7 @@
     /// Describes a simplified type for a driver setting or a tag property definition, to help 
     /// applications to infer what sort of editor they should use for a given setting.
     /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
     public enum SimpleType {
         /// <summary>
         /// The simplified type for the setting is unknown or could not be determined.

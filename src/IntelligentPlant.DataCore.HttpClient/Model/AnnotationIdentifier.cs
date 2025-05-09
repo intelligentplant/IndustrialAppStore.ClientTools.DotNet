@@ -31,7 +31,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// The hash code.
         /// </returns>
         public override int GetHashCode() {
-            return (Id + TagName + UtcAnnotationTime.ToString("O")).GetHashCode();
+            return HashCode.Combine(Id, TagName, UtcAnnotationTime);
         }
 
 
@@ -60,8 +60,8 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <returns>
         /// <see langword="true"/> if the two instances are equivalent, otherwise <see langword="false"/>.
         /// </returns>
-        public override bool Equals(object obj) {
-            return Equals(obj as AnnotationIdentifier);
+        public override bool Equals(object? obj) {
+            return obj is AnnotationIdentifier identifier && Equals(identifier);
         }
 
     }

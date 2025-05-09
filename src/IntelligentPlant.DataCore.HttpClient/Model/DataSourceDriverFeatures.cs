@@ -5,6 +5,7 @@ namespace IntelligentPlant.DataCore.Client.Model {
     /// Describes the features supported by a data source driver.
     /// </summary>
     [Flags]
+    [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
     public enum DataSourceDriverFeatures {
 
         /// <summary>

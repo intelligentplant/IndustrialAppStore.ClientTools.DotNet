@@ -3,6 +3,7 @@
     /// Describes which property of a <see cref="TagValue"/> object should be 
     /// passed into an evaluation script when defining a <see cref="TagReference"/>.
     /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
     public enum TagReferenceType {
         /// <summary>
         /// The reference maps to the <see cref="TagValue.NumericValue"/> property of a tag value.

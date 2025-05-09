@@ -48,7 +48,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
                     await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<IEnumerable<DataSourceInfo>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<DataSourceInfo>>(response, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -85,7 +85,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<AssetModelElementTemplate>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<AssetModelElementTemplate>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -122,7 +122,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<AssetModelElementTemplate>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<AssetModelElementTemplate>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -159,7 +159,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<AssetModelPropertyTemplate>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<AssetModelPropertyTemplate>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -200,7 +200,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<IEnumerable<AssetModelElement>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<AssetModelElement>>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -236,7 +236,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<AssetModelElement>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<AssetModelElement>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {

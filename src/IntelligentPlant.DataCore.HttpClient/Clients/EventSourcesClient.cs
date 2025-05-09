@@ -50,7 +50,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
                     await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<IEnumerable<ComponentInfo>>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<ComponentInfo>>(response, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -86,7 +86,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false)) {
                     await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<ComponentInfo>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<ComponentInfo>(response, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -130,7 +130,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             try {
                 using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await httpResponse.Content.ReadAsAsync<ComponentRoles>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<ComponentRoles>(httpResponse, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {
@@ -180,12 +180,19 @@ namespace IntelligentPlant.DataCore.Client.Clients {
                     : new Dictionary<string, string>(parameters)
             };
 
-            return await CustomFunctionsClient.RunCustomFunctionAsync<T>(
-                HttpClient,
-                GetAbsoluteUrl("api/rpc")!,
-                request,
-                cancellationToken
-            ).ConfigureAwait(false);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, GetAbsoluteUrl("api/rpc")!) {
+                Content = CreateJsonContent(request)
+            };
+
+            try {
+                using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                    await response.ThrowOnErrorResponse().ConfigureAwait(false);
+                    return await ReadFromJsonAsync<T>(response, cancellationToken).ConfigureAwait(false);
+                }
+            }
+            finally {
+                httpRequest.Dispose();
+            }
         }
 
         #endregion

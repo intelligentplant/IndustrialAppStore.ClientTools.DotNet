@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace IntelligentPlant.DataCore.Client.Model {
+﻿namespace IntelligentPlant.DataCore.Client.Model {
     /// <summary>
     /// Describes a property on a component that controbutes towards the overall health status of the component.
     /// </summary>
@@ -34,7 +32,8 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// <param name="isHealthy">A flag indicating if the property is in good health.</param>
         /// <param name="utcTimeStamp">The time stamp of the observation.</param>
         /// <param name="message">A message to accompany the property.</param>
-        [JsonConstructor]
+        [Newtonsoft.Json.JsonConstructor]
+        [System.Text.Json.Serialization.JsonConstructor]
         internal ComponentHealthProperty(string name, bool isHealthy, DateTime utcTimeStamp, string message) {
             Name = name;
             IsHealthy = isHealthy;

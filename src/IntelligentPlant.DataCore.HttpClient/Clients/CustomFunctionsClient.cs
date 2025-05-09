@@ -33,9 +33,6 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <typeparam name="T">
         ///   The function return type.
         /// </typeparam>
-        /// <param name="httpClient">
-        ///   The HTTP client to use.
-        /// </param>
         /// <param name="url">
         ///   The custom function URL.
         /// </param>
@@ -48,8 +45,7 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         /// <returns>
         ///   A task that will return the custom function result.
         /// </returns>
-        internal static async Task<T> RunCustomFunctionAsync<T>(
-            HttpClient httpClient, 
+        internal async Task<T> RunCustomFunctionAsync<T>(
             Uri url,
             CustomFunctionRequest request,
             CancellationToken cancellationToken = default
@@ -64,9 +60,9 @@ namespace IntelligentPlant.DataCore.Client.Clients {
             };
 
             try {
-                using (var response = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                using (var response = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
                     await response.ThrowOnErrorResponse().ConfigureAwait(false);
-                    return await response.Content.ReadAsAsync<T>(cancellationToken).ConfigureAwait(false);
+                    return await ReadFromJsonAsync<T>(response, cancellationToken).ConfigureAwait(false);
                 }
             }
             finally {

@@ -99,17 +99,11 @@ namespace IntelligentPlant.DataCore.Client.Model {
                 return defaultValue;
             }
 
-            TagProperty prop;
-            if (!Properties.TryGetValue(name, out prop)) {
+            if (!Properties.TryGetValue(name, out var prop)) {
                 return defaultValue;
             }
 
-            try {
-                return (T?) prop.Value;
-            }
-            catch (InvalidCastException) {
-                return defaultValue;
-            }
+            return prop.GetValueOrDefault(defaultValue);
         }
 
 

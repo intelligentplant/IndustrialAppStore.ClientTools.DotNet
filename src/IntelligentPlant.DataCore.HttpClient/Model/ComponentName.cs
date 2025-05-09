@@ -92,8 +92,8 @@ namespace IntelligentPlant.DataCore.Client.Model {
             }
 
             return string.IsNullOrWhiteSpace(@namespace)
-                       ? name
-                       : string.Concat(@namespace, ".", name);
+                ? name
+                : string.Concat(@namespace, ".", name);
         }
 
 

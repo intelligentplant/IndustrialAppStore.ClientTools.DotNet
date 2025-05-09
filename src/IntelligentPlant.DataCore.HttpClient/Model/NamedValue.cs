@@ -23,6 +23,8 @@
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <exception cref="ArgumentNullException"><paramref name="name"/> is <see langword="null"/>.</exception>
+        [Newtonsoft.Json.JsonConstructor]
+        [System.Text.Json.Serialization.JsonConstructor]
         public NamedValue(string name, T value) {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Value = value;

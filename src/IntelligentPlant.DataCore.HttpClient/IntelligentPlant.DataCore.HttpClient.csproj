@@ -16,6 +16,7 @@
     <PackageReference Include="IntelligentPlant.Relativity" />
     <PackageReference Include="Jaahas.HttpRequestTransformer" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" />
+    <PackageReference Include="Microsoft.Bcl.HashCode" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="System.ComponentModel.Annotations" />
     <PackageReference Include="System.Net.Http.Json" />

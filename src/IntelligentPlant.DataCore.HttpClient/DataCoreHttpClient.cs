@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Formatting;
+using System.Net.Http.Json;
 
 using IntelligentPlant.DataCore.Client.Clients;
 
@@ -103,7 +104,11 @@ namespace IntelligentPlant.DataCore.Client {
         /// <returns>
         ///   A new <see cref="HttpContent"/> object.
         /// </returns>
-        public static HttpContent CreateJsonContent<T>(T value) {
+        public HttpContent CreateJsonContent<T>(T value) {
+            if (Options.JsonSerializer == JsonSerializerType.SystemTextJson) {
+                return JsonContent.Create(value, options: Options.JsonOptions);
+            }
+
             return new ObjectContent(typeof(T), value, new JsonMediaTypeFormatter());
         }
 

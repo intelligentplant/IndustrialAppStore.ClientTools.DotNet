@@ -2,6 +2,7 @@
     /// <summary>
     /// Describes the quality status for a tag value.
     /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
     public enum TagValueStatus {
         /// <summary>
         /// The value has bad quality.

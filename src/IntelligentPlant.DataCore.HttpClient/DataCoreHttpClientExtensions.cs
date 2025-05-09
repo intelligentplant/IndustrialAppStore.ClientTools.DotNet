@@ -165,7 +165,7 @@ namespace IntelligentPlant.DataCore.Client {
         ///   <paramref name="requestUri"/> is <see langword="null"/>.
         /// </exception>
         public static async Task<HttpResponseMessage> PostAsJsonAsync<TRequest>(this DataCoreHttpClient client, string requestUri, TRequest request, CancellationToken cancellationToken = default) {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = DataCoreHttpClient.CreateJsonContent(request) };
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = client.CreateJsonContent(request) };
             var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
             return httpResponse;
         }
@@ -194,7 +194,7 @@ namespace IntelligentPlant.DataCore.Client {
         ///   <paramref name="requestUri"/> is <see langword="null"/>.
         /// </exception>
         public static async Task<HttpResponseMessage> PostAsJsonAsync<TRequest>(this DataCoreHttpClient client, Uri requestUri, TRequest request, CancellationToken cancellationToken = default) {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = DataCoreHttpClient.CreateJsonContent(request) };
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = client.CreateJsonContent(request) };
             var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
             return httpResponse;
         }
@@ -223,7 +223,7 @@ namespace IntelligentPlant.DataCore.Client {
         ///   <paramref name="requestUri"/> is <see langword="null"/>.
         /// </exception>
         public static async Task<HttpResponseMessage> PutAsJsonAsync<TRequest>(this DataCoreHttpClient client, string requestUri, TRequest request, CancellationToken cancellationToken = default) {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Put, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = DataCoreHttpClient.CreateJsonContent(request) };
+            var httpRequest = new HttpRequestMessage(HttpMethod.Put, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = client.CreateJsonContent(request) };
             var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
             return httpResponse;
         }
@@ -252,7 +252,7 @@ namespace IntelligentPlant.DataCore.Client {
         ///   <paramref name="requestUri"/> is <see langword="null"/>.
         /// </exception>
         public static async Task<HttpResponseMessage> PutAsJsonAsync<TRequest>(this DataCoreHttpClient client, Uri requestUri, TRequest request, CancellationToken cancellationToken = default) {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Put, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = DataCoreHttpClient.CreateJsonContent(request) };
+            var httpRequest = new HttpRequestMessage(HttpMethod.Put, requestUri ?? throw new ArgumentNullException(nameof(requestUri))) { Content = client.CreateJsonContent(request) };
             var httpResponse = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
             return httpResponse;
         }
