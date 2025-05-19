@@ -8,6 +8,7 @@ using IntelligentPlant.IndustrialAppStore.CommandLine.Http;
 using IntelligentPlant.IndustrialAppStore.CommandLine.OAuth;
 
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.Logging;
 
 namespace IntelligentPlant.IndustrialAppStore.CommandLine {
 
@@ -15,7 +16,12 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
     /// <see cref="IndustrialAppStoreSessionManager"/> manages access tokens and refresh tokens 
     /// obtained from the Industrial App Store.
     /// </summary>
-    public sealed class IndustrialAppStoreSessionManager {
+    public sealed partial class IndustrialAppStoreSessionManager {
+
+        /// <summary>
+        /// The logger for the session manager.
+        /// </summary>
+        private readonly ILogger<IndustrialAppStoreSessionManager> _logger;
 
         /// <summary>
         /// The HTTP client factory to create backchannel clients with.
@@ -93,8 +99,10 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
             IDataProtectionProvider dataProtectionProvider,
             AppDataFolderProvider dataFolderProvider,
             IndustrialAppStoreSessionManagerOptions options,
-            TimeProvider? timeProvider = null
+            TimeProvider? timeProvider = null,
+            ILogger<IndustrialAppStoreSessionManager>? logger = null
         ) {
+            _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<IndustrialAppStoreSessionManager>.Instance;
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _dataProtector = dataProtectionProvider?.CreateProtector(typeof(IndustrialAppStoreSessionManager).FullName!, "tokens", "v1") ?? throw new ArgumentNullException(nameof(dataProtectionProvider));
             _options = options ?? throw new ArgumentNullException(nameof(options));
@@ -164,9 +172,15 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
                 return null;
             }
 
-            var protectedTokenData = File.ReadAllBytes(_tokenFile.FullName);
-            var tokenData = _dataProtector.Unprotect(protectedTokenData);
-            return JsonSerializer.Deserialize<OAuthTokens>(tokenData);
+            try {
+                var protectedTokenData = File.ReadAllBytes(_tokenFile.FullName);
+                var tokenData = _dataProtector.Unprotect(protectedTokenData);
+                return JsonSerializer.Deserialize<OAuthTokens>(tokenData);
+            }
+            catch (Exception error) {
+                LogLoadTokensError(error);
+                return null;
+            }
         }
 
 
@@ -364,6 +378,10 @@ namespace IntelligentPlant.IndustrialAppStore.CommandLine {
 
             return new SessionInfo(tokens.UtcExpiresAt, !string.IsNullOrWhiteSpace(tokens.RefreshToken));
         }
+
+
+        [LoggerMessage(1, LogLevel.Warning, "Failed to load session information.")]
+        partial void LogLoadTokensError(Exception error);
 
     }
 }
