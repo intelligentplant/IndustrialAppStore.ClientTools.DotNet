@@ -1,5 +1,5 @@
-﻿using IntelligentPlant.IndustrialAppStore.CommandLine;
-using IntelligentPlant.IndustrialAppStore.Client;
+﻿using IntelligentPlant.IndustrialAppStore.Client;
+using IntelligentPlant.IndustrialAppStore.CommandLine;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
