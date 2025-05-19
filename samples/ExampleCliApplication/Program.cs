@@ -1,6 +1,7 @@
-﻿using IntelligentPlant.IndustrialAppStore.CommandLine;
-using IntelligentPlant.IndustrialAppStore.Client;
+﻿using IntelligentPlant.IndustrialAppStore.Client;
+using IntelligentPlant.IndustrialAppStore.CommandLine;
 
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +14,11 @@ var configuration = new ConfigurationBuilder()
 var services = new ServiceCollection();
 
 services.AddIndustrialAppStoreCliServices(options => configuration.GetSection("IAS").Bind(options));
+
+// Set the application name for the Data Protection system. This is used to isolate protected data
+// specific to this application.
+services.AddDataProtection()
+    .SetApplicationName("ExampleCliApplication");
 
 var provider = services.BuildServiceProvider();
 
