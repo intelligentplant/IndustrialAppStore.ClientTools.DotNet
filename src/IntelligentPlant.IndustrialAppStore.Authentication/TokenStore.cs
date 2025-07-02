@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
@@ -10,7 +11,12 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
     /// <summary>
     /// Base class for <see cref="ITokenStore"/> implementations.
     /// </summary>
-    public abstract class TokenStore : ITokenStore {
+    public abstract partial class TokenStore : ITokenStore {
+
+        /// <summary>
+        /// The logger for the token store.
+        /// </summary>
+        private readonly ILogger _logger;
 
         /// <summary>
         /// The authentication options.
@@ -58,14 +64,19 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <param name="timeProvider">
         ///   The time provider.
         /// </param>
+        /// <param name="logger">
+        ///   The logger for the token store.
+        /// </param>
         protected TokenStore(
             IOptions<IndustrialAppStoreAuthenticationOptions> options,
             HttpClient httpClient,
-            TimeProvider timeProvider
+            TimeProvider timeProvider,
+            ILogger<TokenStore>? logger = null
         ) {
             _options = options.Value;
             _backchannelHttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+            _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<TokenStore>.Instance;
         }
 
 
@@ -150,14 +161,23 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
                 return null;
             }
 
-            var tokens = await UseRefreshTokenAsync(
-                oauthTokens.Value.RefreshToken, 
-                _options.ClientId, 
-                _options.ClientSecret!, 
-                _options.GetTokenEndpoint(), 
-                _backchannelHttpClient, 
-                _timeProvider
-            );
+            OAuthTokens tokens;
+
+            try {
+                tokens = await UseRefreshTokenAsync(
+                    oauthTokens.Value.RefreshToken,
+                    _options.ClientId,
+                    _options.ClientSecret!,
+                    _options.GetTokenEndpoint(),
+                    _backchannelHttpClient,
+                    _timeProvider
+                );
+            }
+            catch (HttpRequestException e) when (e.StatusCode == System.Net.HttpStatusCode.BadRequest) {
+                LogRefreshBadRequestError(e);
+                return null;
+            }
+
             await SaveTokensAsync(tokens);
 
             return tokens;
@@ -330,6 +350,10 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         ///   A <see cref="ValueTask"/> that will save the tokens.
         /// </returns>
         protected internal abstract ValueTask SaveTokensAsync(OAuthTokens tokens);
+
+
+        [LoggerMessage(1, LogLevel.Warning, "HTTP 400/Bad Request response while using refresh token. This indicates that the refresh token has expired or is invalid.")]
+        partial void LogRefreshBadRequestError(Exception error);
 
     }
 }

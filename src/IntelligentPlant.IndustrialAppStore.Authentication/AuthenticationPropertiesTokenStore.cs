@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace IntelligentPlant.IndustrialAppStore.Authentication {
@@ -29,11 +30,15 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         /// <param name="timeProvider">
         ///   The time provider.
         /// </param>
+        /// <param name="logger">
+        ///   The logger for the token store.
+        /// </param>
         public AuthenticationPropertiesTokenStore(
             IOptions<IndustrialAppStoreAuthenticationOptions> options, 
             HttpClient httpClient,
-            TimeProvider timeProvider
-        ) : base(options, httpClient, timeProvider) { }
+            TimeProvider timeProvider,
+            ILogger<AuthenticationPropertiesTokenStore> logger
+        ) : base(options, httpClient, timeProvider, logger) { }
 
 
         /// <summary>
