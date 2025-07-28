@@ -236,7 +236,45 @@ namespace IntelligentPlant.DataCore.Client.Clients {
         }
 
 
+        /// <summary>
+        /// Gets tags by name or ID on the specified data source.
+        /// </summary>
+        /// <param name="request">
+        ///   The request.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   The matching tags.
+        /// </returns>
+        public async Task<IEnumerable<TagSearchResult>> GetTagsAsync(
+            GetTagsRequest request,
+            CancellationToken cancellationToken = default
+        ) {
+            if (request == null) {
+                throw new ArgumentNullException(nameof(request));
+            }
+            Validator.ValidateObject(request, new ValidationContext(request), true);
 
+            var url = GetAbsoluteUrl($"api/data/tags/by-id/{Uri.EscapeDataString(request.DataSourceName)}");
+
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) {
+                Content = CreateJsonContent(new { 
+                    Tags = request.TagNamesOrIds
+                })
+            };
+
+            try {
+                using (var httpResponse = await HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false)) {
+                    await httpResponse.ThrowOnErrorResponse().ConfigureAwait(false);
+                    return await ReadFromJsonAsync<IEnumerable<TagSearchResult>>(httpResponse, cancellationToken).ConfigureAwait(false);
+                }
+            }
+            finally {
+                httpRequest.Dispose();
+            }
+        }
 
         #endregion
 
