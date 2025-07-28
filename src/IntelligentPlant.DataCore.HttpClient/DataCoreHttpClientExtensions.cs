@@ -370,6 +370,87 @@ namespace IntelligentPlant.DataCore.Client {
 
 
         /// <summary>
+        /// Gets tags on the specified data source by name or ID.
+        /// </summary>
+        /// <param name="client">
+        ///   The Data Core client.
+        /// </param>
+        /// <param name="dataSourceName">
+        ///   The data source name.
+        /// </param>
+        /// <param name="namesOrIds">
+        ///   The names or IDs of the tags to retrieve.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   The search results.
+        /// </returns>
+        public static Task<IEnumerable<TagSearchResult>> GetTagsAsync(
+            this DataSourcesClient client,
+            string dataSourceName,
+            IEnumerable<string> namesOrIds,
+            CancellationToken cancellationToken = default
+        ) {
+            if (client == null) {
+                throw new ArgumentNullException(nameof(client));
+            }
+
+            return client.GetTagsAsync(
+                new GetTagsRequest() {
+                    DataSourceName = dataSourceName,
+                    TagNamesOrIds = namesOrIds?.ToArray()!
+                },
+                cancellationToken
+            );
+        }
+
+
+        /// <summary>
+        /// Gets a tag on the specified data source by name or ID.
+        /// </summary>
+        /// <param name="client">
+        ///   The Data Core client.
+        /// </param>
+        /// <param name="dataSourceName">
+        ///   The data source name.
+        /// </param>
+        /// <param name="nameOrId">
+        ///   The name or ID of the tag to retrieve.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   The cancellation token for the operation.
+        /// </param>
+        /// <returns>
+        ///   The search results.
+        /// </returns>
+        public static async Task<TagSearchResult> GetTagAsync(
+            this DataSourcesClient client,
+            string dataSourceName,
+            string nameOrId,
+            CancellationToken cancellationToken = default
+        ) {
+            if (client == null) {
+                throw new ArgumentNullException(nameof(client));
+            }
+            if (nameOrId == null) {
+                throw new ArgumentNullException(nameof(nameOrId));
+            }
+
+            var result = await client.GetTagsAsync(
+                new GetTagsRequest() {
+                    DataSourceName = dataSourceName,
+                    TagNamesOrIds = new [] { nameOrId }
+                },
+                cancellationToken
+            );
+
+            return result.FirstOrDefault()!;
+        }
+
+
+        /// <summary>
         /// Finds script tags on the specified data source.
         /// </summary>
         /// <param name="client">
