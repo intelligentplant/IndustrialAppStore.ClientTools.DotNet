@@ -24,6 +24,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" />
+    <!-- Remove Microsoft.Build reference once a version of Microsoft.VisualStudio.Web.CodeGeneration.Design that mitigates CVE-2025-55247 is available. -->
+    <PackageReference Include="Microsoft.Build" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" />
