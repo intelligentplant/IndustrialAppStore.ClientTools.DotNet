@@ -130,6 +130,9 @@
 {2} - status code
 {3} - reason phrase</comment>
   </data>
+  <data name="Error_DriverIdIsRequired" xml:space="preserve">
+    <value>A driver ID is required.</value>
+  </data>
   <data name="Error_EventSinkNameIsRequired" xml:space="preserve">
     <value>An event sink name is required.</value>
   </data>
