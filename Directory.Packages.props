@@ -5,6 +5,7 @@
     <NoWarn>NU1507;$(NoWarn)</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="IntelligentPlant.AppStoreConnect.Adapter.Core" Version="6.0.0-pre.1552" />
     <PackageVersion Include="IntelligentPlant.ProblemDetails.Core" Version="4.0.0" />
     <PackageVersion Include="IntelligentPlant.Relativity" Version="3.0.0" />
     <PackageVersion Include="Jaahas.HttpRequestTransformer" Version="3.0.1" />
@@ -42,7 +43,7 @@
     <PackageVersion Include="PolySharp" Version="1.15.0" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
-    <PackageVersion Include="System.Net.Http.Json" Version="8.0.1" />
-    <PackageVersion Include="System.Text.Json" Version="8.0.6" />
+    <PackageVersion Include="System.Net.Http.Json" Version="10.0.0" />
+    <PackageVersion Include="System.Text.Json" Version="10.0.0" />
   </ItemGroup>
 </Project>
