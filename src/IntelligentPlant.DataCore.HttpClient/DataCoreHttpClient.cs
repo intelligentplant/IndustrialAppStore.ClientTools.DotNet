@@ -24,6 +24,11 @@ namespace IntelligentPlant.DataCore.Client {
         protected DataCoreHttpClientOptions Options { get; }
 
         /// <summary>
+        /// The App Store Connect adapters client.
+        /// </summary>
+        public AdaptersClient Adapters { get; }
+
+        /// <summary>
         /// The asset model client.
         /// </summary>
         public AssetModelClient AssetModel { get; }
@@ -83,6 +88,7 @@ namespace IntelligentPlant.DataCore.Client {
                 ? Options.DataCoreUrl
                 : new Uri(Options.DataCoreUrl.ToString() + "/");
 
+            Adapters = new AdaptersClient(HttpClient, Options);
             AssetModel = new AssetModelClient(HttpClient, Options);
             Info = new InfoClient(HttpClient, Options);
             DataSources = new DataSourcesClient(HttpClient, Options);

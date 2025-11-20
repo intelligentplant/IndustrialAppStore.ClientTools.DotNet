@@ -88,6 +88,15 @@ namespace IntelligentPlant.DataCore.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A driver ID is required..
+        /// </summary>
+        internal static string Error_DriverIdIsRequired {
+            get {
+                return ResourceManager.GetString("Error_DriverIdIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An event sink name is required..
         /// </summary>
         internal static string Error_EventSinkNameIsRequired {
