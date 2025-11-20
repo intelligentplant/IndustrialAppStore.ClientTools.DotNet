@@ -96,6 +96,14 @@ namespace IntelligentPlant.DataCore.Client.Model {
         /// The driver supports scripting.
         /// </summary>
         [Description("The driver supports scripting.")]
-        Scripting = 8192
+        Scripting = 8192,
+
+        /// <summary>
+        /// The driver supports App Store Connect adapter-style custom functions.
+        /// </summary>
+        /// <seealso href="https://github.com/intelligentplant/AppStoreConnect.Adapters"/>
+        [Description("The driver supports App Store Connect adapter-style custom functions.")]
+        AdapterCustomFunctions = 16384
+
     }
 }
