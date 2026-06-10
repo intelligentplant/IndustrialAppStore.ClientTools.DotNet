@@ -7,7 +7,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Options;
+
+using Polly;
 
 namespace Microsoft.Extensions.DependencyInjection {
 
@@ -95,15 +98,18 @@ namespace Microsoft.Extensions.DependencyInjection {
                     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler() {
                         EnableMultipleHttp2Connections = true
                     })
-                    .AddStandardResilienceHandler(resilience => {
-                        // Disable per-attempt timeout to prevent spurious retries to remote data sources.
-                        // The API client proxies requests to remote data sources that may not support 
-                        // mid-flight cancellation. With attempt timeout enabled, a timeout would cancel 
-                        // the client-side request and trigger a retry, but the original request to the 
-                        // remote data source would continue running, resulting in duplicate requests and 
-                        // wasted resources. The total request timeout (default 30s) still applies as a 
-                        // safeguard against indefinite hangs.
-                        resilience.AttemptTimeout.Timeout = Timeout.InfiniteTimeSpan;
+                    // Custom resilience pipeline that mirrors AddStandardResilienceHandler but
+                    // omits the per-attempt timeout. Per-attempt timeouts are not suitable for this
+                    // use-case since the API client proxies requests to remote data
+                    // sources that may not support mid-flight cancellation: a per-attempt timeout
+                    // would cancel the client-side request and trigger a retry, but the remote
+                    // request would continue running, producing duplicate work. The total request
+                    // timeout (default 30 s) still guards against indefinite hangs.
+                    .AddResilienceHandler("standard", pipeline => {
+                        pipeline
+                            .AddTimeout(new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromSeconds(30) })
+                            .AddRetry(new HttpRetryStrategyOptions())
+                            .AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions());
                     }))
                 .AddCoreAuthenticationServices()
                 .AddAuthentication(configure)
