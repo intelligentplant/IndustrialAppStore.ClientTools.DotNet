@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-
 using IntelligentPlant.IndustrialAppStore.Client;
-
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
@@ -97,10 +95,20 @@ namespace IntelligentPlant.IndustrialAppStore.Authentication {
         public bool ShowConsentPrompt { get; set; }
 
         /// <summary>
+        /// The total request timeout applied to HTTP requests made via <see cref="IndustrialAppStoreHttpClient"/>.
+        /// </summary>
+        /// <remarks>
+        ///   This timeout guards against indefinitely-hanging requests. Per-attempt timeouts are
+        ///   not used because requests may be proxied to remote data sources that do not support
+        ///   mid-flight cancellation.
+        /// </remarks>
+        public TimeSpan HttpRequestTimeout { get; set; } = TimeSpan.FromSeconds(30);
+
+        /// <summary>
         /// The expiry time for the cookie used to store the user's session.
         /// </summary>
         /// <remarks>
-        ///  If <see langword="null"/>, the cookie will use the default expiry period for an 
+        ///  If <see langword="null"/>, the cookie will use the default expiry period for an
         ///  ASP.NET Core authentication cookie.
         /// </remarks>
         public TimeSpan? CookieExpiry { get; set; }
