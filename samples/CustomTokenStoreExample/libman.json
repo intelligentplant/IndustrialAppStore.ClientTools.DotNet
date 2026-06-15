@@ -53,6 +53,7 @@
       ]
     },
     {
+      "provider": "unpkg",
       "library": "rxjs@7.5.4",
       "destination": "wwwroot/lib/rxjs/",
       "files": [

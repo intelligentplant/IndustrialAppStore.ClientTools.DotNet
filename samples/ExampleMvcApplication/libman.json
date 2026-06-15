@@ -62,7 +62,7 @@
       ]
     },
     {
-      "provider": "cdnjs",
+      "provider": "unpkg",
       "library": "rxjs@7.8.1",
       "destination": "wwwroot/lib/rxjs/",
       "files": [
