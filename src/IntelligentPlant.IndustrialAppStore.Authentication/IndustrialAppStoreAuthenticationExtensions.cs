@@ -2,12 +2,13 @@
 using IntelligentPlant.IndustrialAppStore.Authentication.Options;
 using IntelligentPlant.IndustrialAppStore.Client;
 using IntelligentPlant.IndustrialAppStore.DependencyInjection;
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Options;
+using Polly;
 
 namespace Microsoft.Extensions.DependencyInjection {
 
@@ -95,7 +96,21 @@ namespace Microsoft.Extensions.DependencyInjection {
                     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler() {
                         EnableMultipleHttp2Connections = true
                     })
-                    .AddStandardResilienceHandler())
+                    // Custom resilience pipeline that mirrors AddStandardResilienceHandler but
+                    // omits the per-attempt timeout. Per-attempt timeouts are not suitable for this
+                    // use-case since the API client proxies requests to remote data sources that may
+                    // not support mid-flight cancellation: a per-attempt timeout would cancel the
+                    // client-side request and trigger a retry, but the remote request would continue
+                    // running, producing duplicate work. The total request timeout (configurable via
+                    // HttpRequestTimeout; default 30 s) still guards against indefinite hangs.
+                    .AddResilienceHandler("standard", (pipeline, context) => {
+                        var iasOptions = context.ServiceProvider.GetRequiredService<IOptionsMonitor<IndustrialAppStoreAuthenticationOptions>>();
+                        pipeline
+                            .AddRateLimiter(new HttpRateLimiterStrategyOptions())
+                            .AddTimeout(new HttpTimeoutStrategyOptions { Timeout = iasOptions.CurrentValue.HttpRequestTimeout })
+                            .AddRetry(new HttpRetryStrategyOptions())
+                            .AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions());
+                    }))
                 .AddCoreAuthenticationServices()
                 .AddAuthentication(configure)
                 .AddAccessTokenProvider(provider => {
